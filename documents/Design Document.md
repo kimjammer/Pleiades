@@ -134,14 +134,22 @@ Database
 
 * The database stores all of the data stored for Pleiades
 
+```mermaid
+flowchart TD
+    c1[Client]
+    w[Web Host]
+    s[Server]
+    db[Database]
 
+    c1 -->|Requests website| w
+    w -->|Serves website| c1
 
-<p id="gdcalert1" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image1.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert2">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
+    c1 -->|Notifies of changes| s
+    s -->|Streams events| c1
 
-
-![alt_text](images/image1.png "image_tooltip")
-
-
+    s -->|Commit changes| db
+    db -->|Fetch Data| s
+```
 
 ### Detailed Overview of Architecture and Sequence of Events
 
