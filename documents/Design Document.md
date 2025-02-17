@@ -155,12 +155,7 @@ flowchart TD
 
 Maintaining a consistent visual state across multiple clients while ensuring a responsive user interface is a complex task. When the user interacts with the interface and performs an action that must be synchronized with other clients, for example voting in a poll or creating a new task, the event will be transmitted to the server via WebSockets and event handlers on the server will affect the project state in the correct way. In case of the user performing an invalid action, the server will send an error message back to the user. Then the server will broadcast the new state to all clients and the clients will update their views. The server will also commit the new state to the database.
 
-
-
-<p id="gdcalert2" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image2.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert3">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image2.png "image_tooltip")
+![sequence diagram demonstrating a race condition](design-document/race-condition.png)
 
 
 This paradigm requires the Svelte UI to follow a model-view-controller architecture. The UI must in and of itself be stateless and be able to be created from nothing but the project state. Thankfully, Svelte has an effective reactive update system that allows the state to be passed to components, and the DOM automatically updated on arbitrary changes.
@@ -566,27 +561,4 @@ A minimal number of REST endpoints exist to facilitate actions that do not need 
 
 #### UI Mockup
 
-
-
-<p id="gdcalert8" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image8.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert9">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image8.png "image_tooltip")
-
-
-<p id="gdcalert9" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image9.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert10">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image9.png "image_tooltip")
-
-
-<p id="gdcalert10" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image10.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert11">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image10.png "image_tooltip")
-
-
-<p id="gdcalert11" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image11.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert12">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image11.png "image_tooltip")
+![design mockup](design-document/mockup.png)
