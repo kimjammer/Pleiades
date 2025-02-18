@@ -8,6 +8,9 @@ let
 in pkgs.mkShell {
   packages = with pkgs; [
     nodejs_23
+    nodePackages.prettier
+    typescript-language-server
+    svelte-language-server
   ];
 
   inherit NPM_CONFIG_PREFIX;
