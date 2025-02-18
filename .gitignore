@@ -6,12 +6,13 @@ node_modules
 .vercel
 .netlify
 .wrangler
-/.svelte-kit
-/build
+/frontend/.svelte-kit
+/frontend/build
 
 # OS
 .DS_Store
 Thumbs.db
+.direnv
 
 # Env
 .env
