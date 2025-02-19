@@ -1,0 +1,4 @@
+# Backend
+
+## Runnning
+`go run .`

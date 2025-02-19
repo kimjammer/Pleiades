@@ -8,6 +8,7 @@ node_modules
 .wrangler
 /frontend/.svelte-kit
 /frontend/build
+/backend/Pleiades
 
 # OS
 .DS_Store
