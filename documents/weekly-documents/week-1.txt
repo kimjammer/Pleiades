@@ -1,0 +1,13 @@
+=== Weekly Team Report (Team 4: Pleiades) ===
+
+Week 1 (Summary) (Scrum Master: )
+2/18 1.5hr 1126999 Created a stub project page and project state class
+2/18 1.5hr 5ef97c7 Created stub implementations of the state mutation methods on the client side
+
+
+Week 1 (Plan)
+[Meetings]
+2/19 Discuss backend and make sure everyone can run it
+
+[Individual goals]
+Henry: Establish and authenticate a websocket connection between the client and server

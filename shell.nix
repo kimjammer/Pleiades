@@ -11,6 +11,8 @@ in pkgs.mkShell {
     nodePackages.prettier
     typescript-language-server
     svelte-language-server
+    go
+    gopls
   ];
 
   inherit NPM_CONFIG_PREFIX;
