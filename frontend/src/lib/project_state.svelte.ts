@@ -8,6 +8,25 @@ class ReactiveTesting {
     })
 }
 
+export async function connectToProject(key: string, projectId: string): Promise<ProjectState> {
+    // TODO: Don't hardcode this and read it from the URL
+    // We can't do that now because the ports are different
+    let socket = new WebSocket("ws://localhost:8080/ws")
+
+    socket.onmessage = message => {}
+
+    socket.onopen = () => {
+        socket.send(key)
+        socket.send(projectId)
+    }
+
+    socket.onclose = () => {
+        console.log("Closed!")
+    }
+
+    return new Promise((resolve, reject) => {})
+}
+
 export class ProjectState {
     button_state: "enabled" | "a" | "b" = $state("enabled")
 

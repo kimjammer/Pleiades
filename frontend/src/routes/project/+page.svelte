@@ -1,5 +1,7 @@
 <script>
-    import { ProjectState } from "../../lib/project_state.svelte"
+    import { connectToProject, ProjectState } from "../../lib/project_state.svelte"
+
+    connectToProject("bruh", "bruh")
 
     let project = $state(new ProjectState())
 
