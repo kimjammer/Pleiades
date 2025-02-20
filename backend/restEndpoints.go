@@ -19,6 +19,8 @@ func projectsHandler(c *gin.Context) {
 		},
 	}
 
+	//mongoClient.Database("pleiades").Collection("projects").Find("")
+
 	log.Println(response)
 	c.JSON(http.StatusOK, response)
 }

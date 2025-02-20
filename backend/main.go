@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -37,9 +38,13 @@ func main() {
 			}
 		}()
 	}
-	
+
 	// Setup webserver
 	router := gin.Default()
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:5173"}
+	router.Use(cors.Default())
+
 	router.GET("/ws", wsEndpoint)
 	router.GET("/projects", projectsHandler)
 
