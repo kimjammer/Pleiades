@@ -13,7 +13,19 @@ export async function connectToProject(key: string, projectId: string): Promise<
     // We can't do that now because the ports are different
     let socket = new WebSocket("ws://localhost:8080/ws")
 
-    socket.onmessage = message => {}
+    socket.onmessage = message => {
+        let text = message.data
+
+        if (!(text instanceof String)) {
+            console.log("Server sent a non-string!")
+            return
+        }
+
+        if (text.startsWith("FAIL:")) {
+            console.error(text)
+            return
+        }
+    }
 
     socket.onopen = () => {
         socket.send(key)
