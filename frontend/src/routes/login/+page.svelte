@@ -2,6 +2,8 @@
     import { Input } from "$lib/components/ui/input/index"
     import { Button } from "$lib/components/ui/button/index"
 
+    //TODO: implement password recovery link & page?
+
     let email = '';
     let password = '';
 

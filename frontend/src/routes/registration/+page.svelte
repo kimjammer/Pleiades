@@ -8,6 +8,8 @@
     let password = '';
     let passwordConfirm = '';
 
+    //TODO: create link to dashboard
+
     async function register() {
         const res = await fetch('http://localhost:8080/api/register', {
             method: 'POST',
@@ -19,11 +21,22 @@
         console.log(data); // Handle success or error messages
     }
 
+    //This func is activated on submit, confirms validity of input to send to server
+    //if input invalid, pops up error
+    //NOTE: isValid() does NOT handle already existing accounts.
     function isValid() {
+        if (password !== passwordConfirm) {
+
+        }
         //TODO: Implement email and passoword checking
 
         //TODO: Create error messages for invalid input
 
+    }
+
+    //pop up error box with link to login page for already existing accoutns
+    function accountExists() {
+        //TODO: create pop-up box with link to login page
     }
 
 </script>
@@ -39,8 +52,9 @@
 </p>
 <br />
 <div class="grid w-full max-w-sm items-center gap-1.5">
-    <Input type="email" id="email" placeholder="Email" />
-    <Input type="password" id="password" placeholder="Password" />
-    <Input type="confirm password" id="confirm password" placeholder="confirm Password" />
+    <!--Create three input fields and then bind them to three variables-->
+    <Input type="email" id="email" placeholder="Email"  bind:value={email}/>
+    <Input type="password" id="password" placeholder="Password" bind:value={password}/>
+    <Input type="confirm password" id="confirm password" placeholder="confirm Password" bind:value={passwordConfirm}/>
     <Button on:click={isValid()}>Register</Button>
 </div>
