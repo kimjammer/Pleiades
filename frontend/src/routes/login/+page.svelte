@@ -1,11 +1,12 @@
-
-
 <script>
+    import { Input } from "$lib/components/ui/input/index"
+    import { Button } from "$lib/components/ui/button/index"
+
     let email = '';
     let password = '';
 
     async function register() {
-        const res = await fetch('http://localhost:8080/api/register', {
+        const res = await fetch('http://localhost:8080/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
@@ -14,10 +15,20 @@
         const data = await res.json();
         console.log(data); // Handle success or error messages
     }
-</script>
 
-<h1>Login</h1>
-<br />
-<input type="text" placeholder="Email" bind:value={email} />
-<br />
-<input type="password" placeholder="Password" bind:value={password} />
+    function isValid() {
+        //TODO: Implement email and password checking
+
+        //TODO: Create error messages for invalid input
+
+    }
+</script>
+<h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+    Login
+</h1>
+<br/>
+<div class="grid w-full max-w-sm items-center gap-1.5">
+    <Input type="email" id="email" placeholder="Email" />
+    <Input type="password" id="password" placeholder="Password" />
+    <Button on:click={isValid()}>Login</Button>
+</div>
