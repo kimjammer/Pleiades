@@ -12,25 +12,46 @@ import (
 )
 
 func projectsHandler(c *gin.Context) {
-	//DEBUG: Dummy data
-	response := ProjectsResponse{
-		Projects: []minimalProject{
-			{
-				Id:          uuid.New().String(),
-				Title:       "Project 1",
-				Description: "This is project 1",
-			},
-		},
+	//Get current user
+	//TODO: Get User id from token
+	userId := "BOOTSTRAPPER"
+
+	filter := bson.D{{"_id", userId}}
+	var crrUser User
+	err := db.Collection("users").FindOne(c, filter).Decode(&crrUser)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			//TODO: Add error handling for user not found
+		} else {
+			panic(err)
+		}
 	}
 
-	log.Println(response)
+	//Get projects
+	var response ProjectsResponse
+	for _, projectId := range crrUser.Projects {
+		filter := bson.D{{"_id", projectId}}
+		var project Project
+		err := db.Collection("projects").FindOne(c, filter).Decode(&project)
+		if err != nil {
+			panic(err)
+		}
+		response.Projects = append(response.Projects, minimalProject{
+			Id:          project.Id,
+			Title:       project.Title,
+			Description: project.Description,
+		})
+	}
+
 	c.JSON(http.StatusOK, response)
 }
 
 func newProjectHandler(c *gin.Context) {
 	//Get current user
 	//TODO: Get User id from token
-	filter := bson.D{{"_id", "BOOTSTRAPPER"}}
+	userId := "BOOTSTRAPPER"
+
+	filter := bson.D{{"_id", userId}}
 
 	var crrUser User
 	err := db.Collection("users").FindOne(context.TODO(), filter).Decode(&crrUser)
@@ -54,7 +75,7 @@ func newProjectHandler(c *gin.Context) {
 		Tasks:       []Task{},
 		Polls:       []Poll{},
 	}
-	_, err = db.Collection("projects").InsertOne(context.TODO(), project)
+	_, err = db.Collection("projects").InsertOne(c, project)
 	if err != nil {
 		panic(err)
 	}
@@ -62,7 +83,7 @@ func newProjectHandler(c *gin.Context) {
 	//Add project to user
 	crrUser.Projects = append(crrUser.Projects, project.Id)
 	update := bson.D{{"$set", bson.D{{"projects", crrUser.Projects}}}}
-	_, err = db.Collection("users").UpdateOne(context.TODO(), filter, update)
+	_, err = db.Collection("users").UpdateOne(c, filter, update)
 	if err != nil {
 		panic(err)
 	}

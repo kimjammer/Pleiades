@@ -1,24 +1,18 @@
-<script>
+<script lang="ts">
     import { onMount } from "svelte"
     import { Card } from "$lib/components/ui/card"
     import { Button } from "$lib/components/ui/button"
+    import type { ProjectsResponse } from "$lib/schema.js"
+
+    let response: ProjectsResponse = {
+        projects: [],
+    }
 
     onMount(async () => {
         const url = "http://localhost:8080/projects"
-        const response = await fetch(url, { mode: "cors" })
-        console.log(response)
+        const res = await fetch(url, { mode: "cors" })
+        response = (await res.json()) as ProjectsResponse
     })
-
-    let response = [
-        {
-            title: "project",
-            description: "project 428282",
-        },
-        {
-            title: "project2",
-            description: "project descirpit",
-        },
-    ]
 
     async function createProject() {
         const url = "http://localhost:8080/projects/new"
@@ -31,7 +25,7 @@
 
 <h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Pleiades Home Page</h1>
 
-{#each response as project}
+{#each response.projects as project}
     <div class="p-10">
         <h2
             class="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
