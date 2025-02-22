@@ -12,7 +12,7 @@ import (
 	"os"
 )
 
-var mongoClient *mongo.Client
+var db *mongo.Database
 
 func main() {
 	//Connect to database
@@ -31,6 +31,7 @@ func main() {
 		if err := mongoClient.Database("admin").RunCommand(context.TODO(), bson.D{{"ping", 1}}).Decode(&result); err != nil {
 			panic(err)
 		}
+		db = mongoClient.Database("pleiades")
 		log.Println("Successfully connected to MongoDB")
 		defer func() {
 			if err := mongoClient.Disconnect(context.TODO()); err != nil {
@@ -47,6 +48,7 @@ func main() {
 
 	router.GET("/ws", wsEndpoint)
 	router.GET("/projects", projectsHandler)
+	router.POST("/projects/new", newProjectHandler)
 
 	router.Run(":8080")
 }

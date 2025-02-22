@@ -1,65 +1,62 @@
 package main
 
-type Projects struct {
-}
-
 type Project struct {
-	id          string
-	title       string
-	description string
-	users       []User
-	tasks       []Task
-	polls       []Poll
+	Id          string `bson:"_id"`
+	Title       string
+	Description string
+	Users       []string
+	Tasks       []Task
+	Polls       []Poll
 }
 
 type User struct {
-	id           string
-	firstName    string
-	lastName     string
-	email        string
-	password     string //TODO: Change me to correct type
-	phoneNumber  string
-	userPhoto    string //TODO: Change me to correct type
-	availability []Availability
-	projects     []string
+	Id           string `bson:"_id"`
+	FirstName    string
+	LastName     string
+	Email        string
+	Password     string //TODO: Change me to correct type
+	PhoneNumber  string
+	UserPhoto    string //TODO: Change me to correct type
+	Availability []Availability
+	Projects     []string
 }
 
 type Availability struct {
-	dayOfWeek   int
-	startOffset int
-	endOffset   int
+	DayOfWeek   int
+	StartOffset int
+	EndOffset   int
 }
 
 type Poll struct {
-	id          string
-	title       string
-	description string
-	options     []Option
+	Id          string
+	Title       string
+	Description string
+	Options     []Option
 }
 
 type Task struct {
-	id           string
-	title        string
-	description  string
-	dueDate      string //TODO: Change me to correct type
-	kanbanColumn string
-	timeEstimate int
-	completed    bool
-	sessions     []Session
-	assignees    []string
+	Id           string
+	Title        string
+	Description  string
+	DueDate      string //TODO: Change me to correct type
+	KanbanColumn string
+	TimeEstimate int
+	Completed    bool
+	Sessions     []Session
+	Assignees    []string
 }
 
 type Option struct {
-	id            string
-	title         string
-	likedUsers    []string
-	neutralUsers  []string
-	dislikedUsers []string
+	Id            string
+	Title         string
+	LikedUsers    []string
+	NeutralUsers  []string
+	DislikedUsers []string
 }
 
 type Session struct {
-	id        string
-	startTime string //TODO: Change me to correct type
-	endTime   string //TODO: Change me to correct type
-	user      string
+	Id        string
+	StartTime string //TODO: Change me to correct type
+	EndTime   string //TODO: Change me to correct type
+	User      string
 }
