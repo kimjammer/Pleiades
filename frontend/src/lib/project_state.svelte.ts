@@ -1,3 +1,5 @@
+import { PUBLIC_API_HOST } from "$env/static/public"
+
 class ReactiveTesting {
     bruh = $state("X")
     list = $state(["A", "B", "C"])
@@ -11,7 +13,7 @@ class ReactiveTesting {
 export async function connectToProject(key: string, projectId: string): Promise<ProjectState> {
     // TODO: Don't hardcode this and read it from the URL
     // We can't do that now because the ports are different
-    let socket = new WebSocket("ws://localhost:8080/ws")
+    let socket = new WebSocket("ws://" + PUBLIC_API_HOST + "/ws")
 
     socket.onmessage = message => {
         let text = message.data

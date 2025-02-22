@@ -3,19 +3,20 @@
     import { Card } from "$lib/components/ui/card"
     import { Button } from "$lib/components/ui/button"
     import type { ProjectsResponse } from "$lib/schema.js"
+    import { PUBLIC_API_HOST } from "$env/static/public"
 
     let response: ProjectsResponse = {
         projects: [],
     }
 
     onMount(async () => {
-        const url = "http://localhost:8080/projects"
+        const url = "http://" + PUBLIC_API_HOST + "/projects"
         const res = await fetch(url, { mode: "cors" })
         response = (await res.json()) as ProjectsResponse
     })
 
     async function createProject() {
-        const url = "http://localhost:8080/projects/new"
+        const url = "http://" + PUBLIC_API_HOST + "/projects/new"
         await fetch(url, {
             method: "POST",
             mode: "cors",
