@@ -13,6 +13,7 @@ Week 1 (Summary) (Scrum Master: Ethan Dawes)
 2/19 0.5hr 99000cd Configure CORS
 2/19 0.5hr afd8a72 setup typescript
 2/20 1.5hr eb769b0 created barebones login and registration UI pages
+2/20 1hr ec1ab4c 9ec6816 Establish a websocket connection between the client and server
 ...
 2/21 2hr   91716c4 Working MongoDB CRUD
 2/21 1.5hr 0361994 Implement basic /projects endpoint
