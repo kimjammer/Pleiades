@@ -8,10 +8,17 @@ Week 1 (Summary) (Scrum Master: Ethan Dawes)
 2/18 1hr   2b26dbe Connect to DB
 ...
 2/19 0.5hr 99000cd Configure CORS
+2/19 0.5hr afd8a72 setup typescript
+2/20 1.5hr eb769b0 created barebones login and registration UI pages
 ...
 2/21 2hr   91716c4 Working MongoDB CRUD
 2/21 1.5hr 0361994 Implement basic /projects endpoint
 2/21 0.1hr b4317eb Refactor API url to not be hardcoded
+2/21 0.5hr 11e26ee add input component from shadcn-svelte
+2/21 0.5hr e7a4a5d fixed some conflicts caused by personal machine
+2/21 0.5hr d1a99de fixed personal dependencies
+2/21 1.5hr 919656c revised the login and register pages
+2/21 1hr b6be33f researched and imported more components
 2/22 2.5hr 67d8de4 Implement user home page UI
 
 Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
@@ -23,3 +30,4 @@ Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
 [Individual goals]
 Henry: Establish and authenticate a websocket connection between the client and server
 John: Work on the project creation modals and server side validation
+Cate: Create a working backend for creation and storage of accounts
