@@ -1,16 +1,26 @@
 <script>
     import { connectToProject, ProjectState } from "../../lib/project_state.svelte"
+    import { onMount } from "svelte"
 
-    connectToProject("bruh", "bruh")
+    let projectId = $state("")
 
     let project = $state(new ProjectState())
 
     let key = $state("Key")
     let value = $state("Value")
+
+    onMount(() => {
+        //Grab project ID from URL
+        let params = new URLSearchParams(document.location.search)
+        projectId = params.get("id") || ""
+        //TODO: Handle error if no project ID
+
+        connectToProject("bruh", "bruh")
+    })
 </script>
 
 <h1>Project page!</h1>
-
+<p>Project ID: {projectId}</p>
 <input
     value="X"
     oninput={e => project.updateInProject("reactive_testing.bruh", e.currentTarget.value)}

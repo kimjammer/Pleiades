@@ -1,5 +1,6 @@
 <script lang="ts">
     import "../app.css"
+    import { ModeWatcher } from "mode-watcher"
     let { children } = $props()
 </script>
 
@@ -10,4 +11,5 @@
     <a href="/home">User_Home</a>
 </nav>
 
+<ModeWatcher />
 {@render children()}
