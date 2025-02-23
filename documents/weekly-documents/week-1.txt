@@ -7,6 +7,9 @@ Week 1 (Summary) (Scrum Master: Ethan Dawes)
 2/18 0.1hr a0f23a8 Install shadcn-svelte
 2/18 1hr   2b26dbe Connect to DB
 ...
+2/20 0.5hr 79dd904 Setup codespaces devcontainer
+2/20 0.1hr 153e86c Document development procedures
+...
 2/19 0.5hr 99000cd Configure CORS
 2/19 0.5hr afd8a72 setup typescript
 2/20 1.5hr eb769b0 created barebones login and registration UI pages
@@ -31,3 +34,4 @@ Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
 Henry: Establish and authenticate a websocket connection between the client and server
 John: Work on the project creation modals and server side validation
 Cate: Create a working backend for creation and storage of accounts
+Ethan: Create an encapsulated availability picker component (frontend)
