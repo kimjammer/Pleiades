@@ -11,34 +11,59 @@ class ReactiveTesting {
 }
 
 export async function connectToProject(key: string, projectId: string): Promise<ProjectState> {
-    // TODO: Don't hardcode this and read it from the URL
-    // We can't do that now because the ports are different
-    let socket = new WebSocket("ws://" + PUBLIC_API_HOST + "/ws")
+    return new Promise((resolve, reject) => {
+        let socket = new WebSocket("ws://" + PUBLIC_API_HOST + "/ws")
 
-    socket.onmessage = message => {
-        let text = message.data
+        let state = new ProjectState()
+        let gotFirstProjectState = false
 
-        if (!(text instanceof String)) {
-            console.log("Server sent a non-string!")
-            return
+        socket.onmessage = message => {
+            let text = message.data
+
+            if (typeof text != "string") {
+                console.log("Server sent a non-string!", text, typeof text)
+                return
+            }
+
+            if (text.startsWith("FAIL:")) {
+                if (!gotFirstProjectState) {
+                    reject(text)
+                } else {
+                    console.error(text)
+                }
+
+                return
+            }
+
+            if (text == "INVALID TOKEN") {
+                window.location.replace("/login")
+            }
+
+            if (text == "PROJECT ID DNE") {
+                window.location.replace("/projects")
+            }
+
+            let new_state = JSON.parse(text)
+
+            console.log(new_state)
+
+            // TODO: Update the old state
+
+            if (!gotFirstProjectState) {
+                gotFirstProjectState = true
+                resolve(state)
+            }
         }
 
-        if (text.startsWith("FAIL:")) {
-            console.error(text)
-            return
+        socket.onopen = () => {
+            socket.send(key)
+            socket.send(projectId)
         }
-    }
 
-    socket.onopen = () => {
-        socket.send(key)
-        socket.send(projectId)
-    }
-
-    socket.onclose = () => {
-        console.log("Closed!")
-    }
-
-    return new Promise((resolve, reject) => {})
+        socket.onclose = () => {
+            console.log("Closed!")
+        }
+    })
 }
 
 export class ProjectState {

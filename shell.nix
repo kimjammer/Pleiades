@@ -1,4 +1,6 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> {
+  config.allowUnfree = true;
+} }:
 
 let
   lib = import <nixpkgs/lib>;
@@ -13,11 +15,17 @@ in pkgs.mkShell {
     svelte-language-server
     go
     gopls
+    mongodb-ce
+    mongosh
   ];
 
   inherit NPM_CONFIG_PREFIX;
 
   shellHook = ''
     export PATH="${NPM_CONFIG_PREFIX}/bin:$PATH"
+
+    if ! [[ -d ./database ]]; then
+      mkdir database
+    fi
   '';
 }

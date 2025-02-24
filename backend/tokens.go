@@ -6,6 +6,6 @@ func make_token(userId string) string {
 }
 
 // Validate the token for the given user ID, returns `nil` if the token is invalid.
-func verify_token(token string) string {
+func verify_token(token *string) *string {
 	return token
 }

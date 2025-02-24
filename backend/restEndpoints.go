@@ -16,7 +16,7 @@ func projectsHandler(c *gin.Context) {
 	//TODO: Get User id from token
 	userId := "BOOTSTRAPPER"
 
-	filter := bson.D{{"_id", userId}}
+	filter := bson.D{{Key: "_id", Value: userId}}
 	var crrUser User
 	err := db.Collection("users").FindOne(c, filter).Decode(&crrUser)
 	if err != nil {
@@ -30,7 +30,7 @@ func projectsHandler(c *gin.Context) {
 	//Get projects
 	var response ProjectsResponse
 	for _, projectId := range crrUser.Projects {
-		filter := bson.D{{"_id", projectId}}
+		filter := bson.D{{Key: "_id", Value: projectId}}
 		var project Project
 		err := db.Collection("projects").FindOne(c, filter).Decode(&project)
 		if err != nil {

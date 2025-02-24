@@ -24,6 +24,7 @@ Week 1 (Summary) (Scrum Master: Ethan Dawes)
 2/21 1.5hr 919656c revised the login and register pages
 2/21 1hr b6be33f researched and imported more components
 2/22 2.5hr 67d8de4 Implement user home page UI
+2/23 0.2hr 1c6d6a2 Stub implementations of token authentication
 
 Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
 [Meetings]

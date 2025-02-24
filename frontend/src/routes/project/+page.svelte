@@ -15,7 +15,7 @@
         projectId = params.get("id") || ""
         //TODO: Handle error if no project ID
 
-        connectToProject("bruh", "bruh")
+        connectToProject("BOOTSTRAPPER", projectId)
     })
 </script>
 
