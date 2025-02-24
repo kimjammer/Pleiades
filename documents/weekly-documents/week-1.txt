@@ -25,6 +25,7 @@ Week 1 (Summary) (Scrum Master: Ethan Dawes)
 2/21 1hr b6be33f researched and imported more components
 2/22 2.5hr 67d8de4 Implement user home page UI
 2/23 0.2hr 1c6d6a2 Stub implementations of token authentication
+2/23 2hr 0faa530 Make the websockets handler query the server and TX the data to the client
 
 Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
 [Meetings]

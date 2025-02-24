@@ -1,0 +1,18 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: Henry
+
+Week 1 (Summary)
+2/18 1.5hr 1126999 Created a stub project page and project state class
+2/18 1.5hr 5ef97c7 Created stub implementations of the state mutation methods on the client side
+2/20 1hr ec1ab4c 9ec6816 Establish a websocket connection between the client and server
+2/23 0.2hr 1c6d6a2 Stub implementations of token authentication
+2/23 2hr 0faa530 Make the websockets handler query the server and TX the data to the client
+
+Week 4 (Plan)
+2/24 2hr Allow the server to set the project state on the client side
+2/25 3hr Implement mutation methods on the server
+2/27 5hr Make the server coordinate state between different users
+
+Week 5 (Plan)
+3/3 3hr Implement leaving groups
+3/5 3hr Implement deleting groups
