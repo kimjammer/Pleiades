@@ -2,6 +2,7 @@
 
 Week 1 (Summary) (Scrum Master: Ethan Dawes)
 2/24 0.5hr d49faa6 Define the project schema on the frontend
+2/24 0.5hr 72cbfae Allow the client to recieve data from the server
 2/25 4hr   6b63795 Implement availability input
 
 Week 1&2 (Plan) (Scrum Master: Ethan Dawes)

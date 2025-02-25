@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -104,26 +103,29 @@ func handleConnection(conn *websocket.Conn) {
 		}
 	}
 
-	ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	filter = bson.D{{Key: "_id", Value: projectId}}
-	var project Project
-	err = db.Collection("projects").FindOne(ctx, filter).Decode(&project)
-	if err != nil {
-		panic(err)
-	}
+	projectSpace := joinSpace(projectId)
+	disconnectSignal := make(chan struct{})
+	defer func() {
+		disconnectSignal <- struct{}{}
+		close(projectSpace.command_tx)
+	}()
 
-	encoded, err := json.Marshal(project)
-	if err != nil {
-		panic(err)
-	}
+	go func() {
+		for {
+			select {
+			case newState := <-projectSpace.state_rx:
+				if err := conn.WriteMessage(websocket.TextMessage, newState); err != nil {
+					if _, ok := err.(*websocket.CloseError); ok {
+						return
+					}
+					panic(err)
+				}
 
-	if err := conn.WriteMessage(websocket.TextMessage, encoded); err != nil {
-		if _, ok := err.(*websocket.CloseError); ok {
-			return
+			case _ = <-disconnectSignal:
+				return
+			}
 		}
-		panic(err)
-	}
+	}()
 
 	//Listen loop
 	for {
@@ -135,13 +137,15 @@ func handleConnection(conn *websocket.Conn) {
 			panic(err)
 		}
 
-		//DEBUG
-		log.Println("Received: ", string(message))
-
-		//DEBUG: Echo same message back
-		err = conn.WriteMessage(mt, message)
-		if err != nil {
-			panic(err)
+		if mt != websocket.TextMessage {
+			if err := conn.WriteMessage(websocket.TextMessage, []byte("FAIL: Expected the command to be a text message")); err != nil {
+				if _, ok := err.(*websocket.CloseError); ok {
+					return
+				}
+				panic(err)
+			}
 		}
+
+		log.Println(message)
 	}
 }
