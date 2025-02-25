@@ -2,6 +2,7 @@
 
 Week 1 (Summary) (Scrum Master: Ethan Dawes)
 2/24 0.5hr d49faa6 Define the project schema on the frontend
+2/25 4hr   6b63795 Implement
 
 Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
 [Meetings]
