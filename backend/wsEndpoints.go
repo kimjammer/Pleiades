@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -146,6 +147,47 @@ func handleConnection(conn *websocket.Conn) {
 			}
 		}
 
-		log.Println(message)
+		command := CommandMessage{}
+
+		err = json.Unmarshal(message, &command)
+		if err != nil {
+			panic(err)
+		}
+
+		decodedCommand := decodeCommand(command)
+
+		projectSpace.command_tx <- decodedCommand
 	}
+}
+
+type CommandMessage struct {
+	Name string
+	Args json.RawMessage
+}
+
+type DemoButtonCommand struct {
+	newState string
+}
+
+func (self DemoButtonCommand) apply(state *Project) {
+	if self.newState == "" {
+		state.DemoButtonState = ""
+	} else if state.DemoButtonState == "" && slices.Contains([]string{"a", "b"}, self.newState) {
+		state.DemoButtonState = self.newState
+	}
+}
+
+func decodeCommand(command CommandMessage) Command {
+	if command.Name == "demoButtonState" {
+		var newState string
+		err := json.Unmarshal(command.Args, &newState)
+		if err != nil {
+			panic("Client sent invalid command")
+		}
+
+		return DemoButtonCommand{newState}
+	}
+
+	log.Println("Command:", command)
+	panic("Unknown command:" + command.Name)
 }

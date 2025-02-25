@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"sync"
 	"time"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-type Command struct{}
+type Command interface {
+	apply(project *Project)
+}
 
 type ConnectionForSpace struct {
 	state_tx   chan<- []byte
@@ -81,6 +82,8 @@ func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string
 		default:
 		}
 
+		appliedCommand := false
+
 		i := len(connections) - 1
 		for i >= 0 {
 			connection := connections[i]
@@ -91,12 +94,31 @@ func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string
 					// Channel closed, stop listening to it
 					connections[i] = connections[len(connections)-1]
 					connections = connections[:len(connections)-1]
+					i -= 1
+					continue
 				}
-				log.Println(command)
-				// TODO: Handle command
+
+				command.apply(&project)
+				appliedCommand = true
 			}
 
 			i -= 1
+		}
+
+		if appliedCommand {
+			encoded := encodeProject(project)
+
+			for _, connection := range connections {
+				connection.state_tx <- encoded
+			}
+
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			update := bson.D{{"$set", project}}
+			_, err := db.Collection("projects").UpdateOne(ctx, filter, update)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 }

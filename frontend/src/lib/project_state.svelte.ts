@@ -14,7 +14,7 @@ export async function connectToProject(key: string, projectId: string): Promise<
     return new Promise((resolve, reject) => {
         let socket = new WebSocket("ws://" + PUBLIC_API_HOST + "/ws")
 
-        let state = new ProjectState()
+        let state = new ProjectState(socket)
         let gotFirstProjectState = false
 
         socket.onmessage = message => {
@@ -70,6 +70,7 @@ function updateState(serverResponse: any, state: ProjectState) {
     state.id = serverResponse.Id
     state.title = serverResponse.Title
     state.description = serverResponse.Description
+    state.demoButtonState = serverResponse.DemoButtonState
     // TODO: Make the server send more comprehensive user info
 
     while (state.tasks.length > serverResponse.Tasks.length) {
@@ -202,7 +203,7 @@ export class Poll {
 }
 
 export class ProjectState {
-    button_state: "enabled" | "a" | "b" = $state("enabled")
+    demoButtonState: "" | "a" | "b" = $state("")
 
     reactive_testing = $state(new ReactiveTesting())
 
@@ -213,10 +214,19 @@ export class ProjectState {
     tasks: Task[] = $state([])
     polls: Poll[] = $state([])
 
-    select(option: "a" | "b") {
-        if (this.button_state == "enabled") {
-            this.button_state = option
-        }
+    socket: WebSocket
+
+    constructor(socket: WebSocket) {
+        this.socket = socket
+    }
+
+    select(option: "" | "a" | "b") {
+        this.socket.send(
+            JSON.stringify({
+                Name: "demoButtonState",
+                Args: option,
+            }),
+        )
     }
 
     appendInProject(key: string, value: any) {

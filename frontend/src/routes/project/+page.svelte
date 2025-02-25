@@ -81,15 +81,14 @@
     <br />
     <br />
 
-    <button onclick={() => project.updateInProject("button_state", "enabled")}
-        >Enable selector</button
-    >
+    <button onclick={() => project.select("")}>Enable selector</button>
     <input
         type="radio"
         name="options"
         id="A"
         value="A"
-        disabled={project.button_state != "enabled"}
+        checked={project.demoButtonState == "a"}
+        disabled={project.demoButtonState != ""}
         oninput={() => project.select("a")}
     />
     <label for="A">A</label>
@@ -98,7 +97,8 @@
         name="options"
         id="B"
         value="B"
-        disabled={project.button_state != "enabled"}
+        checked={project.demoButtonState == "b"}
+        disabled={project.demoButtonState != ""}
         oninput={() => project.select("b")}
     />
     <label for="B">B</label>

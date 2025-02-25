@@ -1,12 +1,13 @@
 package main
 
 type Project struct {
-	Id          string `bson:"_id"`
-	Title       string
-	Description string
-	Users       []string
-	Tasks       []Task
-	Polls       []Poll
+	Id              string `bson:"_id"`
+	Title           string
+	Description     string
+	Users           []string
+	Tasks           []Task
+	Polls           []Poll
+	DemoButtonState string
 }
 
 type User struct {
