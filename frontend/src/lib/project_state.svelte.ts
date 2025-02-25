@@ -66,10 +66,64 @@ export async function connectToProject(key: string, projectId: string): Promise<
     })
 }
 
+export class Availability {
+    dayOfWeek = $state(0)
+    startOffset = $state(0)
+    endOffset = $state(0)
+}
+
+export class UserInProject {
+    id: string = $state("")
+    firstName: string = $state("")
+    lastName: string = $state("")
+    availability: Availability[] = $state([])
+}
+
+export class Session {
+    id: string = $state("")
+    startTime: string = $state("") // TODO: Change to correct type
+    endTime: string = $state("") // TODO: Change to correct type
+    user: string = $state("")
+}
+
+export class Task {
+    id: string = $state("")
+    title: string = $state("")
+    description: string = $state("")
+    dueDate: string = $state("") // TODO: Change to correct type
+    kanbanColumn: string = $state("")
+    timeEstimate: number = $state(0)
+    completed: boolean = $state(false)
+    sessions: Session[] = $state([])
+    assignees: string[] = $state([])
+}
+
+export class Option {
+    id: string = $state("")
+    title: string = $state("")
+    likedUsers: string[] = $state([])
+    neutralUsers: string[] = $state([])
+    dislikedUsers: string[] = $state([])
+}
+
+export class Poll {
+    id: string = $state("")
+    title: string = $state("")
+    description: string = $state("")
+    options: Option[] = $state([])
+}
+
 export class ProjectState {
     button_state: "enabled" | "a" | "b" = $state("enabled")
 
     reactive_testing = $state(new ReactiveTesting())
+
+    id: string = $state("")
+    title: string = $state("")
+    description: string = $state("")
+    users: UserInProject[] = $state([])
+    tasks: Task[] = $state([])
+    polls: Poll[] = $state([])
 
     select(option: "a" | "b") {
         if (this.button_state == "enabled") {
