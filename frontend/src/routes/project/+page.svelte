@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
     import { connectToProject, ProjectState } from "../../lib/project_state.svelte"
     import { onMount } from "svelte"
 
     let projectId = $state("")
 
-    let project = $state(new ProjectState())
+    let project: Promise<ProjectState> = $state(new Promise((_a, _b) => {}))
 
     let key = $state("Key")
     let value = $state("Value")
@@ -15,87 +15,96 @@
         projectId = params.get("id") || ""
         //TODO: Handle error if no project ID
 
-        connectToProject("BOOTSTRAPPER", projectId)
+        project = connectToProject("BOOTSTRAPPER", projectId)
     })
 </script>
 
-<h1>Project page!</h1>
-<p>Project ID: {projectId}</p>
-<input
-    value="X"
-    oninput={e => project.updateInProject("reactive_testing.bruh", e.currentTarget.value)}
-/>
+{#await project}
+    <p>Loading project</p>
+{:then project}
+    <h1>Project page for {project.title}!</h1>
+    <p>Description: {project.description}</p>
+    <p>Project ID: {project.id}</p>
+    <input
+        value="X"
+        oninput={e => project.updateInProject("reactive_testing.bruh", e.currentTarget.value)}
+    />
 
-<p>{project.reactive_testing.bruh}</p>
+    <p>{project.reactive_testing.bruh}</p>
 
-<button
-    onclick={() => {
-        project.appendInProject("reactive_testing.list", project.reactive_testing.bruh)
-    }}>Append</button
->
+    <button
+        onclick={() => {
+            project.appendInProject("reactive_testing.list", project.reactive_testing.bruh)
+        }}>Append</button
+    >
 
-<br />
+    <br />
 
-{#each project.reactive_testing.list as value}
-    <p>{value}</p>
-{/each}
+    {#each project.reactive_testing.list as value}
+        <p>{value}</p>
+    {/each}
 
-<button
-    onclick={() => {
-        project.deleteInProject(
-            `reactive_testing.list[${Math.floor(project.reactive_testing.list.length / 2)}]`,
-        )
-    }}>Delete Halfway</button
->
-<br />
-<br />
+    <button
+        onclick={() => {
+            project.deleteInProject(
+                `reactive_testing.list[${Math.floor(project.reactive_testing.list.length / 2)}]`,
+            )
+        }}>Delete Halfway</button
+    >
+    <br />
+    <br />
 
-{#each Object.keys(project.reactive_testing.values) as value}
-    <p>{value}: {project.reactive_testing.values[value]}</p>
-{/each}
+    {#each Object.keys(project.reactive_testing.values) as value}
+        <p>{value}: {project.reactive_testing.values[value]}</p>
+    {/each}
 
-<input bind:value={key} />
-<input bind:value /><br />
+    <input bind:value={key} />
+    <input bind:value /><br />
 
-<button
-    onclick={() => {
-        if (project.reactive_testing.values[key] == undefined) {
-            project.appendInProject(`reactive_testing.values.${key}`, value)
-        } else {
-            project.updateInProject(`reactive_testing.values.${key}`, value)
-        }
-    }}>Insert/Update</button
-><br />
-<button
-    onclick={() => {
-        if (project.reactive_testing.values[key] != undefined) {
-            project.deleteInProject(`reactive_testing.values.${key}`)
-        }
-    }}>Delete</button
->
+    <button
+        onclick={() => {
+            if (project.reactive_testing.values[key] == undefined) {
+                project.appendInProject(`reactive_testing.values.${key}`, value)
+            } else {
+                project.updateInProject(`reactive_testing.values.${key}`, value)
+            }
+        }}>Insert/Update</button
+    ><br />
+    <button
+        onclick={() => {
+            if (project.reactive_testing.values[key] != undefined) {
+                project.deleteInProject(`reactive_testing.values.${key}`)
+            }
+        }}>Delete</button
+    >
 
-<br />
-<br />
+    <br />
+    <br />
 
-<button onclick={() => project.updateInProject("button_state", "enabled")}>Enable selector</button>
-<input
-    type="radio"
-    name="options"
-    id="A"
-    value="A"
-    disabled={project.button_state != "enabled"}
-    oninput={() => project.select("a")}
-/>
-<label for="A">A</label>
-<input
-    type="radio"
-    name="options"
-    id="B"
-    value="B"
-    disabled={project.button_state != "enabled"}
-    oninput={() => project.select("b")}
-/>
-<label for="B">B</label>
+    <button onclick={() => project.updateInProject("button_state", "enabled")}
+        >Enable selector</button
+    >
+    <input
+        type="radio"
+        name="options"
+        id="A"
+        value="A"
+        disabled={project.button_state != "enabled"}
+        oninput={() => project.select("a")}
+    />
+    <label for="A">A</label>
+    <input
+        type="radio"
+        name="options"
+        id="B"
+        value="B"
+        disabled={project.button_state != "enabled"}
+        oninput={() => project.select("b")}
+    />
+    <label for="B">B</label>
+{:catch err}
+    <p>{err}</p>
+{/await}
 
 <style>
     input,

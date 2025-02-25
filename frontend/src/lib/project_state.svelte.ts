@@ -43,11 +43,11 @@ export async function connectToProject(key: string, projectId: string): Promise<
                 window.location.replace("/projects")
             }
 
-            let new_state = JSON.parse(text)
+            let serverState = JSON.parse(text)
 
-            console.log(new_state)
+            updateState(serverState, state)
 
-            // TODO: Update the old state
+            console.log($state.snapshot(state))
 
             if (!gotFirstProjectState) {
                 gotFirstProjectState = true
@@ -64,6 +64,94 @@ export async function connectToProject(key: string, projectId: string): Promise<
             console.log("Closed!")
         }
     })
+}
+
+function updateState(serverResponse: any, state: ProjectState) {
+    state.id = serverResponse.Id
+    state.title = serverResponse.Title
+    state.description = serverResponse.Description
+    // TODO: Make the server send more comprehensive user info
+
+    while (state.tasks.length > serverResponse.Tasks.length) {
+        state.tasks.pop()
+    }
+
+    while (state.tasks.length < serverResponse.Tasks.length) {
+        state.tasks.push(new Task())
+    }
+
+    for (let i = 0; i < state.tasks.length; i++) {
+        updateTask(serverResponse.Tasks[i], state.tasks[i])
+    }
+
+    while (state.polls.length > serverResponse.Polls.length) {
+        state.polls.pop()
+    }
+
+    while (state.polls.length < serverResponse.Polls.length) {
+        state.polls.push(new Poll())
+    }
+
+    for (let i = 0; i < state.polls.length; i++) {
+        updatePoll(serverResponse.Polls[i], state.polls[i])
+    }
+}
+
+function updateTask(serverTask: any, task: Task) {
+    task.id = serverTask.Id
+    task.title = serverTask.Title
+    task.description = serverTask.Description
+    task.dueDate = serverTask.DueDate
+    task.kanbanColumn = serverTask.KanbanColumn
+    task.timeEstimate = serverTask.TimeEstimate
+    task.completed = serverTask.completed
+
+    while (task.sessions.length > serverTask.Sessions.length) {
+        task.sessions.pop()
+    }
+
+    while (task.sessions.length < serverTask.Sessions.length) {
+        task.sessions.push(new Session())
+    }
+
+    for (let i = 0; i < task.sessions.length; i++) {
+        updateSession(serverTask.Sessions[i], task.sessions[i])
+    }
+
+    task.assignees = serverTask.Assignees
+}
+
+function updateSession(serverSession: any, session: Session) {
+    session.id = serverSession.Id
+    session.startTime = serverSession.StartTime
+    session.startTime = serverSession.EndTime
+    session.user = serverSession.User
+}
+
+function updatePoll(serverPoll: any, poll: Poll) {
+    poll.id = serverPoll.Id
+    poll.title = serverPoll.Title
+    poll.description = serverPoll.Description
+
+    while (poll.options.length > serverPoll.Options.length) {
+        poll.options.pop()
+    }
+
+    while (poll.options.length < serverPoll.Options.length) {
+        poll.options.push(new Option())
+    }
+
+    for (let i = 0; i < poll.options.length; i++) {
+        updateOption(serverPoll.Sessions[i], poll.options[i])
+    }
+}
+
+function updateOption(serverOption: any, option: Option) {
+    option.id = serverOption.Id
+    option.title = serverOption.Title
+    option.likedUsers = serverOption.LikedUsers
+    option.neutralUsers = serverOption.NeutralUsers
+    option.dislikedUsers = serverOption.DislikedUsers
 }
 
 export class Availability {

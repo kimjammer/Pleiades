@@ -1,0 +1,16 @@
+=== Weekly Team Report (Team 5: Pleiades) ===
+
+Week 1 (Summary) (Scrum Master: Ethan Dawes)
+2/24 0.5hr d49faa6 Define the project schema on the frontend
+
+Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
+[Meetings]
+2/19 Discuss backend and make sure everyone can run it
+2/26
+2/27
+
+[Individual goals]
+Henry: Establish and authenticate a websocket connection between the client and server
+John: Work on the project creation modals and server side validation
+Cate: Create a working backend for creation and storage of accounts
+Ethan: Create an encapsulated availability picker component (frontend)
