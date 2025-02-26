@@ -50,6 +50,7 @@ func main() {
 	router.GET("/projects", projectsHandler)
 	router.POST("/projects/new", newProjectHandler)
 	router.GET("/registration/check", checkEmail)
+	router.GET("/registration", registerUser)
 
 	router.Run(":8080")
 }

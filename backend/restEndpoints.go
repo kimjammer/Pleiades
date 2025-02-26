@@ -128,3 +128,9 @@ func checkEmail(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"exists": true})
 	}
 }
+
+func registerUser(c *gin.Context) {
+	//email := c.Query("email")
+	//password := c.Query("password")
+	//
+}

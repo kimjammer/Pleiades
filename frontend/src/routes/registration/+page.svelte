@@ -8,15 +8,24 @@
     let password = ""
     let passwordConfirm = ""
     let error = ""
+    let firstname = ""
+    let lastname = ""
 
     //TODO: create link to dashboard
 
     async function register() {
+        const user = {
+            email: email,
+            firstname: firstname,
+            lastname: lastname,
+            password: password,
+        };
         const res = await fetch("http://" + PUBLIC_API_HOST + "/register", {
             method: "POST",
             mode: "cors",
-            body: JSON.stringify({ email })
+            body: JSON.stringify(user)
         })
+        console.log("registration data sent")
 
         const data = await res.json()
         console.log(data) // Handle success or error messages
@@ -26,13 +35,13 @@
     //if input invalid, pops up error
     //NOTE: isValid() does NOT handle already existing accounts.
     async function isValid() {
-        //TODO: Implement email and password checking
-        //TODO: Create error messages for invalid input
+        //TODO: add checking for special characters in password
+
         //FIRST: Check for if account exists
         console.log("account Exists checking")
-        //TODO: check server to see if account exists
-        const res = await fetch("http://" + PUBLIC_API_HOST + `/api/register/check?email=${encodeURIComponent(email)}`, {
+        const res = await fetch("http://" + PUBLIC_API_HOST + `/api/register/check`, {
             mode: "cors",
+            body: JSON.stringify({email: email})
         })
 
         const data = await res.json()
@@ -51,7 +60,7 @@
         }
 
     }
-    
+
 </script>
 
 <h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
@@ -76,6 +85,18 @@
         bind:value={email}
     />
     <Input
+            type="First Name"
+            id="First name"
+            placeholder="First Name"
+            bind:value={firstname}
+    />
+    <Input
+            type="Last Name"
+            id="Last Name"
+            placeholder= "Last Name"
+            bind:value={lastname}
+    />
+    <Input
         type="password"
         id="password"
         placeholder="Password"
@@ -87,5 +108,5 @@
         placeholder="confirm Password"
         bind:value={passwordConfirm}
     />
-    <Button on:click={isValid()}>Register</Button>
+    <Button onclick={isValid}>Register</Button>
 </div>
