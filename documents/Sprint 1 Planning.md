@@ -9,7 +9,7 @@ Cate Harrison, John Kim, Henry Rovnyak, Ethan Dawes
 
 In this first sprint, we will be focusing on building up the infrastructure and codebase necessary to build features on top of. We will need to coordinate how common patterns in both the front and backend should be implemented, and make sure the project structure is set up in a meaningful way. We will also start implementing the core features of the application, as well as conducting a user study to determine our final UI layout.
 
-**Scrum Master: **Ethan Dawes
+**Scrum Master:** Ethan Dawes
 
 **Meeting Plan:** Wednesday 11:30 AM, Thursday 8:50 AM
 
