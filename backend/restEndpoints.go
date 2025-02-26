@@ -136,8 +136,21 @@ func checkEmail(c *gin.Context) {
 }
 
 func registerUser(c *gin.Context) {
-	log.Println("register register yes yes")
-	//email := c.Query("email")
-	//password := c.Query("password")
-	//
+	var newUser User
+	log.Println("registering new user")
+	if err := c.ShouldBindJSON(&newUser); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+
+	//Insert the new user into MongoDB
+	var err interface{}
+	collection := db.Collection("users")
+	_, err = collection.InsertOne(context.TODO(), newUser)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert user"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"success": true})
 }

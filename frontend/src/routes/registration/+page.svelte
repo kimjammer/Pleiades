@@ -20,7 +20,7 @@
             lastname: lastname,
             password: password,
         };
-        const res = await fetch("http://" + PUBLIC_API_HOST + "/register", {
+        const res = await fetch("http://" + PUBLIC_API_HOST + "/register/new", {
             method: "POST",
             mode: "cors",
             body: JSON.stringify(user)
@@ -29,6 +29,9 @@
 
         const data = await res.json()
         console.log(data) // Handle success or error messages
+        if (data.success) {
+            await goto("/home")
+        }
     }
 
     //This func is activated on submit, confirms validity of input to send to server
