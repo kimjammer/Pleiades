@@ -9,7 +9,7 @@ Cate Harrison, John Kim, Henry Rovnyak, Ethan Dawes
 
 In this first sprint, we will be focusing on building up the infrastructure and codebase necessary to build features on top of. We will need to coordinate how common patterns in both the front and backend should be implemented, and make sure the project structure is set up in a meaningful way. We will also start implementing the core features of the application, as well as conducting a user study to determine our final UI layout.
 
-**Scrum Master:** Ethan Dawes
+**Scrum Master: **Ethan Dawes
 
 **Meeting Plan:** Wednesday 11:30 AM, Thursday 8:50 AM
 
@@ -24,70 +24,50 @@ Since there is no codebase to start off from, this initial period of programming
 ## Current Sprint Detail
 
 
-### User Story #2.1
-
-As a user, I want to be able to create a group so that I can begin my project
-
-
-| # | Description                          | Estimated Time | Owner(s) |
-|---|--------------------------------------|----------------|----------|
-| 1 | Set up mongoDB tables for groups     | 2 Hr           | John     |
-| 2 | Create /projects/new API endpoint    | 5 Hr           | John     |
-| 3 | Write tests for API endpoint         | 3 Hr           | John     |
-| 4 | UI Modal for creating groups         | 4 Hr           | John     |
-| 5 | Write tests for group creation modal | 1 Hr           | John     |
-
-
-
-Acceptance Criteria:
-
-
-
-1. Given that the project creation modal is set up, when the user presses the create project button, a form should pop up with the required fields for project creation.
-2. Given that the API endpoint has been created, when the user submits the create project form, the data should be validated and saved to the database.
-3. Given that the user isn’t logged in, when the user submits the create project form, the request should be rejected.
-4. Given that the user submits invalid information in the project creation form, when the user submits the data, the server should return and the UI should display a helpful error message.
-
-
-### User Story #2.8
-
-As a user, I want to be able to see a list of groups I am in so that I can choose which group I want to view
-
-
-| # | Description                   | Estimated Time | Owner(s) |
-|---|-------------------------------|----------------|----------|
-| 1 | Create /projects API endpoint | 2 Hr           | John     |
-| 2 | Write tests for API endpoint  | 2 Hr           | John     |
-| 3 | Create user home page UI      | 5 Hr           | John     |
-
-
-
-Acceptance Criteria:
-
-
-
-1. Given that the UI has been created, when the user navigates to the user home page, they should see a grid of projects that they are a part of.
-2. Given that the UI has been created, when the user navigates to the user home page, they should see a button to create a new project.
-3. Given that the user is part of at least 1 project, when the user clicks on a project’s card, it should navigate them to that project’s home page.
-4. Given that the user is not logged in, when the user navigates to the user home page, they should be redirected to the login screen.
-
-
 ### User Story #1.1
 
 As a user, I want to be able to create an account with an email, real name, and password.
 
 
-| # | Description                                                             | Estimated Time | Owner(s) |
-|---|-------------------------------------------------------------------------|----------------|----------|
-| 1 | Create API endpoints for registration                                   | 2 hr           | Cate     |
-| 2 | Create “Register New Account” UI                                        | 2 hr           | Cate     |
-| 3 | Write tests for creating a new account, and creating duplicate accounts | 2 hr           | Cate     |
-| 4 | Implement checking for duplicate accounts during registration           | 2 hr           | Cate     |
-| 5 | Implement password strength requirements.                               | 2 hr           | Cate     |
+<table>
+  <tr>
+   <td>#</td>
+   <td>Description</td>
+   <td>Estimated Time</td>
+   <td>Owner(s)</td>
+  </tr>
+  <tr>
+   <td>1</td>
+   <td>Create API endpoints for registration</td>
+   <td>2 hr</td>
+   <td>Cate</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Create “Register New Account” UI</td>
+   <td>2 hr</td>
+   <td>Cate</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Write tests for creating a new account, and creating duplicate accounts</td>
+   <td>2 hr</td>
+   <td>Cate</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td>Implement checking for duplicate accounts during registration</td>
+   <td>2 hr</td>
+   <td>Cate</td>
+  </tr>
+  <tr>
+   <td>5</td>
+   <td>Implement password strength requirements.</td>
+   <td>2 hr</td>
+   <td>Cate</td>
+  </tr>
+</table>
 
-
-
-Note: Non-User Story Task #1 is a subtask of this because both the frontend and backend must be deployed and functioning to be able to access and log into the application.
 
 Acceptance Criteria:
 
@@ -105,20 +85,63 @@ Acceptance Criteria:
 As a user, I want to be able to log in with an email and password so that I can see information for me and my team.
 
 
-| # | Description                                                   | Estimated Time | Owner(s) |
-|---|---------------------------------------------------------------|----------------|----------|
-| 1 | Implement login verification                                  | 2 hr           | Cate     |
-| 2 | Implement error messages for invalid attempts                 | 2 hr           | Cate     |
-| 3 | Write tests for logging in                                    | 2 hr           | Cate     |
-| 4 | Create “Log-In” UI                                            | 2 hr           | Cate     |
-| 5 | Create API endpoints for login                                | 2 hr           | Cate     |
-| 6 | Implement password hashing                                    | 3 hr           | Cate     |
-| 7 | Implement salting passwords                                   | 3 hr           | Cate     |
-| 8 | Write tests to ensure password safety and login functionality | 3 hr           | Cate     |
+<table>
+  <tr>
+   <td>#</td>
+   <td>Description</td>
+   <td>Estimated Time</td>
+   <td>Owner(s)</td>
+  </tr>
+  <tr>
+   <td>1</td>
+   <td>Implement login verification</td>
+   <td>2 hr</td>
+   <td>Cate</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Implement error messages for invalid attempts</td>
+   <td>2 hr</td>
+   <td>Cate</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Write tests for logging in</td>
+   <td>2 hr</td>
+   <td>Cate</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td>Create “Log-In” UI</td>
+   <td>2 hr</td>
+   <td>Cate</td>
+  </tr>
+  <tr>
+   <td>5</td>
+   <td>Create API endpoints for login</td>
+   <td>2 hr</td>
+   <td>Cate</td>
+  </tr>
+  <tr>
+   <td>6</td>
+   <td>Implement password hashing</td>
+   <td>3 hr</td>
+   <td>Cate</td>
+  </tr>
+  <tr>
+   <td>7</td>
+   <td>Implement salting passwords</td>
+   <td>3 hr</td>
+   <td>Cate</td>
+  </tr>
+  <tr>
+   <td>8</td>
+   <td>Write tests to ensure password safety and login functionality</td>
+   <td>2 hr</td>
+   <td>Cate</td>
+  </tr>
+</table>
 
-
-
-Note: Non-User Story Task #3 is a subtask of this because generating authentication tokens is the final step of logging in from the perspective of the server.
 
 Acceptance Criteria:
 
@@ -127,58 +150,61 @@ Acceptance Criteria:
 1. Given that an email is registered, the account can be logged in to.
 2. Given that the user is successfully logged in, they should be directed to their home screen.
 3. Given that the user submits invalid login data, an error message will pop up.
-4. Given that an account is registered, the true password will not be stored on the server.
-5. Given that a user has a password, a unique string will be generated to salt their password before hashing.
-6. Given that a user has an account, a reasonably strong hashing method will be used.
 
 
-### User Story #5.2
+### User Story #2.1
 
-As a user I want to be able to manually set availabilities if I don’t use a traditional calendar
+As a user, I want to be able to create a group so that I can begin my project
 
 
-| # | Description                                        | Estimated Time | Owner(s) |
-|---|----------------------------------------------------|----------------|----------|
-| 1 | Create availability input component                | 4 Hr           | Ethan    |
-| 2 | Save availability data to backend                  | 2 Hr           | Ethan    |
-| 3 | Translate availabilities across time zones         | 1 Hr           | Ethan    |
-| 4 | Write unit tests for inputting availability        | 1 Hr           | Ethan    |
-| 5 | Write unit test for saving availability to server  | 1 Hr           | Ethan    |
-| 6 | Write integration tests component saving to server | 1 Hr           | Ethan    |
-
+<table>
+  <tr>
+   <td>#</td>
+   <td>Description</td>
+   <td>Estimated Time</td>
+   <td>Owner(s)</td>
+  </tr>
+  <tr>
+   <td>1</td>
+   <td>Set up mongoDB tables for groups</td>
+   <td>2 Hr</td>
+   <td>John</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Create /projects/new API endpoint</td>
+   <td>5 Hr</td>
+   <td>John</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Write tests for API endpoint</td>
+   <td>3 Hr</td>
+   <td>John</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td>UI Modal for creating groups</td>
+   <td>3 Hr</td>
+   <td>John</td>
+  </tr>
+  <tr>
+   <td>5</td>
+   <td>Write tests for group creation modal</td>
+   <td>1 Hr</td>
+   <td>John</td>
+  </tr>
+</table>
 
 
 Acceptance Criteria:
 
 
 
-1. Given the UI is implemented, when the user navigates to the availability page, they should see a table. On the X axis are dates, the Y axis is times in 30-minute increments, and the cells can be checked and unchecked to indicate whether or not they are available during that time block.
-2. Given the UI is implemented, when a user navigates to the availability page, they should see a drop-down to change their time zone
-3. Given time zones work correctly, when the user switches their timezone, the times and dates should shift to reflect their current time zone
-
-
-### User Story #5.3
-
-As a user I want to be able to view everyone’s availability as a calendar in a weekly view
-
-
-| # | Description                                             | Estimated Time | Owner(s) |
-|---|---------------------------------------------------------|----------------|----------|
-| 1 | Extend availability component to combine availabilities | 2 Hr           | Ethan    |
-| 2 | Add a tooltip to availability component                 | 2 Hr           | Ethan    |
-| 3 | Write tests to ensure rendering correctly               | 1 Hr           | Ethan    |
-
-
-
-Note: Non-User Story Task #2 is a subtask of this because networking is required for this to function correctly.
-
-Acceptance Criteria:
-
-
-
-1. Given the group calendar works, when multiple different people input their availability, the combined availability calendar should be darker in areas where the most people are available
-2. Given the group calendar works, when hovering over a time block, the user should see a list of members who are available or not during that time block
-3. Given the group calendar works, as you or other members input their availability in real-time, changes should be reflected immediately
+1. Given that the project creation modal is set up, when the user presses the create project button, a form should pop up with the required fields for project creation.
+2. Given that the user isn’t logged in, when the user submits the create project form, the request should be rejected.
+3. Given that the user submits invalid information in the project creation form, when the user submits the data, the server should return and the UI should display a helpful error message.
+4. Given that the user submits valid information, when the user visits the user home page, the project should appear. 
 
 
 ### User Story #2.2
@@ -186,13 +212,38 @@ Acceptance Criteria:
 As a user I want to generate an invite link to the group so that I can collaborate with other students
 
 
-| # | Description                                                                | Estimated Time | Owner(s) |
-|---|----------------------------------------------------------------------------|----------------|----------|
-| 1 | Create an ‘/invite’ route                                                  | 4 Hr           | Ethan    |
-| 2 | Create tests for ‘/invite’ route                                           | 1 Hr           | Ethan    |
-| 3 | Make a QR code for other users to scan on their phones to join the project | 2 Hr           | Ethan    |
-| 4 | Create UI to invite members to project                                     | 0.5 Hr         | Ethan    |
-
+<table>
+  <tr>
+   <td>#</td>
+   <td>Description</td>
+   <td>Estimated Time</td>
+   <td>Owner(s)</td>
+  </tr>
+  <tr>
+   <td>1</td>
+   <td>Create an ‘/invite’ route</td>
+   <td>4 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Create tests for ‘/invite’ route</td>
+   <td>1 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Make a QR code for other users to scan on their phones to join the project</td>
+   <td>2 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td>Create UI to invite members to project</td>
+   <td>0.5 Hr</td>
+   <td>Ethan</td>
+  </tr>
+</table>
 
 
 Acceptance Criteria:
@@ -209,15 +260,50 @@ Acceptance Criteria:
 As a user I want to click on invite links and automatically be added to that group
 
 
-| # | Description                                                                                                | Estimated Time | Owner(s) |
-|---|------------------------------------------------------------------------------------------------------------|----------------|----------|
-| 1 | Implement ‘/join’ route which takes join session token as parameter and adds authenticated user to project | 3 Hr           | Ethan    |
-| 2 | Write tests for ‘/join’ route                                                                              | 1 hr           | Ethan    |
-| 3 | Write UI for invite accept/decline                                                                         | 2 Hr           | Ethan    |
-| 4 | Write UI for invalid invitation                                                                            | 1 Hr           | Ethan    |
-| 5 | Write UI for expired invitation                                                                            | 1 Hr           | Ethan    |
-| 6 | Write tests for UI                                                                                         | 1 Hr           | Ethan    |
-
+<table>
+  <tr>
+   <td>#</td>
+   <td>Description</td>
+   <td>Estimated Time</td>
+   <td>Owner(s)</td>
+  </tr>
+  <tr>
+   <td>1</td>
+   <td>Implement ‘/join’ route which takes join session token as parameter and adds authenticated user to project</td>
+   <td>3 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Write tests for ‘/join’ route</td>
+   <td>1 hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Write UI for invite accept/decline</td>
+   <td>2 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td>Write UI for invalid invitation</td>
+   <td>1 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>5</td>
+   <td>Write UI for expired invitation</td>
+   <td>1 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>6</td>
+   <td>Write tests for UI</td>
+   <td>1 Hr</td>
+   <td>Ethan</td>
+  </tr>
+</table>
 
 
 Acceptance Criteria:
@@ -225,9 +311,301 @@ Acceptance Criteria:
 
 
 1. Given an expired invite link, when the user visits it, they will see a notice that it’s expired
-2. Using a link while signed out will redirect to login page (task 2.5 will improve the flow)
+2. Using a link while signed out will redirect to login page (user story 2.5 will improve the flow)
 3. Given a valid invite link, when the user visits it, they will see a confirmation page with basic project info and an option to accept or decline
 4. Given an invalid invite link, when the user visits it, they will see a message indicating the link is invalid
+
+
+### User Story #2.6
+
+As a user I want to be able to leave a group.
+
+
+<table>
+  <tr>
+   <td>#</td>
+   <td>Description</td>
+   <td>Estimated Time</td>
+   <td>Owner(s)</td>
+  </tr>
+  <tr>
+   <td>1</td>
+   <td>Implement a `leave` endpoint in the websocket connection that removes a user from the group</td>
+   <td>3 Hr</td>
+   <td>Henry</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Integrate a “Leave group” button into the UI as well as an “Are you sure?” modal</td>
+   <td>3 hr</td>
+   <td>Henry</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Call the endpoint upon the user confirming leaving the group and redirect to the main page</td>
+   <td>0.5 Hr</td>
+   <td>Henry</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td>Write integration tests for the user flow</td>
+   <td>2 Hr</td>
+   <td>Henry</td>
+  </tr>
+</table>
+
+
+Acceptance Criteria:
+
+
+
+1. Upon clicking the “leave” button, a confirmation modal will appear and clicking “Confirm” will cause the user to leave the group and redirect to the homepage. The group will not appear there.
+2. Upon clicking the “leave” button, a confirmation modal will appear and clicking “Cancel” will cause the modal to close and nothing to happen.
+3. An invitation link will allow the user to rejoin the group
+
+
+### User Story #2.7
+
+As a user I want to be able to delete a group.
+
+
+<table>
+  <tr>
+   <td>#</td>
+   <td>Description</td>
+   <td>Estimated Time</td>
+   <td>Owner(s)</td>
+  </tr>
+  <tr>
+   <td>1</td>
+   <td>Implement a `delete` endpoint in the websocket connection that deletes a group from the database along with all invitation links.</td>
+   <td>3 Hr</td>
+   <td>Henry</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Integrate a “Delete group” button into the UI as well as an “Are you sure?” modal. It will be invisible or disabled when other people have not left the group.</td>
+   <td>1 hr</td>
+   <td>Henry</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Call the endpoint upon the user confirming deleting the group and redirect to the main page</td>
+   <td>0.5 Hr</td>
+   <td>Henry</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td>Write integration tests for the user flow</td>
+   <td>2 Hr</td>
+   <td>Henry</td>
+  </tr>
+</table>
+
+
+Acceptance Criteria:
+
+
+
+1. Upon clicking the “delete” button, a confirmation modal will appear and clicking “Confirm” will cause the group to be deleted and the user redirected to the main page. The group will not appear there.
+2. Upon clicking the “delete” button, a confirmation modal will appear and clicking “Cancel” will cause the modal to close and nothing to happen.
+3. Invitation links will not work after deleting the group.
+
+
+### User Story #2.8
+
+As a user, I want to be able to see a list of groups I am in so that I can choose which group I want to view
+
+
+<table>
+  <tr>
+   <td>#</td>
+   <td>Description</td>
+   <td>Estimated Time</td>
+   <td>Owner(s)</td>
+  </tr>
+  <tr>
+   <td>1</td>
+   <td>Create /projects API endpoint</td>
+   <td>2 Hr</td>
+   <td>John</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Write tests for API endpoint</td>
+   <td>2 Hr</td>
+   <td>John</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Create user home page UI</td>
+   <td>5 Hr</td>
+   <td>John</td>
+  </tr>
+</table>
+
+
+Acceptance Criteria:
+
+
+
+1. Given that the UI has been created, when the user navigates to the user home page, they should see a grid of projects that they are a part of.
+2. Given that the UI has been created, when the user navigates to the user home page, they should see a button to create a new project.
+3. Given that the user is part of at least 1 project, when the user clicks on a project’s card, it should navigate them to that project’s home page.
+4. Given that the user is not logged in, when the user navigates to the user home page, they should be redirected to the login screen.
+
+
+### User Story #2.10
+
+Create and view a group information panel with a project name, project description, and links in the description automatically converted to anchor tags
+
+
+<table>
+  <tr>
+   <td>#</td>
+   <td>Description</td>
+   <td>Estimated Time</td>
+   <td>Owner(s)</td>
+  </tr>
+  <tr>
+   <td>1</td>
+   <td>Create project page UI</td>
+   <td>3 Hr</td>
+   <td>John</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Write tests for displaying project page</td>
+   <td>1 Hr</td>
+   <td>John</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Load state from database</td>
+   <td>3 Hr</td>
+   <td>John</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td>Automatically turn links into anchor tags</td>
+   <td>1 Hr</td>
+   <td>John</td>
+  </tr>
+</table>
+
+
+Acceptance Criteria:
+
+
+
+1. Given that the project exists, when the user navigates to the project page, they see the project name.
+2. Given that the project exists, when the user navigates to the project page, they see the project description.
+3. Given that the project description contains links, when the user navigates to the project page, they see the links in the description as anchor tags.
+4. Given that the user is not logged in, when the user navigates to the project page, they should be redirected to the login screen.
+
+
+### User Story #5.2
+
+As a user I want to be able to manually set availabilities if I don’t use a traditional calendar
+
+
+<table>
+  <tr>
+   <td>#</td>
+   <td>Description</td>
+   <td>Estimated Time</td>
+   <td>Owner(s)</td>
+  </tr>
+  <tr>
+   <td>1</td>
+   <td>Create availability input component</td>
+   <td>4 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Save availability data to backend</td>
+   <td>2 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Translate availabilities across time zones</td>
+   <td>1 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td>Write unit tests for inputting availability</td>
+   <td>1 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>5</td>
+   <td>Write unit test for saving availability to server</td>
+   <td>1 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>6</td>
+   <td>Write integration tests component saving to server</td>
+   <td>1 Hr</td>
+   <td>Ethan</td>
+  </tr>
+</table>
+
+
+Acceptance Criteria:
+
+
+
+1. Given the UI is implemented, when the user navigates to the availability page, they should see a table. On the X axis are dates, the Y axis is times in 30-minute increments, and the cells can be checked and unchecked to indicate whether or not they are available during that time block.
+2. Given the UI is implemented, when a user navigates to the availability page, they should see a drop-down to change their time zone
+3. Given time zones work correctly, when the user switches their timezone, the times and dates should shift to reflect their current time zone
+
+
+### User Story #5.3
+
+As a user I want to be able to view everyone’s availability as a calendar in a weekly view
+
+
+<table>
+  <tr>
+   <td>#</td>
+   <td>Description</td>
+   <td>Estimated Time</td>
+   <td>Owner(s)</td>
+  </tr>
+  <tr>
+   <td>1</td>
+   <td>Extend availability component to combine availabilities</td>
+   <td>2 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Add a tooltip to availability component</td>
+   <td>2 Hr</td>
+   <td>Ethan</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Write tests to ensure rendering correctly</td>
+   <td>1 Hr</td>
+   <td>Ethan</td>
+  </tr>
+</table>
+
+
+Note: Non-User Story Task #1 is a subtask of this because networking is required for this to function correctly.
+
+Acceptance Criteria:
+
+
+
+1. Given the group calendar works, when multiple different people input their availability, the combined availability calendar should be darker in areas where the most people are available
+2. Given the group calendar works, when hovering over a time block, the user should see a list of members who are available or not during that time block
+3. Given the group calendar works, as you or other members input their availability in real-time, changes should be reflected immediately
 
 
 ## Non-User Story Tasks
@@ -235,42 +613,59 @@ Acceptance Criteria:
 
 ### Task #1
 
-As a developer, we want to have CI/CD so that deployments can be made quickly to the prod server.
-
-
-| # | Description                                    | Estimated Time | Owner(s) |
-|---|------------------------------------------------|----------------|----------|
-| 1 | Setup automated website builds and deployments | 2 Hr           | John     |
-| 2 | Containerize the backend application           | 2 Hr           | John     |
-| 3 | Setup automated backend builds and deployments | 3 Hr           | John     |
-| 4 | Test the CI/CD system                          | 0.5 Hr         | John     |
-
-
-
-Acceptance Criteria:
-
-
-
-1. Given the website CI/CD is set up, when a website commit is pushed, it should be automatically deployed within 30 minutes.
-2. Given the backend CI/CD is set up, when a backend commit is pushed, it should be automatically deployed within 30 minutes.
-3. Given the backend has been containerized, when code changes are made, they should be able to be built and run with only the docker compose file.
-
-
-### Task #2
-
 Client-Server communication will be done using WebSockets to allow real time updates
 
 
-| # | Description                                                                                                                                                                                                                                             | Estimated Time | Owner(s) |
-|---|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|----------|
-| 1 | Create a class to encapsulate the state and the WebSocket connection along with a meaningful Typescript API for the class including local-only stub implementations. Also set up the project page for Svelte so that it uses this class as a parameter. | 3 Hr           | Henry    |
-| 2 | Establish a WebSocket connection endpoint on the server and allow the webpage to connect to it                                                                                                                                                          | 5 Hr           | Henry    |
-| 3 | Set up the Svelte interface to accept the program state and make the state update on changes broadcast by the server                                                                                                                                    | 3 Hr           | Henry    |
-| 4 | Establish an API on the server to handle updating state on events being received                                                                                                                                                                        | 3 Hr           | Henry    |
-| 5 | Create a temporary demonstration of the project page including a radio button that disables on click and an un-disable button to demonstrate networking                                                                                                 | 0.5 Hr         | Henry    |
-| 6 | Implement `appendInProject`, `updateInProject`, and `deleteInProject` events on the server and client                                                                                                                                                   | 5 Hr           | Henry    |
-| 7 | As necessary, refactor my teammate’s code to use the new events                                                                                                                                                                                         | 2 Hr           | Henry    |
-
+<table>
+  <tr>
+   <td>#</td>
+   <td>Description</td>
+   <td>Estimated Time</td>
+   <td>Owner(s)</td>
+  </tr>
+  <tr>
+   <td>1</td>
+   <td>Create a class to encapsulate the state and the WebSocket connection along with a meaningful Typescript API for the class including local-only stub implementations. Also set up the project page for Svelte so that it uses this class as a parameter.</td>
+   <td>3 Hr</td>
+   <td>Henry</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Establish a WebSocket connection endpoint on the server and allow the webpage to connect to it</td>
+   <td>5 Hr</td>
+   <td>Henry</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Set up the Svelte interface to accept the program state and make the state update on changes broadcast by the server</td>
+   <td>3 Hr</td>
+   <td>Henry</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td>Establish an API on the server to handle updating state on events being received</td>
+   <td>3 Hr</td>
+   <td>Henry</td>
+  </tr>
+  <tr>
+   <td>5</td>
+   <td>Create a temporary demonstration of the project page including a radio button that disables on click and an un-disable button to demonstrate networking</td>
+   <td>0.5 Hr</td>
+   <td>Henry</td>
+  </tr>
+  <tr>
+   <td>6</td>
+   <td>Implement `appendInProject`, `updateInProject`, and `deleteInProject` events on the server and client</td>
+   <td>5 Hr</td>
+   <td>Henry</td>
+  </tr>
+  <tr>
+   <td>7</td>
+   <td>As necessary, refactor my teammate’s code to use the new events</td>
+   <td>2 Hr</td>
+   <td>Henry</td>
+  </tr>
+</table>
 
 
 Acceptance Criteria:
@@ -283,30 +678,7 @@ Acceptance Criteria:
 4. Any project specific UI implemented by teammates should reflect on other machines
 
 
-### Task #3
-
-We need a system to authenticate endpoints using tokens
-
-
-| # | Description                                                                                                                                     | Estimated Time | Owner(s) |
-|---|-------------------------------------------------------------------------------------------------------------------------------------------------|----------------|----------|
-| 1 | Create stub functions for token creation and verification that do not use cryptography (to allow others to integrate them into their endpoints) | 0.5 Hr         | Henry    |
-| 2 | Implement the function that creates tokens containing the user’s ID, creation date, and expiration date using a message authentication code     | 5 Hr           | Henry    |
-| 3 | Implement the function that decodes tokens and verifies the MAC                                                                                 | 3 Hr           | Henry    |
-| 4 | Create tests to verify correct encoding, decoding, and validation of tests                                                                      | 2 Hr           | Henry    |
-| 4 | As necessary, assist other teammates in integrating the tokens                                                                                  | 1 Hr           | Henry    |
-
-
-
-Acceptance Criteria:
-
-
-
-1. For all authenticated endpoints, a forged token will not grant access to the endpoint.
-2. For all authenticated endpoints, a true token *will* grant access to the endpoint
-3. For all authenticated endpoints, the endpoint will be able to identify who is accessing the endpoint
-
-
+### 
 
 
 ### Remaining Backlog
@@ -325,44 +697,44 @@ As a user, I want to be able to
     4. (If time allows) Reset my password so that I can recover my account
     5. Upload a profile picture
 2. **Group**
-    1. ~~Create a group so that I can begin my project~~
-    2. ~~Generate an invite link to the group so that I can collaborate with other students~~
-    3. (If time allows) Invite people directly in the app using their email
-    4. ~~Click on invite links and automatically be added to that group~~
-    5. Be directed to the login page when clicking an invite link if not signed in and automatically being added to the group after signing in
-    6. Leave a group if I am leaving that group or changing group
-    7. Delete a group so that data can be deleted if wanted at the end of the project
-    8. ~~See a list of groups I am in so that I can choose which group I want to view~~
-    9. View my teammates’ profiles, specifically names, profile pictures, and contact information
-    10. Create and view a group information panel with a project name, project description, and links in the description automatically converted to anchor tags
+    6. ~~Create a group so that I can begin my project~~
+    7. ~~Generate an invite link to the group so that I can collaborate with other students~~
+    8. (If time allows) Invite people directly in the app using their email
+    9. ~~Click on invite links and automatically be added to that group~~
+    10. Be directed to the login page when clicking an invite link if not signed in and automatically being added to the group after signing in
+    11. ~~Leave a group if I am leaving that group or changing group~~
+    12. ~~Delete a group so that data can be deleted if wanted at the end of the project~~
+    13. ~~See a list of groups I am in so that I can choose which group I want to view~~
+    14. View my teammates’ profiles, specifically names, profile pictures, and contact information
+    15. ~~Create and view a group information panel with a project name, project description, and links in the description automatically converted to anchor tags~~
 3. **Tasks**
-    1. View current tasks in a simplified 3 column kanban board
-    2. View who is assigned to each task
-    3. Create tasks so that I can track those tasks throughout the lifetime of the group project
-    4. Assign due dates to tasks
-    5. Assign time estimates to tasks
-    6. Delete tasks and mark tasks as completed
-    7. Assign/unassign tasks so that the entire team knows who is responsible for which tasks
-    8. Track time spent on tasks so that the team knows how much time has been spent by who on each task
-    9. (if time allows) View a personal window with all tasks I am assigned to across multiple groups
+    16. View current tasks in a simplified 3 column kanban board
+    17. View who is assigned to each task
+    18. Create tasks so that I can track those tasks throughout the lifetime of the group project
+    19. Assign due dates to tasks
+    20. Assign time estimates to tasks
+    21. Delete tasks and mark tasks as completed
+    22. Assign/unassign tasks so that the entire team knows who is responsible for which tasks
+    23. Track time spent on tasks so that the team knows how much time has been spent by who on each task
+    24. (if time allows) View a personal window with all tasks I am assigned to across multiple groups
 4. **Stats**
-    1. See a burndown chart so that I can track the team’s progress toward our goals
-    2. Split the burndown chart into a stacked line plot by user
-    3. Show the burndown chart by estimated time
-    4. See a pie chart with how much time each team member has recorded
+    25. See a burndown chart so that I can track the team’s progress toward our goals
+    26. Split the burndown chart into a stacked line plot by user
+    27. Show the burndown chart by estimated time
+    28. See a pie chart with how much time each team member has recorded
 5. **Calendar**
-    1. (if time allows) Upload my calendar from another program into Pleiades so that it can be used for finding team availabilities
-    2. ~~Manually set availabilities if I don’t use a traditional calendar~~
-    3. ~~View everyone’s availability as a calendar in a weekly view~~
-    4. View due dates of tasks in the calendar view in a monthly view
-    5. See a color coded view of the calendar/tasks indicative of the progress made
+    29. (if time allows) Upload my calendar from another program into Pleiades so that it can be used for finding team availabilities
+    30. ~~Manually set availabilities if I don’t use a traditional calendar~~
+    31. ~~View everyone’s availability as a calendar in a weekly view~~
+    32. View due dates of tasks in the calendar view in a monthly view
+    33. See a color coded view of the calendar/tasks indicative of the progress made
 6. **Notifications**
-    1. (if time allows) View notifications in-app of updates and changes made to the project
-    2. (if time allows) Be able to change/customize my notification settings 
+    34. (if time allows) View notifications in-app of updates and changes made to the project
+    35. (if time allows) Be able to change/customize my notification settings 
 7. **Voting**
-    1. Start a vote to decide project direction when consensus cannot be reached
-    2. Vote in a project vote
-    3. Display the results of of a vote
+    36. Start a vote to decide project direction when consensus cannot be reached
+    37. Vote in a project vote
+    38. Display the results of of a vote
 
 
 ### Non-functional
