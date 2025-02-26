@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { connectToProject, ProjectState } from "../../lib/project_state.svelte"
+    import { connectToProject, ProjectState } from "$lib/project_state.svelte"
     import { onMount } from "svelte"
 
     let projectId = $state("")

@@ -49,6 +49,7 @@ func main() {
 	router.GET("/ws", wsEndpoint)
 	router.GET("/projects", projectsHandler)
 	router.POST("/projects/new", newProjectHandler)
+	router.GET("/registration/check", checkEmail)
 
 	router.Run(":8080")
 }

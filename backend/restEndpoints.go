@@ -113,3 +113,18 @@ func tempBootstrapper() {
 
 	log.Println("Inserted User with Id: ", result)
 }
+
+// this function checks to see if an email is already registered in the database
+func checkEmail(c *gin.Context) {
+	email := c.Query("email")
+	collection := db.Collection("users")
+	var result bson.M
+	err := collection.FindOne(context.TODO(), bson.M{"email": email}).Decode(&result)
+
+	//c.JSON sends result back?
+	if err == mongo.ErrNoDocuments {
+		c.JSON(http.StatusOK, gin.H{"exists": false})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"exists": true})
+	}
+}
