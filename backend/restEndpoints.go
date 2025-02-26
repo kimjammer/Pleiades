@@ -144,13 +144,37 @@ func registerUser(c *gin.Context) {
 	}
 
 	//Insert the new user into MongoDB
+	log.Println("inserting")
 	var err interface{}
 	collection := db.Collection("users")
 	_, err = collection.InsertOne(context.TODO(), newUser)
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert user"})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"success": true})
+}
+
+func login(c *gin.Context) {
+	email := c.Query("email")
+	password := c.Query("password")
+	var result bson.M
+
+	log.Println("fetching from database")
+	//use c instead of context.TODO()???
+	err := db.Collection("users").FindOne(context.TODO(), bson.M{"email": email, "password": password}).Decode(&result)
+
+	if err == mongo.ErrNoDocuments {
+		c.JSON(http.StatusOK, gin.H{"exists": false})
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"exists": true})
+	}
+}
+
+func hashPassword() {
+	//TODO: implement hashing :D
 }

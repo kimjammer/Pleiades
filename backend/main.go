@@ -51,6 +51,7 @@ func main() {
 	router.POST("/projects/new", newProjectHandler)
 	router.GET("/register/check", checkEmail)
 	router.POST("/register/new", registerUser)
+	router.GET("/login", login)
 
 	router.Run(":8080")
 }
