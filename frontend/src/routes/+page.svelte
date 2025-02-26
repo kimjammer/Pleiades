@@ -13,6 +13,6 @@
     >
         Collaborate Easier...or else...
     </h2>
-
+    <Button onclick={() => goto('/login')}>Login</Button>
     <Button onclick={() => goto('/registration')}>Create an account</Button>
 </div>

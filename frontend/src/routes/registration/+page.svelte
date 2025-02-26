@@ -38,9 +38,11 @@
     //if input invalid, pops up error
     //NOTE: isValid() does NOT handle already existing accounts.
     async function isValid() {
-        //TODO: add checking for special characters in password
-        //TODO: add checking for @ in email
 
+        if (!email.includes("@")) {
+            error = "Invalid Email"
+            return
+        }
         //FIRST: Check for if account exists
         console.log("account Exists checking")
         const res = await fetch("http://" + PUBLIC_API_HOST + `/register/check?email=${encodeURIComponent(email)}`, {
@@ -118,4 +120,6 @@
         bind:value={passwordConfirm}
     />
     <Button onclick={isValid}>Register</Button>
+    <Button variant="link" onclick={() => goto("/login")}>Login</Button>
+
 </div>
