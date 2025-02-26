@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
+	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
 	"log"
 	"net/http"
@@ -107,6 +108,11 @@ func tempBootstrapper() {
 		Projects:     nil,
 	}
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err == nil {
+		user.Password = string(hashedPassword)
+	}
+
 	result, err := db.Collection("users").InsertOne(context.TODO(), user)
 	if err != nil {
 		log.Println(err)
@@ -143,9 +149,15 @@ func registerUser(c *gin.Context) {
 		return
 	}
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	} else {
+		newUser.Password = string(hashedPassword)
+	}
 	//Insert the new user into MongoDB
 	log.Println("inserting")
-	var err interface{}
 	collection := db.Collection("users")
 	_, err = collection.InsertOne(context.TODO(), newUser)
 	if err != nil {
@@ -162,9 +174,15 @@ func login(c *gin.Context) {
 	password := c.Query("password")
 	var result bson.M
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	}
+	log.Println(string(hashedPassword))
 	log.Println("fetching from database")
 	//use c instead of context.TODO()???
-	err := db.Collection("users").FindOne(context.TODO(), bson.M{"email": email, "password": password}).Decode(&result)
+	err = db.Collection("users").FindOne(context.TODO(), bson.M{"email": email, "password": string(hashedPassword)}).Decode(&result)
 
 	if err == mongo.ErrNoDocuments {
 		c.JSON(http.StatusOK, gin.H{"exists": false})
@@ -173,8 +191,4 @@ func login(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{"exists": true})
 	}
-}
-
-func hashPassword() {
-	//TODO: implement hashing :D
 }
