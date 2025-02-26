@@ -697,44 +697,44 @@ As a user, I want to be able to
     4. (If time allows) Reset my password so that I can recover my account
     5. Upload a profile picture
 2. **Group**
-    6. ~~Create a group so that I can begin my project~~
-    7. ~~Generate an invite link to the group so that I can collaborate with other students~~
-    8. (If time allows) Invite people directly in the app using their email
-    9. ~~Click on invite links and automatically be added to that group~~
-    10. Be directed to the login page when clicking an invite link if not signed in and automatically being added to the group after signing in
-    11. ~~Leave a group if I am leaving that group or changing group~~
-    12. ~~Delete a group so that data can be deleted if wanted at the end of the project~~
-    13. ~~See a list of groups I am in so that I can choose which group I want to view~~
-    14. View my teammates’ profiles, specifically names, profile pictures, and contact information
-    15. ~~Create and view a group information panel with a project name, project description, and links in the description automatically converted to anchor tags~~
+    1. ~~Create a group so that I can begin my project~~
+    2. ~~Generate an invite link to the group so that I can collaborate with other students~~
+    3. (If time allows) Invite people directly in the app using their email
+    4. ~~Click on invite links and automatically be added to that group~~
+    5. Be directed to the login page when clicking an invite link if not signed in and automatically being added to the group after signing in
+    6. ~~Leave a group if I am leaving that group or changing group~~
+    7. ~~Delete a group so that data can be deleted if wanted at the end of the project~~
+    8. ~~See a list of groups I am in so that I can choose which group I want to view~~
+    9. View my teammates’ profiles, specifically names, profile pictures, and contact information
+    10. ~~Create and view a group information panel with a project name, project description, and links in the description automatically converted to anchor tags~~
 3. **Tasks**
-    16. View current tasks in a simplified 3 column kanban board
-    17. View who is assigned to each task
-    18. Create tasks so that I can track those tasks throughout the lifetime of the group project
-    19. Assign due dates to tasks
-    20. Assign time estimates to tasks
-    21. Delete tasks and mark tasks as completed
-    22. Assign/unassign tasks so that the entire team knows who is responsible for which tasks
-    23. Track time spent on tasks so that the team knows how much time has been spent by who on each task
-    24. (if time allows) View a personal window with all tasks I am assigned to across multiple groups
+    1. View current tasks in a simplified 3 column kanban board
+    2. View who is assigned to each task
+    3. Create tasks so that I can track those tasks throughout the lifetime of the group project
+    4. Assign due dates to tasks
+    5. Assign time estimates to tasks
+    6. Delete tasks and mark tasks as completed
+    7. Assign/unassign tasks so that the entire team knows who is responsible for which tasks
+    8. Track time spent on tasks so that the team knows how much time has been spent by who on each task
+    9. (if time allows) View a personal window with all tasks I am assigned to across multiple groups
 4. **Stats**
-    25. See a burndown chart so that I can track the team’s progress toward our goals
-    26. Split the burndown chart into a stacked line plot by user
-    27. Show the burndown chart by estimated time
-    28. See a pie chart with how much time each team member has recorded
+    1. See a burndown chart so that I can track the team’s progress toward our goals
+    2. Split the burndown chart into a stacked line plot by user
+    3. Show the burndown chart by estimated time
+    4. See a pie chart with how much time each team member has recorded
 5. **Calendar**
-    29. (if time allows) Upload my calendar from another program into Pleiades so that it can be used for finding team availabilities
-    30. ~~Manually set availabilities if I don’t use a traditional calendar~~
-    31. ~~View everyone’s availability as a calendar in a weekly view~~
-    32. View due dates of tasks in the calendar view in a monthly view
-    33. See a color coded view of the calendar/tasks indicative of the progress made
+    1. (if time allows) Upload my calendar from another program into Pleiades so that it can be used for finding team availabilities
+    2. ~~Manually set availabilities if I don’t use a traditional calendar~~
+    3. ~~View everyone’s availability as a calendar in a weekly view~~
+    4. View due dates of tasks in the calendar view in a monthly view
+    5. See a color coded view of the calendar/tasks indicative of the progress made
 6. **Notifications**
-    34. (if time allows) View notifications in-app of updates and changes made to the project
-    35. (if time allows) Be able to change/customize my notification settings 
+    1. (if time allows) View notifications in-app of updates and changes made to the project
+    2. (if time allows) Be able to change/customize my notification settings 
 7. **Voting**
-    36. Start a vote to decide project direction when consensus cannot be reached
-    37. Vote in a project vote
-    38. Display the results of of a vote
+    1. Start a vote to decide project direction when consensus cannot be reached
+    2. Vote in a project vote
+    3. Display the results of of a vote
 
 
 ### Non-functional
