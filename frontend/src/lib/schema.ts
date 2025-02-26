@@ -7,3 +7,5 @@ export type minimalProject = {
     title: string
     description: string
 }
+
+

@@ -36,14 +36,19 @@
     //NOTE: isValid() does NOT handle already existing accounts.
     async function isValid() {
         //TODO: add checking for special characters in password
+        //TODO: add checking for @ in email
 
         //FIRST: Check for if account exists
         console.log("account Exists checking")
-        const res = await fetch("http://" + PUBLIC_API_HOST + `/api/register/check`, {
+        const res = await fetch("http://" + PUBLIC_API_HOST + `/register/check?email=${encodeURIComponent(email)}`, {
+            method: "GET",
             mode: "cors",
-            body: JSON.stringify({email: email})
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            //body: JSON.stringify({email: email})
         })
-
+        console.log("awaiting")
         const data = await res.json()
         console.log(data)
         if (data.exists) {
@@ -56,6 +61,7 @@
             error = "Your passwords do not match"
         }
         else {
+            error = ""
             await register()
         }
 

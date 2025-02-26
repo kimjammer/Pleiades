@@ -47,6 +47,7 @@ func projectsHandler(c *gin.Context) {
 }
 
 func newProjectHandler(c *gin.Context) {
+	log.Println("new project")
 	//Get current user
 	//TODO: Get User id from token
 	userId := "BOOTSTRAPPER"
@@ -116,20 +117,26 @@ func tempBootstrapper() {
 
 // this function checks to see if an email is already registered in the database
 func checkEmail(c *gin.Context) {
+	log.Println("checking email")
 	email := c.Query("email")
 	collection := db.Collection("users")
 	var result bson.M
+
+	//use c instead of context.TODO()???
 	err := collection.FindOne(context.TODO(), bson.M{"email": email}).Decode(&result)
 
-	//c.JSON sends result back?
 	if err == mongo.ErrNoDocuments {
 		c.JSON(http.StatusOK, gin.H{"exists": false})
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"exists": true})
 	}
+	//c is sent at end of function
 }
 
 func registerUser(c *gin.Context) {
+	log.Println("register register yes yes")
 	//email := c.Query("email")
 	//password := c.Query("password")
 	//
