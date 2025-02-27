@@ -171,8 +171,9 @@ func registerUser(c *gin.Context) {
 	} else {
 		newUser.Password = string(hashedPassword)
 	}
-	//Insert the new user into MongoDB
-	log.Println("inserting")
+	//TODO debug this
+	newUser.Id = uuid.New().String()
+	//Insert new user into db
 	collection := db.Collection("users")
 	_, err = collection.InsertOne(context.TODO(), newUser)
 	if err != nil {
@@ -182,9 +183,12 @@ func registerUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"success": true})
+	log.Println("Created User with Id: ", newUser.Id)
 }
 
 func login(c *gin.Context) {
+	//TODO: fix password checking
+	//TODO: delete the dummy accounts T-T make better ones
 	email := c.Query("email")
 	password := c.Query("password")
 	var result bson.M

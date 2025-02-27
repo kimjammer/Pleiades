@@ -34,6 +34,10 @@
         }
     }
 
+    function hasUpperandLowerCase() {
+        return /[A-Z]/.test(password) && /[a-z]/.test(password)
+    }
+
     //This func is activated on submit, confirms validity of input to send to server
     //if input invalid, pops up error
     //NOTE: isValid() does NOT handle already existing accounts.
@@ -59,8 +63,9 @@
         if (data.exists) {
             error = "There is already an account registered with this email!"
         }
-        else if (password.length < 8) {
-            error = "Your password must be at least 8 characters"
+        else if (password.length < 8 || !hasUpperandLowerCase() || !/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(password)) {
+            error = "Your password must be at least 8 characters, " +
+                        "have at least one upper case and lower case letter, and contain at least one special character."
         }
         else if (password !== passwordConfirm) {
             error = "Your passwords do not match"
