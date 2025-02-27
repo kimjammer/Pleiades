@@ -14,6 +14,23 @@ import (
 
 var db *mongo.Database
 
+func setupRouter() *gin.Engine {
+	// Setup webserver
+	router := gin.Default()
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:5173"}
+	router.Use(cors.Default())
+
+	router.GET("/ws", wsEndpoint)
+	router.GET("/projects", projectsHandler)
+	router.POST("/projects/new", newProjectHandler)
+	router.GET("/register/check", checkEmail)
+	router.POST("/register/new", registerUser)
+	router.GET("/login", login)
+
+	return router
+}
+
 func main() {
 	//Connect to database
 	if err := godotenv.Load(); err != nil {
@@ -40,18 +57,6 @@ func main() {
 		}()
 	}
 
-	// Setup webserver
-	router := gin.Default()
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173"}
-	router.Use(cors.Default())
-
-	router.GET("/ws", wsEndpoint)
-	router.GET("/projects", projectsHandler)
-	router.POST("/projects/new", newProjectHandler)
-	router.GET("/register/check", checkEmail)
-	router.POST("/register/new", registerUser)
-	router.GET("/login", login)
-
+	router := setupRouter()
 	router.Run(":8080")
 }

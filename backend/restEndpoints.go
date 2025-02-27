@@ -73,6 +73,12 @@ func newProjectHandler(c *gin.Context) {
 		return
 	}
 
+	//Validation
+	if newProject.Title == "" {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+
 	//Create Project
 	project := Project{
 		Id:          uuid.New().String(),
