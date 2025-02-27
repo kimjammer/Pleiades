@@ -52,7 +52,6 @@ func newProjectHandler(c *gin.Context) {
 	//Get current user
 	//TODO: Get User id from token
 	userId := "BOOTSTRAPPER"
-
 	filter := bson.D{{"_id", userId}}
 
 	var crrUser User
@@ -64,22 +63,30 @@ func newProjectHandler(c *gin.Context) {
 			err = db.Collection("users").FindOne(context.TODO(), filter).Decode(&crrUser)
 			//TODO: Add error handling for user not found
 		} else {
-			panic(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found"})
 		}
+	}
+
+	var newProject NewProjectRequest
+	if err := c.ShouldBindJSON(&newProject); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
 	}
 
 	//Create Project
 	project := Project{
 		Id:          uuid.New().String(),
-		Title:       "Project Title",
-		Description: "Project Description",
+		Title:       newProject.Title,
+		Description: newProject.Description,
 		Users:       []string{crrUser.Id},
 		Tasks:       []Task{},
 		Polls:       []Poll{},
 	}
 	_, err = db.Collection("projects").InsertOne(c, project)
 	if err != nil {
-		panic(err)
+		log.Println("Error inserting project: ", err)
+		c.Status(http.StatusInternalServerError)
+		return
 	}
 
 	//Add project to user
@@ -87,7 +94,9 @@ func newProjectHandler(c *gin.Context) {
 	update := bson.D{{"$set", bson.D{{"projects", crrUser.Projects}}}}
 	_, err = db.Collection("users").UpdateOne(c, filter, update)
 	if err != nil {
-		panic(err)
+		log.Println("Error updating user with new project: ", err)
+		c.Status(http.StatusInternalServerError)
+		return
 	}
 
 	c.Status(http.StatusOK)

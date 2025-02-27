@@ -9,3 +9,7 @@ export type minimalProject = {
 }
 
 
+export type newProjectRequest = {
+    title: string
+    description: string
+}

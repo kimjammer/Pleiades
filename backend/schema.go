@@ -13,3 +13,8 @@ type minimalProject struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
+
+type NewProjectRequest struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}

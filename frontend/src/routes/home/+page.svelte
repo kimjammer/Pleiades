@@ -2,14 +2,20 @@
     import { onMount } from "svelte"
     import { toggleMode } from "mode-watcher";
     import { Button } from "$lib/components/ui/button"
+    import { Label } from "$lib/components/ui/label"
+    import { Input } from "$lib/components/ui/input"
+    import * as Dialog from "$lib/components/ui/dialog"
+    import  { toast } from "svelte-sonner"
     import { Sun, Moon } from "lucide-svelte";
-    import type { ProjectsResponse } from "$lib/schema.js"
+    import type { ProjectsResponse, newProjectRequest } from "$lib/schema.js"
     import { PUBLIC_API_HOST } from "$env/static/public"
 
-
+    let title = $state("")
+    let description = $state("")
     let response: ProjectsResponse = $state({
         projects: [],
     })
+    let createDialogOpen = $state(false)
 
     onMount(async () => {
         await loadProjects()
@@ -18,15 +24,31 @@
     async function loadProjects() {
         const url = "http://" + PUBLIC_API_HOST + "/projects"
         const res = await fetch(url, { mode: "cors" })
+        if (!res.ok) {
+            toast.error("Failed to load projects")
+            return
+        }
         response = (await res.json()) as ProjectsResponse
     }
 
     async function createProject() {
+        createDialogOpen = false
+
         const url = "http://" + PUBLIC_API_HOST + "/projects/new"
-        await fetch(url, {
+        const body: newProjectRequest = { title, description }
+        const res = await fetch(url, {
             method: "POST",
             mode: "cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
         })
+
+        //Error handling
+        if (!res.ok) {
+            toast.error("Failed to create project")
+            return
+        }
+
         await loadProjects()
     }
 </script>
@@ -77,19 +99,44 @@
             </a>
 
         {/each}
-        <div class="p-5 w-60 h-60 flex flex-col justify-center
-        border-8 border-dashed border-primary
-        hover:hover:bg-slate-300 hover:dark:bg-slate-800
-        transition duration-300
-        rounded-xl"
-             onclick={createProject}
-             onkeyup={createProject}
-             role="button"
-             tabindex="0"
-        >
-            <h4 class="scroll-m-20 text-xl font-semibold tracking-tight">
-                Create a new project
-            </h4>
-        </div>
+        <Dialog.Root bind:open={createDialogOpen}>
+            <Dialog.Trigger>
+                <div class="p-5 w-60 h-60 flex flex-col justify-center
+                    border-8 border-dashed border-primary
+                    hover:hover:bg-slate-300 hover:dark:bg-slate-800
+                    transition duration-300
+                    rounded-xl">
+                    <h4 class="scroll-m-20 text-xl font-semibold tracking-tight">
+                        Create a new project
+                    </h4>
+                </div>
+            </Dialog.Trigger>
+            <Dialog.Content>
+                <Dialog.Header>
+                    <Dialog.Title>
+                        Create new Project
+                    </Dialog.Title>
+                    <Dialog.Description>
+                        Choose a name and description for your project and click create!
+                    </Dialog.Description>
+                    <div class="flex flex-col gap-5 py-5">
+                        <div>
+                            <Label for="title" class="text-right">Title</Label>
+                            <Input id="title" placeholder="Project Name" bind:value={title} />
+                        </div>
+                        <div>
+                            <Label for="description" class="text-right">Description</Label>
+                            <Input id="description" placeholder="Project Description" bind:value={description} />
+                        </div>
+                    </div>
+                    <Dialog.Footer>
+                        <Button onclick={createProject} onkeypress={createProject} type="submit">
+                            Create!
+                        </Button>
+                    </Dialog.Footer>
+                </Dialog.Header>
+            </Dialog.Content>
+        </Dialog.Root>
+
     </div>
 </div>
