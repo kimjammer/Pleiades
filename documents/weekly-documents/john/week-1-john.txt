@@ -1,0 +1,25 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: John Kim
+
+Week 1 (Summary)
+2/18 1.5hr d960dfe Scaffold backend server
+2/18 0.1hr a0f23a8 Install shadcn-svelte
+2/18 1hr   2b26dbe Connect to DB
+2/19 0.5hr 99000cd Configure CORS
+2/21 2hr   91716c4 Working MongoDB CRUD
+2/21 1.5hr 0361994 Implement basic /projects endpoint
+2/21 0.1hr b4317eb Refactor API url to not be hardcoded
+2/22 2.5hr 67d8de4 Implement user home page UI
+
+Week 2 (Plan)
+2/26 1.5hr Work on UI for project creation
+2/27 1.5hr Work on tests for UI
+2/28 3.5hr Implement /projects/new endpoint
+3/01 3hr   Finish /projects/new and write tests for endpoint
+
+Week 3 (Plan)
+3/04 2.5hr Work on project page UI
+3/05 1.5hr Integrate user auth into existing endpoints
+3/06 1hr   Write tests for project page UI
+3/07 3.5hr Work on loading state from DB
+3/08 3hr   Work on automatic anchor tag conversion and full integration

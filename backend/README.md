@@ -1,4 +1,28 @@
-# Backend
+# Pleiades Backend
+
+## Setup
+
+Install MongoDB and note the URI.
+
+Create the .env file based on the .env.example file.
+
+Environment Variables:
+<table>
+  <tr>
+   <td>Variable</td>
+   <td>Example</td>
+   <td>Purpose</td>
+  </tr>
+  <tr>
+   <td>MONGODB_URI</td>
+   <td>mongodb://localhost:27017</td>
+   <td>The URI of the MongoDB server to connect to.</td>
+  </tr>
+</table>
 
 ## Runnning
 `go run .`
+
+## Testing
+
+`go test .`

@@ -1,18 +1,22 @@
-# sv
+# Pleiades Frontend
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## Setup
 
-## Creating a project
+Create the .env file based on the .env.example file. Rerun `npm run dev` so that svelte regenerates the environment variable files.
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
+Environment Variables:
+<table>
+  <tr>
+   <td>Variable</td>
+   <td>Example</td>
+   <td>Purpose</td>
+  </tr>
+  <tr>
+   <td>PUBLIC_API_HOST</td>
+   <td>localhost:8080</td>
+   <td>The location of the API server, without the protocol.</td>
+  </tr>
+</table>
 
 ## Developing
 
