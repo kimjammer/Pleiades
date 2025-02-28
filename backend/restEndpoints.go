@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -129,13 +130,14 @@ func registerUser(c *gin.Context) {
 		return
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
+	hashedPassword, err := encryptPassword(newUser.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
 	} else {
-		newUser.Password = string(hashedPassword)
+		newUser.Password = hashedPassword
 	}
+
 	//TODO debug this
 	newUser.Id = uuid.New().String()
 	//Insert new user into db
@@ -154,26 +156,25 @@ func registerUser(c *gin.Context) {
 func login(c *gin.Context) {
 	//TODO: fix password checking
 	//TODO: delete the dummy accounts T-T make better ones
+	listUsers()
 	email := c.Query("email")
 	password := c.Query("password")
 	var result bson.M
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
-		return
-	}
-	log.Println(string(hashedPassword))
 	log.Println("fetching from database")
-	//use c instead of context.TODO()???
-	err = db.Collection("users").FindOne(context.TODO(), bson.M{"email": email, "password": string(hashedPassword)}).Decode(&result)
+	err := db.Collection("users").FindOne(context.TODO(), bson.M{"email": email}).Decode(&result)
 
 	if err == mongo.ErrNoDocuments {
 		c.JSON(http.StatusOK, gin.H{"exists": false})
 	} else if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 	} else {
-		c.JSON(http.StatusOK, gin.H{"exists": true})
+		//check if passwords match
+		if checkPassword(result["password"].(string), password) {
+			c.JSON(http.StatusOK, gin.H{"exists": true})
+		} else {
+			c.JSON(http.StatusOK, gin.H{"exists": false})
+		}
 	}
 }
 
@@ -186,4 +187,47 @@ func fakeLogin(c *gin.Context) {
 	c.SetSameSite(http.SameSiteNoneMode)
 	c.SetCookie("token", token, 3600, "/", "", true, true)
 	c.Status(http.StatusOK)
+}
+
+func encryptPassword(password string) (string, error) {
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost) // Use a fixed cost
+	if err != nil {
+		return "", err
+	}
+	return string(hashedBytes), nil
+}
+
+func checkPassword(hashedPassword, plainPassword string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
+	return err == nil
+}
+
+// TEMPORARY
+func listUsers() {
+	collection := db.Collection("users") // Reference the "users" collection
+
+	// MongoDB filter (empty filter `{}` to get all documents)
+	filter := bson.M{}
+
+	// Cursor to iterate over all documents
+	cursor, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		log.Fatal("Error finding users:", err)
+	}
+	defer cursor.Close(context.TODO()) // Close cursor when function ends
+
+	fmt.Println("Current Users in Database:")
+
+	for cursor.Next(context.TODO()) {
+		var user User
+		if err := cursor.Decode(&user); err != nil {
+			log.Println("Error decoding user:", err)
+			continue
+		}
+		fmt.Printf("ID: %s, Name: %s %s, Email: %s, Password: %s\n", user.Id, user.FirstName, user.LastName, user.Email, user.Password)
+	}
+
+	if err := cursor.Err(); err != nil {
+		log.Fatal("Cursor error:", err)
+	}
 }
