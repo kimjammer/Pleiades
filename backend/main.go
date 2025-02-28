@@ -67,7 +67,8 @@ func defineRoutes(router *gin.Engine) {
 	router.POST("/register/new", registerUser)
 	router.GET("/login", login)
 
-	return router
+	//TODO: Remove testing route that only sets cookie
+	router.GET("/fakelogin", fakeLogin)
 }
 
 func main() {

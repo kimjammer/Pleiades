@@ -23,6 +23,7 @@
         const res = await fetch("http://" + PUBLIC_API_HOST + "/register/new", {
             method: "POST",
             mode: "cors",
+            credentials: "include",
             body: JSON.stringify(user)
         })
         console.log("registration data sent")

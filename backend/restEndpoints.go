@@ -173,3 +173,15 @@ func login(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"exists": true})
 	}
 }
+
+func fakeLogin(c *gin.Context) {
+	//Find first user
+	var user User
+	_ = db.Collection("users").FindOne(context.TODO(), bson.D{}).Decode(&user)
+
+	//Stub token generation, NOT real token generation code!!!
+	token := user.Id
+	c.SetSameSite(http.SameSiteNoneMode)
+	c.SetCookie("token", token, 3600, "/", "", true, true)
+	c.Status(http.StatusOK)
+}

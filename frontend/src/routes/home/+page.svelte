@@ -23,7 +23,7 @@
 
     async function loadProjects() {
         const url = "http://" + PUBLIC_API_HOST + "/projects"
-        const res = await fetch(url, { mode: "cors" })
+        const res = await fetch(url, { mode: "cors", credentials: "include" })
         if (!res.ok) {
             toast.error("Failed to load projects")
             return
@@ -39,6 +39,7 @@
         const res = await fetch(url, {
             method: "POST",
             mode: "cors",
+            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
         })
