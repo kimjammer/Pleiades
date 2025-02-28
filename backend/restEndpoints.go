@@ -16,7 +16,6 @@ func projectsHandler(c *gin.Context) {
 	//Get current user
 	userId, _ := c.Get("userId")
 
-	log.Println(userId)
 	filter := bson.D{{Key: "_id", Value: userId}}
 	var crrUser User
 	err := db.Collection("users").FindOne(c, filter).Decode(&crrUser)
@@ -58,16 +57,19 @@ func newProjectHandler(c *gin.Context) {
 	if err != nil {
 		//TODO: Add error handling for user not found
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found"})
+		return
 	}
 
 	var newProject NewProjectRequest
 	if err := c.ShouldBindJSON(&newProject); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
 	}
 
 	//Validation
 	if newProject.Title == "" {
 		c.AbortWithStatus(http.StatusBadRequest)
+		return
 	}
 
 	//Create Project
@@ -93,6 +95,7 @@ func newProjectHandler(c *gin.Context) {
 	if err != nil {
 		log.Println("Error updating user with new project: ", err)
 		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
 	c.Status(http.StatusOK)
