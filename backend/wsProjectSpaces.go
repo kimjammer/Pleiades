@@ -55,6 +55,20 @@ func encodeProject(project Project) []byte {
 	return encoded
 }
 
+func timeout(channel chan<- struct{}) {
+	secs := 10.
+
+	duration := time.Duration(secs * 1000 * 1000 * 1000)
+
+	if duration.Seconds() != secs {
+		panic("Conversion wrong")
+	}
+
+	time.Sleep(duration)
+
+	channel <- struct{}{}
+}
+
 func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string) {
 	defer func() {
 		projectSpacesMutex.Lock()
@@ -72,6 +86,10 @@ func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string
 		panic(err)
 	}
 
+	var noConnectionsTimeout = make(chan struct{})
+
+	go timeout(noConnectionsTimeout)
+
 	var connections []ConnectionForSpace
 
 	for {
@@ -79,6 +97,10 @@ func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string
 		case newConnection := <-connectionsChannel:
 			newConnection.state_tx <- encodeProject(project)
 			connections = append(connections, newConnection)
+		case _ = <-noConnectionsTimeout:
+			if len(connections) == 0 {
+				return
+			}
 		default:
 		}
 
@@ -95,11 +117,17 @@ func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string
 					connections[i] = connections[len(connections)-1]
 					connections = connections[:len(connections)-1]
 					i -= 1
+
+					if len(connections) == 0 {
+						go timeout(noConnectionsTimeout)
+					}
+
 					continue
 				}
 
 				command.apply(&project)
 				appliedCommand = true
+			default:
 			}
 
 			i -= 1
