@@ -14,9 +14,9 @@ import (
 
 func projectsHandler(c *gin.Context) {
 	//Get current user
-	//TODO: Get User id from token
-	userId := "BOOTSTRAPPER"
+	userId, _ := c.Get("userId")
 
+	log.Println(userId)
 	filter := bson.D{{Key: "_id", Value: userId}}
 	var crrUser User
 	err := db.Collection("users").FindOne(c, filter).Decode(&crrUser)
@@ -48,35 +48,26 @@ func projectsHandler(c *gin.Context) {
 }
 
 func newProjectHandler(c *gin.Context) {
-	log.Println("new project")
+	log.Println("Creating New Project")
 	//Get current user
-	//TODO: Get User id from token
-	userId := "BOOTSTRAPPER"
+	userId, _ := c.Get("userId")
 	filter := bson.D{{"_id", userId}}
 
 	var crrUser User
 	err := db.Collection("users").FindOne(context.TODO(), filter).Decode(&crrUser)
 	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			//TODO: Remove bootstrapper
-			tempBootstrapper()
-			err = db.Collection("users").FindOne(context.TODO(), filter).Decode(&crrUser)
-			//TODO: Add error handling for user not found
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found"})
-		}
+		//TODO: Add error handling for user not found
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found"})
 	}
 
 	var newProject NewProjectRequest
 	if err := c.ShouldBindJSON(&newProject); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
-		return
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 	}
 
 	//Validation
 	if newProject.Title == "" {
-		c.Status(http.StatusBadRequest)
-		return
+		c.AbortWithStatus(http.StatusBadRequest)
 	}
 
 	//Create Project
@@ -101,39 +92,10 @@ func newProjectHandler(c *gin.Context) {
 	_, err = db.Collection("users").UpdateOne(c, filter, update)
 	if err != nil {
 		log.Println("Error updating user with new project: ", err)
-		c.Status(http.StatusInternalServerError)
-		return
+		c.AbortWithStatus(http.StatusInternalServerError)
 	}
 
 	c.Status(http.StatusOK)
-}
-
-// TODO: Remove bootstrapping
-func tempBootstrapper() {
-	//Create a user
-	user := User{
-		Id:           "BOOTSTRAPPER",
-		FirstName:    "Joe",
-		LastName:     "Smith",
-		Email:        "example@example.com",
-		Password:     "notapassword",
-		PhoneNumber:  "1234567890",
-		UserPhoto:    "",
-		Availability: nil,
-		Projects:     nil,
-	}
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err == nil {
-		user.Password = string(hashedPassword)
-	}
-
-	result, err := db.Collection("users").InsertOne(context.TODO(), user)
-	if err != nil {
-		log.Println(err)
-	}
-
-	log.Println("Inserted User with Id: ", result)
 }
 
 // this function checks to see if an email is already registered in the database

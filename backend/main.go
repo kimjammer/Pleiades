@@ -9,21 +9,60 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"log"
+	"net/http"
 	"os"
 )
 
 var db *mongo.Database
+
+// Middleware to load token from cookie
+func loadToken() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		cookie, err := c.Cookie("token")
+
+		if err != nil {
+			log.Println("No token found")
+		} else {
+			//TODO: DECODE AND VALIDATE TOKEN
+			//TODO: Token should be a signed JWT, right now it's just the current user's ID
+			//TODO: Do not abort request on invalid token, authRequired() will abort invalid requests
+			userId := cookie
+
+			c.Set("userId", userId)
+		}
+
+		c.Next()
+	}
+}
+
+// Middleware to deny access to unauthenticated users, for routes that are only for logged-in users
+func authRequired() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		_, exists := c.Get("userId")
+		if exists == false {
+			c.AbortWithStatus(http.StatusUnauthorized)
+		}
+
+		c.Next()
+	}
+}
 
 func setupRouter() *gin.Engine {
 	// Setup webserver
 	router := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:5173"}
-	router.Use(cors.Default())
+	config.AllowCredentials = true
+	router.Use(cors.New(config))
+	router.Use(loadToken())
 
-	router.GET("/ws", wsEndpoint)
-	router.GET("/projects", projectsHandler)
-	router.POST("/projects/new", newProjectHandler)
+	return router
+}
+
+func defineRoutes(router *gin.Engine) {
+	router.GET("/ws", authRequired(), wsEndpoint)
+	router.GET("/projects", authRequired(), projectsHandler)
+	router.POST("/projects/new", authRequired(), newProjectHandler)
 	router.GET("/register/check", checkEmail)
 	router.POST("/register/new", registerUser)
 	router.GET("/login", login)
@@ -58,5 +97,6 @@ func main() {
 	}
 
 	router := setupRouter()
+	defineRoutes(router)
 	router.Run(":8080")
 }
