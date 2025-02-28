@@ -1,11 +1,13 @@
 package main
 
+// TODO: Encode/decode JWT
+
 // Create a token for the given user ID
-func make_token(userId string) string {
+func makeToken(userId string) string {
 	return userId
 }
 
-// Validate the token for the given user ID, returns `nil` if the token is invalid.
-func verify_token(token *string) *string {
-	return token
+// Validate the token for the given user ID, returns an error if the token is invalid.
+func verifyToken(token string) (string, error) {
+	return token, nil
 }

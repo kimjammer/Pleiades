@@ -10,7 +10,7 @@ class ReactiveTesting {
     })
 }
 
-export async function connectToProject(key: string, projectId: string): Promise<ProjectState> {
+export async function connectToProject(projectId: string): Promise<ProjectState> {
     return new Promise((resolve, reject) => {
         let socket = new WebSocket("ws://" + PUBLIC_API_HOST + "/ws")
 
@@ -35,12 +35,9 @@ export async function connectToProject(key: string, projectId: string): Promise<
                 return
             }
 
-            if (text == "INVALID TOKEN") {
-                window.location.replace("/login")
-            }
-
             if (text == "PROJECT ID DNE") {
-                window.location.replace("/projects")
+                window.location.replace("/home")
+                return
             }
 
             let serverState = JSON.parse(text)
@@ -56,12 +53,16 @@ export async function connectToProject(key: string, projectId: string): Promise<
         }
 
         socket.onopen = () => {
-            socket.send(key)
             socket.send(projectId)
         }
 
         socket.onclose = () => {
             console.log("Closed!")
+        }
+
+        socket.onerror = e => {
+            // Is there a way to tell if the error is caused by "unauthorized"?
+            window.location.replace("/login")
         }
     })
 }

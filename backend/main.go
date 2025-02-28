@@ -23,12 +23,11 @@ func loadToken() gin.HandlerFunc {
 		if err != nil {
 			log.Println("No token found")
 		} else {
-			//TODO: DECODE AND VALIDATE TOKEN
-			//TODO: Token should be a signed JWT, right now it's just the current user's ID
-			//TODO: Do not abort request on invalid token, authRequired() will abort invalid requests
-			userId := cookie
+			userId, err := verifyToken(cookie)
 
-			c.Set("userId", userId)
+			if err == nil {
+				c.Set("userId", userId)
+			}
 		}
 
 		c.Next()
@@ -60,7 +59,7 @@ func setupRouter() *gin.Engine {
 }
 
 func defineRoutes(router *gin.Engine) {
-	router.GET("/ws", wsEndpoint)
+	router.GET("/ws", authRequired(), wsEndpoint)
 	router.GET("/projects", authRequired(), projectsHandler)
 	router.POST("/projects/new", authRequired(), newProjectHandler)
 	router.GET("/register/check", checkEmail)

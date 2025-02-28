@@ -30,42 +30,19 @@ func wsEndpoint(c *gin.Context) {
 		return
 	}
 
-	go handleConnection(conn)
+	userId, _ := c.Get("userId")
+
+	go handleConnection(conn, userId.(string))
 }
 
-func handleConnection(conn *websocket.Conn) {
+func handleConnection(conn *websocket.Conn, userId string) {
 	defer conn.Close()
-
-	mt, token_bytes, err := conn.ReadMessage()
-	if err != nil {
-		panic(err)
-	}
-	token := string(token_bytes)
-
-	if mt != websocket.TextMessage {
-		if err := conn.WriteMessage(websocket.TextMessage, []byte("FAIL: Expected the token to be a text message")); err != nil {
-			if _, ok := err.(*websocket.CloseError); ok {
-				return
-			}
-			panic(err)
-		}
-	}
-
-	userId := verify_token(&token)
-	if userId == nil {
-		if err := conn.WriteMessage(websocket.TextMessage, []byte("INVALID TOKEN")); err != nil {
-			if _, ok := err.(*websocket.CloseError); ok {
-				return
-			}
-			panic(err)
-		}
-	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	filter := bson.D{{Key: "_id", Value: userId}}
 	var crrUser User
-	err = db.Collection("users").FindOne(ctx, filter).Decode(&crrUser)
+	err := db.Collection("users").FindOne(ctx, filter).Decode(&crrUser)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			if err := conn.WriteMessage(websocket.TextMessage, []byte("FAIL: User ID not found")); err != nil {

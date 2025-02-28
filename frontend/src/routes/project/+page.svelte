@@ -13,9 +13,8 @@
         //Grab project ID from URL
         let params = new URLSearchParams(document.location.search)
         projectId = params.get("id") || ""
-        //TODO: Handle error if no project ID
 
-        project = connectToProject("BOOTSTRAPPER", projectId)
+        project = connectToProject(projectId)
     })
 </script>
 
