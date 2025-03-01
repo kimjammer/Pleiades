@@ -1,21 +1,27 @@
 === Weekly Team Report (Team 5: Pleiades) ===
 
-Week 1 (Summary) (Scrum Master: Ethan Dawes)
+Week 2 (Summary) (Scrum Master: Ethan Dawes)
 2/24 0.5hr d49faa6 Define the project schema on the frontend
 2/24 0.5hr 72cbfae Allow the client to recieve data from the server
 2/25 4hr   6b63795 Implement availability input
 2/25 2hr   24323aa Allow websockets in the same project group to communicate with each other
 2/25 2hr   55b0d01 Networking with the demo at bottom kinda works
+2/26 2.5hr 830ab0b Implement creating new projects (front & backend)
+2/26 1hr   02b7326 Write tests for /projects/new
+2/27 2hr   964ec10 More tests for /project and token cookie logic for tests
+2/27 1hr   b139b64 Stubbed token loading and saving
+2/27 0.1hr 3d1129c Bug fixes for /projects/new
 2/28 0.5hr 02fca0e Make tokens work with websockets
+2/28 2hr   0f1e34c Implement frontend e2e testing for user home page
 
 Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
 [Meetings]
 2/19 Discuss backend and make sure everyone can run it
-2/26
-2/27
+2/26 Discuss token implementation details and overview of chosen project for hw2
+2/27 Overview of testing
 
 [Individual goals]
 Henry: Establish and authenticate a websocket connection between the client and server
-John: Work on the project creation modals and server side validation
-Cate: Create a working backend for creation and storage of accounts
-Ethan: Create an encapsulated availability picker component (frontend)
+John: Work on the project dashboard and displaying project state from the backend
+Cate:
+Ethan:
