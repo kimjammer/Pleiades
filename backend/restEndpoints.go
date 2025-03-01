@@ -178,6 +178,7 @@ func login(c *gin.Context) {
 	}
 }
 
+// TODO: Frontend e2e testing uses this button/route. Figure out solution for this before removing
 func fakeLogin(c *gin.Context) {
 	//Find first user
 	var user User

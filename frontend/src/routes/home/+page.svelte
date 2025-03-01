@@ -1,12 +1,12 @@
 <script lang="ts">
     import { onMount } from "svelte"
-    import { toggleMode } from "mode-watcher";
+    import { toggleMode } from "mode-watcher"
     import { Button } from "$lib/components/ui/button"
     import { Label } from "$lib/components/ui/label"
     import { Input } from "$lib/components/ui/input"
     import * as Dialog from "$lib/components/ui/dialog"
-    import  { toast } from "svelte-sonner"
-    import { Sun, Moon } from "lucide-svelte";
+    import { toast } from "svelte-sonner"
+    import { Sun, Moon } from "lucide-svelte"
     import type { ProjectsResponse, newProjectRequest } from "$lib/schema.js"
     import { PUBLIC_API_HOST } from "$env/static/public"
 
@@ -32,6 +32,12 @@
     }
 
     async function createProject() {
+        //Basic validation
+        if (title === "") {
+            toast.error("Title is required")
+            return
+        }
+
         createDialogOpen = false
 
         const url = "http://" + PUBLIC_API_HOST + "/projects/new"
@@ -54,14 +60,16 @@
     }
 </script>
 
-<div class="flex justify-between p-5 border-b">
+<div class="flex justify-between border-b p-5">
     <div>
-        <h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-            Pleiades
-        </h1>
+        <h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Pleiades</h1>
     </div>
     <div class="flex gap-5">
-        <Button onclick={toggleMode} variant="outline" size="icon">
+        <Button
+            onclick={toggleMode}
+            variant="outline"
+            size="icon"
+        >
             <Sun
                 class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
             />
@@ -70,26 +78,27 @@
             />
             <span class="sr-only">Toggle theme</span>
         </Button>
-        <Button>
-            Logout
-        </Button>
+        <Button>Logout</Button>
     </div>
 </div>
 
 <div class="p-5">
     <div>
-        <h2 class="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
+        <h2
+            class="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
+        >
             Your Projects
         </h2>
     </div>
-    <div class="flex flex-wrap mt-5 mb-5 gap-10">
+    <div class="mb-5 mt-5 flex flex-wrap gap-10">
         {#each response.projects as project}
-            <a class="p-5 w-60 h-60 flex flex-col justify-end
-            border-8 border-primary
-            hover:bg-slate-300 hover:dark:bg-slate-800
+            <a
+                class="flex h-60 w-60 flex-col justify-end overflow-hidden
+            rounded-xl border-8
+            border-primary p-5
             transition duration-300
-            rounded-xl overflow-hidden"
-               href="/project?id={project.id}"
+            hover:bg-slate-300 hover:dark:bg-slate-800"
+                href="/project?id={project.id}"
             >
                 <h3 class="scroll-m-20 text-2xl font-semibold tracking-tight">
                     {project.title}
@@ -98,15 +107,16 @@
                     {project.description}
                 </p>
             </a>
-
         {/each}
         <Dialog.Root bind:open={createDialogOpen}>
             <Dialog.Trigger>
-                <div class="p-5 w-60 h-60 flex flex-col justify-center
+                <div
+                    class="flex h-60 w-60 flex-col justify-center rounded-xl
                     border-8 border-dashed border-primary
-                    hover:hover:bg-slate-300 hover:dark:bg-slate-800
-                    transition duration-300
-                    rounded-xl">
+                    p-5 transition
+                    duration-300 hover:hover:bg-slate-300
+                    hover:dark:bg-slate-800"
+                >
                     <h4 class="scroll-m-20 text-xl font-semibold tracking-tight">
                         Create a new project
                     </h4>
@@ -114,30 +124,45 @@
             </Dialog.Trigger>
             <Dialog.Content>
                 <Dialog.Header>
-                    <Dialog.Title>
-                        Create new Project
-                    </Dialog.Title>
+                    <Dialog.Title>Create new Project</Dialog.Title>
                     <Dialog.Description>
                         Choose a name and description for your project and click create!
                     </Dialog.Description>
                     <div class="flex flex-col gap-5 py-5">
                         <div>
-                            <Label for="title" class="text-right">Title</Label>
-                            <Input id="title" placeholder="Project Name" bind:value={title} />
+                            <Label
+                                for="title"
+                                class="text-right">Title</Label
+                            >
+                            <Input
+                                id="title"
+                                placeholder="Project Name"
+                                bind:value={title}
+                            />
                         </div>
                         <div>
-                            <Label for="description" class="text-right">Description</Label>
-                            <Input id="description" placeholder="Project Description" bind:value={description} />
+                            <Label
+                                for="description"
+                                class="text-right">Description</Label
+                            >
+                            <Input
+                                id="description"
+                                placeholder="Project Description"
+                                bind:value={description}
+                            />
                         </div>
                     </div>
                     <Dialog.Footer>
-                        <Button onclick={createProject} onkeypress={createProject} type="submit">
+                        <Button
+                            onclick={createProject}
+                            onkeypress={createProject}
+                            type="submit"
+                        >
                             Create!
                         </Button>
                     </Dialog.Footer>
                 </Dialog.Header>
             </Dialog.Content>
         </Dialog.Root>
-
     </div>
 </div>
