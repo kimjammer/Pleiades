@@ -26,11 +26,25 @@ var upgrader = websocket.Upgrader{
 func wsEndpoint(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
+		conn.Close()
 		log.Println(err)
 		return
 	}
 
-	userId, _ := c.Get("userId")
+	userId, exists := c.Get("userId")
+
+	if !exists {
+		defer conn.Close()
+
+		if err := conn.WriteMessage(websocket.TextMessage, []byte("UNAUTHORIZED")); err != nil {
+			if _, ok := err.(*websocket.CloseError); ok {
+				return
+			}
+			panic(err)
+		}
+
+		return
+	}
 
 	go handleConnection(conn, userId.(string))
 }

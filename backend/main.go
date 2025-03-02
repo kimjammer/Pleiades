@@ -59,7 +59,7 @@ func setupRouter() *gin.Engine {
 }
 
 func defineRoutes(router *gin.Engine) {
-	router.GET("/ws", authRequired(), wsEndpoint)
+	router.GET("/ws", wsEndpoint)
 	router.GET("/projects", authRequired(), projectsHandler)
 	router.POST("/projects/new", authRequired(), newProjectHandler)
 	router.GET("/register/check", checkEmail)

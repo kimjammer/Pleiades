@@ -17,7 +17,7 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
         let state = new ProjectState(socket)
         let gotFirstProjectState = false
 
-        socket.onmessage = message => {
+        let onmessage = (message: MessageEvent) => {
             let text = message.data
 
             if (typeof text != "string") {
@@ -33,6 +33,10 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
                 }
 
                 return
+            }
+
+            if (text == "UNAUTHORIZED") {
+                window.location.replace("/login")
             }
 
             if (text == "PROJECT ID DNE") {
@@ -52,18 +56,25 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
             }
         }
 
-        socket.onopen = () => {
+        let onopen = () => {
             socket.send(projectId)
         }
 
-        socket.onclose = () => {
-            console.log("Closed!")
+        let joinSocket = (socket: WebSocket) => {
+            socket.onmessage = onmessage
+            socket.onopen = onopen
+            socket.onclose = onclose
         }
 
-        socket.onerror = e => {
-            // Is there a way to tell if the error is caused by "unauthorized"?
-            window.location.replace("/login")
+        let onclose = () => {
+            setTimeout(() => {
+                console.log("Trying to rejoin")
+                socket = new WebSocket("ws://" + PUBLIC_API_HOST + "/ws")
+                joinSocket(socket)
+            }, 500)
         }
+
+        joinSocket(socket)
     })
 }
 

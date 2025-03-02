@@ -13,6 +13,7 @@ Week 2 (Summary) (Scrum Master: Ethan Dawes)
 2/27 0.1hr 3d1129c Bug fixes for /projects/new
 2/28 0.5hr 02fca0e Make tokens work with websockets
 2/28 2hr   0f1e34c Implement frontend e2e testing for user home page
+2/28 0.5hr 65f9e18 Debug websockets, add timeouts to group spaces, and make them work!
 
 Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
 [Meetings]
