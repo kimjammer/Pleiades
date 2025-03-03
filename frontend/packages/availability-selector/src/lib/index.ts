@@ -6,5 +6,5 @@ export function range(start: number, stop: number, step = 1) {
 
 export * from "./units.js";
 export * from "./timeutils.js";
-export * from "./Availability.svelte";
-export * from "./ManualInput.svelte";
+export {default as Availability} from "./Availability.svelte";
+export {default as ManualInput} from "./ManualInput.svelte";
