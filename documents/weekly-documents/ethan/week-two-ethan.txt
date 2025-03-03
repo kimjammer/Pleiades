@@ -1,0 +1,20 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: Ethan Dawes
+
+Week 6 (Summary)
+2/18 0.5hr eed6781 Translate design document/sprint planning to markdown
+2/20 0.5hr 79dd904 Setup codespaces devcontainer
+2/20 0.5hr 153e86c Document development procedures
+
+Week 7 (Summary)
+2/25 4hr   6b63795 Implement availability input
+2/25 3hr   6b63795 Add timezone translation utility functions
+3/2  1hr   56127f1 55a184e 09446be Integrate npm package w/ main, squash errors
+3/2  1hr   (WIP)   Save over websockets
+
+Week 8 (Plan)
+3/3 1hr Add to frontend
+3/3 1hr write tests for backend availability
+3/3 1hr Write tests for availability picker
+3/4 2hr Write backend for availability picker
+3/5 2hr sync with others & show group availability
