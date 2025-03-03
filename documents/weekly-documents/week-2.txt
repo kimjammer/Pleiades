@@ -23,6 +23,7 @@ Week 2 (Summary) (Scrum Master: Ethan Dawes)
 2/28 2hr   0f1e34c Implement frontend e2e testing for user home page
 2/28 0.5hr 65f9e18 Debug websockets, add timeouts to group spaces, and make them work!
 2/28 1hr   23fa4e7 password hashing works
+3/2  0.5hr 024a8af Make websockets reconnect on network failure
 
 Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
 [Meetings]
