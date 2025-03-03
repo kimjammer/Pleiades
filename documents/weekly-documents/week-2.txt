@@ -38,4 +38,4 @@ Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
 Henry: Establish and authenticate a websocket connection between the client and server
 John: Work on the project dashboard and displaying project state from the backend
 Cate: Create tests for registration and login, and use cookies to store current login
-Ethan:
+Ethan: Get availability input working, integrate with server
