@@ -4,7 +4,7 @@ export function range(start: number, stop: number, step = 1) {
   return [...Array(Math.ceil((stop - start) / step)).keys()].map(i => i * step + start);
 }
 
-export * from "./units.ts";
+export * from "./units.js";
 export * from "./timeutils.js";
 export * from "./Availability.svelte";
 export * from "./ManualInput.svelte";

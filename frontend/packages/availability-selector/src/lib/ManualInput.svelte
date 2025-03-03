@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {range} from "./index.ts";
+  import {range} from "./index.js";
   import {
     canonicalDateStr,
     type Coord,
@@ -12,15 +12,15 @@
     offsetRange,
     rangesToDate,
     timeInRange
-  } from "./timeutils.ts";
+  } from "./timeutils.js";
   import {
     type Availability,
     blankAvailability,
     compactAvailability,
     type InternalAvailability,
     mergeAvailability
-  } from "./Availability.ts";
-  import {DAY, TIME_STEP} from "./units.ts";
+  } from "./Availability.js";
+  import {DAY, TIME_STEP} from "./units.js";
   import {readable, writable, type Writable} from "svelte/store";
   import {Tooltip} from "flowbite-svelte";
   import AvailabilityComponent from "./Availability.svelte";

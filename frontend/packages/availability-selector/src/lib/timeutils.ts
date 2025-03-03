@@ -1,4 +1,4 @@
-import {DAY, HOUR, MILLISECOND, MINUTE, TIME_STEP} from "./units.ts";
+import {DAY, HOUR, MILLISECOND, MINUTE, TIME_STEP} from "./units.js";
 
 /** Date formatted in en-US locale, m/dd/yy. TODO: tighten this type */
 export type DateStr = `${number}/${number}/${number}` | string;
