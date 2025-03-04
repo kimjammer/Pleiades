@@ -23,23 +23,51 @@ type ConnectionForSocket struct {
 	command_tx chan<- Command
 }
 
+type ProjectSpaceContactPoint struct {
+	sendNewConnection chan ConnectionForSpace
+	requeryRequest    chan struct{}
+}
+
+type UserInProject struct {
+	Id           string
+	LeftProject  bool
+	FirstName    string
+	LastName     string
+	Availability []Availability
+}
+
 var projectSpacesMutex sync.Mutex
-var projectSpaces = make(map[string]chan<- ConnectionForSpace)
+var projectSpaces = make(map[string]ProjectSpaceContactPoint)
+
+// When a change is applied to a user (availability), this function will retransmit the data to all of the projects that the user is a member of
+func requeryUser(user User) {
+	projectSpacesMutex.Lock()
+	defer projectSpacesMutex.Unlock()
+
+	for _, project := range user.Projects {
+		if contactPoint, exists := projectSpaces[project]; exists {
+			contactPoint.requeryRequest <- struct{}{}
+		}
+	}
+}
 
 func joinSpace(projectId string) ConnectionForSocket {
 	projectSpacesMutex.Lock()
 	defer projectSpacesMutex.Unlock()
 
 	if _, ok := projectSpaces[projectId]; !ok {
-		channel := make(chan ConnectionForSpace)
-		go projectSpace(channel, projectId)
-		projectSpaces[projectId] = channel
+		contactPoint := ProjectSpaceContactPoint{
+			sendNewConnection: make(chan ConnectionForSpace),
+			requeryRequest:    make(chan struct{}),
+		}
+		go projectSpace(contactPoint, projectId)
+		projectSpaces[projectId] = contactPoint
 	}
 
 	state_chan := make(chan []byte)
 	command_chan := make(chan Command)
 
-	projectSpaces[projectId] <- ConnectionForSpace{state_tx: state_chan, command_rx: command_chan}
+	projectSpaces[projectId].sendNewConnection <- ConnectionForSpace{state_tx: state_chan, command_rx: command_chan}
 
 	return ConnectionForSocket{
 		state_rx:   state_chan,
@@ -47,8 +75,16 @@ func joinSpace(projectId string) ConnectionForSocket {
 	}
 }
 
-func encodeProject(project Project) []byte {
-	encoded, err := json.Marshal(project)
+type ProjectAndUsers struct {
+	Project Project
+	Users   []UserInProject
+}
+
+func encodeProject(project Project, users []UserInProject) []byte {
+	encoded, err := json.Marshal(ProjectAndUsers{
+		Project: project,
+		Users:   users,
+	})
 	if err != nil {
 		panic(err)
 	}
@@ -69,13 +105,16 @@ func timeout(channel chan<- struct{}) {
 	channel <- struct{}{}
 }
 
-func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string) {
+func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 	defer func() {
 		projectSpacesMutex.Lock()
 		defer projectSpacesMutex.Unlock()
 
 		delete(projectSpaces, projectId)
 	}()
+
+	connectionsChannel := contactPoint.sendNewConnection
+	requeryChannel := contactPoint.requeryRequest
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -86,6 +125,8 @@ func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string
 		panic(err)
 	}
 
+	users := queryUsers(project.Users)
+
 	var noConnectionsTimeout = make(chan struct{})
 
 	go timeout(noConnectionsTimeout)
@@ -95,12 +136,14 @@ func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string
 	for {
 		select {
 		case newConnection := <-connectionsChannel:
-			newConnection.state_tx <- encodeProject(project)
+			newConnection.state_tx <- encodeProject(project, users)
 			connections = append(connections, newConnection)
 		case _ = <-noConnectionsTimeout:
 			if len(connections) == 0 {
 				return
 			}
+		case _ = <-requeryChannel:
+			users = queryUsers(project.Users)
 		default:
 		}
 
@@ -128,12 +171,14 @@ func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string
 				command.apply(&project)
 
 				if _, is := command.(UserLeave); is {
+					users = queryUsers(project.Users)
 					if !existingInviteLinks(project) && maybeDeleteProject(project) {
 						return
 					}
 				}
 
 				if _, is := command.(Delete); is {
+					users = queryUsers(project.Users)
 					if maybeDeleteProject(project) {
 						return
 					}
@@ -147,7 +192,7 @@ func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string
 		}
 
 		if appliedCommand {
-			encoded := encodeProject(project)
+			encoded := encodeProject(project, users)
 
 			for _, connection := range connections {
 				connection.state_tx <- encoded
@@ -162,6 +207,33 @@ func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string
 			}
 		}
 	}
+}
+
+func queryUsers(users []UserAndLeft) []UserInProject {
+	out := []UserInProject{}
+
+	for _, user := range users {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		filter := bson.D{{Key: "_id", Value: user.User}}
+		var userInDB User
+		err := db.Collection("users").FindOne(ctx, filter).Decode(&userInDB)
+		if err != nil {
+			panic(err)
+		}
+
+		userInProject := UserInProject{
+			Id:           user.User,
+			LeftProject:  user.LeftProject,
+			FirstName:    userInDB.FirstName,
+			LastName:     userInDB.LastName,
+			Availability: userInDB.Availability,
+		}
+
+		out = append(out, userInProject)
+	}
+
+	return out
 }
 
 func existingInviteLinks(project Project) bool {

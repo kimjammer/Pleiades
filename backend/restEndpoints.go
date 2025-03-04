@@ -54,7 +54,7 @@ func newProjectHandler(c *gin.Context) {
 	filter := bson.D{{"_id", userId}}
 
 	var crrUser User
-	err := db.Collection("users").FindOne(context.TODO(), filter).Decode(&crrUser)
+	err := db.Collection("users").FindOne(c, filter).Decode(&crrUser)
 	if err != nil {
 		//TODO: Add error handling for user not found
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found"})
@@ -123,26 +123,39 @@ func checkEmail(c *gin.Context) {
 }
 
 func registerUser(c *gin.Context) {
-	var newUser User
+	var userFromClient User
 	log.Println("registering new user")
-	if err := c.ShouldBindJSON(&newUser); err != nil {
+	if err := c.ShouldBindJSON(&userFromClient); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
 
-	hashedPassword, err := encryptPassword(newUser.Password)
+	hashedPassword, err := encryptPassword(userFromClient.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
 	} else {
-		newUser.Password = hashedPassword
+		userFromClient.Password = hashedPassword
 	}
 
 	//TODO debug this
-	newUser.Id = uuid.New().String()
+	id := uuid.New().String()
+
+	user := User{
+		Id:           id,
+		FirstName:    userFromClient.FirstName,
+		LastName:     userFromClient.LastName,
+		Email:        userFromClient.Email,
+		Password:     hashedPassword,
+		PhoneNumber:  userFromClient.PhoneNumber,
+		UserPhoto:    userFromClient.UserPhoto,
+		Availability: []Availability{},
+		Projects:     []string{},
+	}
+
 	//Insert new user into db
 	collection := db.Collection("users")
-	_, err = collection.InsertOne(context.TODO(), newUser)
+	_, err = collection.InsertOne(context.TODO(), user)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert user"})
@@ -150,7 +163,7 @@ func registerUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"success": true})
-	log.Println("Created User with Id: ", newUser.Id)
+	log.Println("Created User with Id: ", user.Id)
 }
 
 func login(c *gin.Context) {

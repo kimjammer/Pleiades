@@ -86,34 +86,76 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
 }
 
 function updateState(serverResponse: any, state: ProjectState) {
-    state.id = serverResponse.Id
-    state.title = serverResponse.Title
-    state.description = serverResponse.Description
-    state.demoButtonState = serverResponse.DemoButtonState
+    console.log(serverResponse)
+    updateProject(serverResponse.Project, state)
+
+    while (state.users.length > serverResponse.Users.length) {
+        state.users.pop()
+    }
+
+    while (state.users.length < serverResponse.Users.length) {
+        state.users.push(new UserInProject())
+    }
+
+    for (let i = 0; i < state.users.length; i++) {
+        updateUser(serverResponse.Users[i], state.users[i])
+    }
+}
+
+function updateUser(serverUser: any, user: UserInProject) {
+    user.id = serverUser.Id
+    user.leftProject = serverUser.LeftProject
+    user.firstName = serverUser.FirstName
+    user.lastName = serverUser.LastName
+
+    while (user.availability.length > serverUser.Availability.length) {
+        user.availability.pop()
+    }
+
+    while (user.availability.length < serverUser.Availability.length) {
+        user.availability.push(new Availability())
+    }
+
+    for (let i = 0; i < user.availability.length; i++) {
+        updateAvailability(serverUser.Availability[i], user.availability[i])
+    }
+}
+
+function updateAvailability(serverAvailability: any, availability: Availability) {
+    availability.dayOfWeek = serverAvailability.DayOfWeek
+    availability.startOffset = serverAvailability.StartOffset
+    availability.endOffset = serverAvailability.EndOffset
+}
+
+function updateProject(serverProject: any, state: ProjectState) {
+    state.id = serverProject.Id
+    state.title = serverProject.Title
+    state.description = serverProject.Description
+    state.demoButtonState = serverProject.DemoButtonState
     // TODO: Make the server send more comprehensive user info
 
-    while (state.tasks.length > serverResponse.Tasks.length) {
+    while (state.tasks.length > serverProject.Tasks.length) {
         state.tasks.pop()
     }
 
-    while (state.tasks.length < serverResponse.Tasks.length) {
+    while (state.tasks.length < serverProject.Tasks.length) {
         state.tasks.push(new Task())
     }
 
     for (let i = 0; i < state.tasks.length; i++) {
-        updateTask(serverResponse.Tasks[i], state.tasks[i])
+        updateTask(serverProject.Tasks[i], state.tasks[i])
     }
 
-    while (state.polls.length > serverResponse.Polls.length) {
+    while (state.polls.length > serverProject.Polls.length) {
         state.polls.pop()
     }
 
-    while (state.polls.length < serverResponse.Polls.length) {
+    while (state.polls.length < serverProject.Polls.length) {
         state.polls.push(new Poll())
     }
 
     for (let i = 0; i < state.polls.length; i++) {
-        updatePoll(serverResponse.Polls[i], state.polls[i])
+        updatePoll(serverProject.Polls[i], state.polls[i])
     }
 }
 
@@ -182,6 +224,7 @@ export class Availability {
 
 export class UserInProject {
     id: string = $state("")
+    leftProject: boolean = $state(false)
     firstName: string = $state("")
     lastName: string = $state("")
     availability: Availability[] = $state([])

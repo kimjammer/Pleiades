@@ -44,13 +44,14 @@ func resetDB() {
 
 	//Create a user
 	user := User{
-		Id:          "c8478bcd-51fe-486d-965d-c8a8837c577c",
-		FirstName:   "Joe",
-		LastName:    "Smith",
-		Email:       "example@example.com",
-		Password:    "notthepassword",
-		PhoneNumber: "1234567890",
-		Projects:    []string{"53ed4d28-9279-4b4e-9256-b1e693332625"},
+		Id:           "c8478bcd-51fe-486d-965d-c8a8837c577c",
+		FirstName:    "Joe",
+		LastName:     "Smith",
+		Email:        "example@example.com",
+		Password:     "notthepassword",
+		PhoneNumber:  "1234567890",
+		Projects:     []string{"53ed4d28-9279-4b4e-9256-b1e693332625"},
+		Availability: []Availability{},
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err == nil {
