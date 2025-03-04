@@ -1,5 +1,6 @@
 <script lang="ts">
-    import {ManualInput, weekdayDateRanges} from "availability-selector";
+    import ManualInput from "$lib/availability/ManualInput.svelte";
+    import {weekdayDateRanges} from "$lib/availability/timeutils";
   
     let tzOffset = 0;
     const ranges = weekdayDateRanges();
