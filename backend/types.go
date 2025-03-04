@@ -1,10 +1,15 @@
 package main
 
+type UserAndLeft struct {
+	User        string
+	LeftProject bool
+}
+
 type Project struct {
 	Id              string `bson:"_id"`
 	Title           string
 	Description     string
-	Users           []string
+	Users           []UserAndLeft
 	Tasks           []Task
 	Polls           []Poll
 	DemoButtonState string

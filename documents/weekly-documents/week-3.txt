@@ -1,0 +1,13 @@
+=== Weekly Team Report (Team 5: Pleiades) ===
+
+Week 3 (Summary) (Scrum Master: Ethan Dawes)
+3/4 1.5hr 4f525ee UI and basic handling for leaving groups
+
+Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
+[Meetings]
+
+[Individual goals]
+Henry: Implement leaving and deleting projects
+John: Work on the project dashboard and displaying project state from the backend
+Cate: Create tests for registration and login, and use cookies to store current login
+Ethan: Get availability input working, integrate with server

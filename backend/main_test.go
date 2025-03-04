@@ -61,7 +61,7 @@ func resetDB() {
 		Id:          "53ed4d28-9279-4b4e-9256-b1e693332625",
 		Title:       "Test Project",
 		Description: "Test Description",
-		Users:       []string{"c8478bcd-51fe-486d-965d-c8a8837c577c"},
+		Users:       []UserAndLeft{{"c8478bcd-51fe-486d-965d-c8a8837c577c", false}},
 		Tasks:       []Task{},
 		Polls:       []Poll{},
 	}

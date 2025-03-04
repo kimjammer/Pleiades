@@ -78,7 +78,7 @@ func newProjectHandler(c *gin.Context) {
 		Id:          uuid.New().String(),
 		Title:       newProject.Title,
 		Description: newProject.Description,
-		Users:       []string{crrUser.Id},
+		Users:       []UserAndLeft{{crrUser.Id, false}},
 		Tasks:       []Task{},
 		Polls:       []Poll{},
 	}

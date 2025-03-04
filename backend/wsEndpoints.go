@@ -150,6 +150,16 @@ func handleConnection(conn *websocket.Conn, userId string) {
 		projectSpace.command_tx <- decodedCommand
 
 		if command.Name == "leave" {
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+
+			filter := bson.D{{"_id", userId}}
+			update := bson.D{{"$pull", bson.D{{"projects", projectId}}}}
+			_, err = db.Collection("users").UpdateOne(ctx, filter, update)
+			if err != nil {
+				panic(err)
+			}
+
 			return
 		}
 	}
@@ -177,7 +187,13 @@ type UserLeave struct {
 }
 
 func (self UserLeave) apply(state *Project) {
-	log.Println("Leave")
+	log.Println("Applying Leave")
+	for i, user := range state.Users {
+		if user.User == self.userId {
+			log.Println("Found user that left")
+			state.Users[i].LeftProject = true
+		}
+	}
 }
 
 func decodeCommand(command CommandMessage, userId string) Command {
