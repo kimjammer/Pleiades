@@ -1,0 +1,15 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: Henry
+
+Week 2 (Summary)
+2/24 0.5hr d49faa6 Define the project schema on the frontend
+2/24 0.5hr 72cbfae Allow the client to recieve data from the server
+2/25 2hr   24323aa Allow websockets in the same project group to communicate with each other
+2/25 2hr   55b0d01 Networking with the demo at bottom kinda works
+2/28 0.5hr 02fca0e Make tokens work with websockets
+2/28 0.5hr 65f9e18 Debug websockets, add timeouts to group spaces, and make them work!
+3/2  0.5hr 024a8af Make websockets reconnect on network failure
+
+Week 3 (Plan)
+3/3 3hr Implement leaving groups
+3/5 3hr Implement deleting groups

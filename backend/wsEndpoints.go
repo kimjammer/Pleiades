@@ -145,9 +145,13 @@ func handleConnection(conn *websocket.Conn, userId string) {
 			panic(err)
 		}
 
-		decodedCommand := decodeCommand(command)
+		decodedCommand := decodeCommand(command, userId)
 
 		projectSpace.command_tx <- decodedCommand
+
+		if command.Name == "leave" {
+			return
+		}
 	}
 }
 
@@ -168,7 +172,15 @@ func (self DemoButtonCommand) apply(state *Project) {
 	}
 }
 
-func decodeCommand(command CommandMessage) Command {
+type UserLeave struct {
+	userId string
+}
+
+func (self UserLeave) apply(state *Project) {
+	log.Println("Leave")
+}
+
+func decodeCommand(command CommandMessage, userId string) Command {
 	if command.Name == "demoButtonState" {
 		var newState string
 		err := json.Unmarshal(command.Args, &newState)
@@ -177,6 +189,10 @@ func decodeCommand(command CommandMessage) Command {
 		}
 
 		return DemoButtonCommand{newState}
+	}
+
+	if command.Name == "leave" {
+		return UserLeave{userId: userId}
 	}
 
 	log.Println("Command:", command)

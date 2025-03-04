@@ -1,6 +1,8 @@
 <script lang="ts">
     import { connectToProject, ProjectState } from "$lib/project_state.svelte"
     import { onMount } from "svelte"
+    import * as Dialog from "$lib/components/ui/dialog"
+    import { Button } from "$lib/components/ui/button"
 
     let projectId = $state("")
 
@@ -8,6 +10,8 @@
 
     let key = $state("Key")
     let value = $state("Value")
+
+    let leaveDialogOpen = $state(false)
 
     onMount(() => {
         //Grab project ID from URL
@@ -28,6 +32,27 @@
         value="X"
         oninput={e => project.updateInProject("reactive_testing.bruh", e.currentTarget.value)}
     />
+
+    <Dialog.Root bind:open={leaveDialogOpen}>
+        <Dialog.Trigger>
+            <Button>Leave Project</Button>
+        </Dialog.Trigger>
+        <Dialog.Content>
+            <Dialog.Header>Are you sure you want to leave the project?</Dialog.Header>
+            <div>
+                <Button
+                    onclick={() => {
+                        project.leave()
+                    }}>Confirm</Button
+                >
+                <Button
+                    onclick={() => {
+                        leaveDialogOpen = false
+                    }}>Cancel</Button
+                >
+            </div>
+        </Dialog.Content>
+    </Dialog.Root>
 
     <p>{project.reactive_testing.bruh}</p>
 

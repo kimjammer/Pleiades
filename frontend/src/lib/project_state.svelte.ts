@@ -17,7 +17,7 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
         let state = new ProjectState(socket)
         let gotFirstProjectState = false
 
-        let onmessage = (message: MessageEvent) => {
+        let onmessage = function (this: WebSocket, message: MessageEvent) {
             let text = message.data
 
             if (typeof text != "string") {
@@ -36,10 +36,12 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
             }
 
             if (text == "UNAUTHORIZED") {
+                this.close()
                 window.location.replace("/login")
             }
 
             if (text == "PROJECT ID DNE") {
+                this.close()
                 window.location.replace("/home")
                 return
             }
@@ -68,8 +70,13 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
 
         let onclose = () => {
             setTimeout(() => {
+                if (window.location.pathname != "/project") {
+                    return
+                }
+
                 console.log("Trying to rejoin")
                 socket = new WebSocket("ws://" + PUBLIC_API_HOST + "/ws")
+                state.socket = socket
                 joinSocket(socket)
             }, 500)
         }
@@ -239,6 +246,16 @@ export class ProjectState {
                 Args: option,
             }),
         )
+    }
+
+    leave() {
+        this.socket.send(
+            JSON.stringify({
+                Name: "leave",
+                Args: {},
+            }),
+        )
+        window.location.replace("/home")
     }
 
     appendInProject(key: string, value: any) {
