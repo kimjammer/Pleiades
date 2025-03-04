@@ -258,6 +258,16 @@ export class ProjectState {
         window.location.replace("/home")
     }
 
+    delete() {
+        this.socket.send(
+            JSON.stringify({
+                Name: "delete",
+                Args: {},
+            }),
+        )
+        window.location.replace("/home")
+    }
+
     appendInProject(key: string, value: any) {
         traverseObject(
             this,

@@ -126,6 +126,19 @@ func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string
 				}
 
 				command.apply(&project)
+
+				if _, is := command.(UserLeave); is {
+					if !existingInviteLinks(project) && maybeDeleteProject(project) {
+						return
+					}
+				}
+
+				if _, is := command.(Delete); is {
+					if maybeDeleteProject(project) {
+						return
+					}
+				}
+
 				appliedCommand = true
 			default:
 			}
@@ -149,4 +162,27 @@ func projectSpace(connectionsChannel <-chan ConnectionForSpace, projectId string
 			}
 		}
 	}
+}
+
+func existingInviteLinks(project Project) bool {
+	// TODO
+	return true
+}
+
+func maybeDeleteProject(project Project) bool {
+	for _, user := range project.Users {
+		if !user.LeftProject {
+			return false
+		}
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	filter := bson.D{{Key: "_id", Value: project.Id}}
+	_, err := db.Collection("projects").DeleteOne(ctx, filter)
+	if err != nil {
+		panic(err)
+	}
+
+	return true
 }

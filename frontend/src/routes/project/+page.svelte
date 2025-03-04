@@ -12,6 +12,7 @@
     let value = $state("Value")
 
     let leaveDialogOpen = $state(false)
+    let deleteDialogOpen = $state(false)
 
     onMount(() => {
         //Grab project ID from URL
@@ -48,6 +49,27 @@
                 <Button
                     onclick={() => {
                         leaveDialogOpen = false
+                    }}>Cancel</Button
+                >
+            </div>
+        </Dialog.Content>
+    </Dialog.Root>
+
+    <Dialog.Root bind:open={deleteDialogOpen}>
+        <Dialog.Trigger>
+            <Button>Delete Project</Button>
+        </Dialog.Trigger>
+        <Dialog.Content>
+            <Dialog.Header>Are you sure you want to delete the project?</Dialog.Header>
+            <div>
+                <Button
+                    onclick={() => {
+                        project.delete()
+                    }}>Confirm</Button
+                >
+                <Button
+                    onclick={() => {
+                        deleteDialogOpen = false
                     }}>Cancel</Button
                 >
             </div>

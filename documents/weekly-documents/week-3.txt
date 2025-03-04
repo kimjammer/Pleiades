@@ -2,6 +2,7 @@
 
 Week 3 (Summary) (Scrum Master: Ethan Dawes)
 3/4 1.5hr 4f525ee UI and basic handling for leaving groups
+3/4 1.5hr 2adcc5b Leaving groups works
 
 Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
 [Meetings]
