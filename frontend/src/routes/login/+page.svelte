@@ -28,6 +28,7 @@
                                     `/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
             method: "GET",
             mode: "cors",
+            credentials: "include", //for cookies
             headers: { "Content-Type": "application/json" },
         })
 

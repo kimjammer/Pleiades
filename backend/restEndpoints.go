@@ -3,23 +3,31 @@ package main
 import (
 	"errors"
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
+
 	"log"
 	"net/http"
 )
 
 func projectsHandler(c *gin.Context) {
 	//Get current user
-	userId, _ := c.Get("userId")
-
-	filter := bson.D{{Key: "_id", Value: userId}}
+	userId, _ := c.Cookie("token")
+	userId, err := verifyToken(userId)
+	if err != nil {
+		log.Println("Invalid token:", err)
+	}
+	log.Println("Token belongs to user:", userId)
+	objId, _ := primitive.ObjectIDFromHex(userId)
+	filter := bson.D{{Key: "_id", Value: objId}}
 	var crrUser User
-	err := db.Collection("users").FindOne(c, filter).Decode(&crrUser)
+	err = db.Collection("users").FindOne(c, filter).Decode(&crrUser)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			//TODO: Add error handling for user not found
@@ -50,19 +58,27 @@ func projectsHandler(c *gin.Context) {
 func newProjectHandler(c *gin.Context) {
 	log.Println("Creating New Project")
 	//Get current user
-	userId, _ := c.Get("userId")
-	filter := bson.D{{"_id", userId}}
+	userId, _ := c.Cookie("token")
+	userId, err := verifyToken(userId)
+	if err != nil {
+		log.Println("Invalid token:", err)
+	}
+	log.Println("Token belongs to user:", userId)
+	objId, _ := primitive.ObjectIDFromHex(userId)
+	filter := bson.D{{Key: "_id", Value: objId}}
 
 	var crrUser User
-	err := db.Collection("users").FindOne(c, filter).Decode(&crrUser)
+	err = db.Collection("users").FindOne(c, filter).Decode(&crrUser)
 	if err != nil {
 		//TODO: Add error handling for user not found
+		log.Println("User not found!")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found"})
 		return
 	}
 
 	var newProject NewProjectRequest
 	if err := c.ShouldBindJSON(&newProject); err != nil {
+		log.Println("Invalid JSON data")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
@@ -78,7 +94,7 @@ func newProjectHandler(c *gin.Context) {
 		Id:          uuid.New().String(),
 		Title:       newProject.Title,
 		Description: newProject.Description,
-		Users:       []UserAndLeft{{crrUser.Id, false}},
+		Users:       []UserAndLeft{{crrUser.Id.Hex(), false}},
 		Tasks:       []Task{},
 		Polls:       []Poll{},
 	}
@@ -109,8 +125,7 @@ func checkEmail(c *gin.Context) {
 	collection := db.Collection("users")
 	var result bson.M
 
-	//use c instead of context.TODO()???
-	err := collection.FindOne(context.TODO(), bson.M{"email": email}).Decode(&result)
+	err := collection.FindOne(c.Request.Context(), bson.M{"email": email}).Decode(&result)
 
 	if err == mongo.ErrNoDocuments {
 		c.JSON(http.StatusOK, gin.H{"exists": false})
@@ -123,39 +138,25 @@ func checkEmail(c *gin.Context) {
 }
 
 func registerUser(c *gin.Context) {
-	var userFromClient User
+	var newUser User
 	log.Println("registering new user")
-	if err := c.ShouldBindJSON(&userFromClient); err != nil {
+	if err := c.ShouldBindJSON(&newUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
 
-	hashedPassword, err := encryptPassword(userFromClient.Password)
+	hashedPassword, err := encryptPassword(newUser.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
 	} else {
-		userFromClient.Password = hashedPassword
+		newUser.Password = hashedPassword
 	}
 
-	//TODO debug this
-	id := uuid.New().String()
-
-	user := User{
-		Id:           id,
-		FirstName:    userFromClient.FirstName,
-		LastName:     userFromClient.LastName,
-		Email:        userFromClient.Email,
-		Password:     hashedPassword,
-		PhoneNumber:  userFromClient.PhoneNumber,
-		UserPhoto:    userFromClient.UserPhoto,
-		Availability: []Availability{},
-		Projects:     []string{},
-	}
-
+	newUser.Id = primitive.NewObjectID()
 	//Insert new user into db
 	collection := db.Collection("users")
-	_, err = collection.InsertOne(context.TODO(), user)
+	_, err = collection.InsertOne(c.Request.Context(), newUser)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert user"})
@@ -163,19 +164,22 @@ func registerUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"success": true})
-	log.Println("Created User with Id: ", user.Id)
+
+	//set cookie upon successful registration (cookie is user id)
+	token := makeToken(newUser.Id.Hex())
+	c.SetSameSite(http.SameSiteNoneMode)
+	c.SetCookie("token", token, 3600, "/", "", true, true)
+	log.Println("Created User with Id: ", newUser.Id)
 }
 
 func login(c *gin.Context) {
-	//TODO: fix password checking
-	//TODO: delete the dummy accounts T-T make better ones
-	listUsers()
+	//listUsers()
 	email := c.Query("email")
 	password := c.Query("password")
-	var result bson.M
+	var user User
 
 	log.Println("fetching from database")
-	err := db.Collection("users").FindOne(context.TODO(), bson.M{"email": email}).Decode(&result)
+	err := db.Collection("users").FindOne(c.Request.Context(), bson.M{"email": email}).Decode(&user)
 
 	if err == mongo.ErrNoDocuments {
 		c.JSON(http.StatusOK, gin.H{"exists": false})
@@ -183,21 +187,26 @@ func login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 	} else {
 		//check if passwords match
-		if checkPassword(result["password"].(string), password) {
+		if checkPassword(user.Password, password) {
 			c.JSON(http.StatusOK, gin.H{"exists": true})
+			//set cookie upon successful login (cookie is user id)
+			log.Println("User id: ", user.Id, user.Id.Hex())
+			token := makeToken(user.Id.Hex())
+			c.SetSameSite(http.SameSiteNoneMode)
+			c.SetCookie("token", token, 3600, "/", "", true, true)
 		} else {
 			c.JSON(http.StatusOK, gin.H{"exists": false})
 		}
 	}
+
 }
 
 // TODO: Frontend e2e testing uses this button/route. Figure out solution for this before removing
 func fakeLogin(c *gin.Context) {
-	//Find first user
 	var user User
-	_ = db.Collection("users").FindOne(context.TODO(), bson.D{}).Decode(&user)
+	_ = db.Collection("users").FindOne(c.Request.Context(), bson.D{}).Decode(&user)
 
-	token := makeToken(user.Id)
+	token := makeToken(user.Id.Hex())
 	c.SetSameSite(http.SameSiteNoneMode)
 	c.SetCookie("token", token, 3600, "/", "", true, true)
 	c.Status(http.StatusOK)
@@ -244,4 +253,16 @@ func listUsers() {
 	if err := cursor.Err(); err != nil {
 		log.Fatal("Cursor error:", err)
 	}
+}
+
+// TEMPORARY
+func deleteAllUsers() {
+	collection := db.Collection("users") // Reference the "users" collection
+
+	result, err := collection.DeleteMany(context.TODO(), bson.M{}) // Empty filter {} means delete all
+	if err != nil {
+		log.Fatal("Error deleting users:", err)
+	}
+
+	log.Printf("Deleted %d users from the database\n", result.DeletedCount)
 }

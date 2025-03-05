@@ -1,5 +1,7 @@
 package main
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type UserAndLeft struct {
 	User        string
 	LeftProject bool
@@ -16,7 +18,7 @@ type Project struct {
 }
 
 type User struct {
-	Id           string `bson:"_id"`
+	Id           primitive.ObjectID `bson:"_id,omitempty"`
 	FirstName    string
 	LastName     string
 	Email        string
