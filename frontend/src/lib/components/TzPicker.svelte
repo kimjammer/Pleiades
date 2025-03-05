@@ -6,35 +6,19 @@
     import * as Popover from "$lib/components/ui/popover";
     import { Button } from "$lib/components/ui/button";
     import { cn } from "$lib/utils.js";
+    import { getAllTzNames, getLocalTzName, getTzOffset } from "$lib/availability/timeutils"
     
-    const frameworks = [
-     {
-      value: "sveltekit",
-      label: "SvelteKit"
-     },
-     {
-      value: "next.js",
-      label: "Next.js"
-     },
-     {
-      value: "nuxt.js",
-      label: "Nuxt.js"
-     },
-     {
-      value: "remix",
-      label: "Remix"
-     },
-     {
-      value: "astro",
-      label: "Astro"
-     }
-    ];
+    const timezones = getAllTzNames().map(tz => ({
+      value: getTzOffset(tz),
+      label: tz,
+     }));
     
     let open = false;
-    let value = "";
+    let value = getLocalTzName();
+    $: console.log(value, selectedValue);
     
     $: selectedValue =
-     frameworks.find((f) => f.value === value)?.label ?? "Select a framework...";
+     timezones.find((f) => f.label === value)?.value;
     
     // We want to refocus the trigger button when the user selects
     // an item from the list so users can continue navigating the
@@ -56,18 +40,18 @@
       aria-expanded={open}
       class="w-[200px] justify-between"
      >
-      {selectedValue}
+      {value}
       <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
      </Button>
     </Popover.Trigger>
-    <Popover.Content class="w-[200px] p-0">
+    <Popover.Content class="w-[200px] h-[500px] p-0">
      <Command.Root>
-      <Command.Input placeholder="Search framework..." />
-      <Command.Empty>No framework found.</Command.Empty>
-      <Command.Group>
-       {#each frameworks as framework}
+      <Command.Input placeholder="Search timezones..." />
+      <Command.Empty>No timezones found.</Command.Empty>
+      <Command.Group class="overflow-y-auto">
+       {#each timezones as timezone}
         <Command.Item
-         value={framework.value}
+         value={timezone.label}
          onSelect={(currentValue) => {
           value = currentValue;
           closeAndFocusTrigger(ids.trigger);
@@ -76,14 +60,13 @@
          <Check
           class={cn(
            "mr-2 h-4 w-4",
-           value !== framework.value && "text-transparent"
+           value !== timezone.label && "text-transparent"
           )}
          />
-         {framework.label}
+         {timezone.label}
         </Command.Item>
        {/each}
       </Command.Group>
      </Command.Root>
     </Popover.Content>
    </Popover.Root>
-   

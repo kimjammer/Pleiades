@@ -17,7 +17,9 @@
 			"extensions": [
 				"mongodb.mongodb-vscode",
 				"golang.Go",
-				"svelte.svelte-vscode"
+				"svelte.svelte-vscode",
+				"bradlc.vscode-tailwindcss",
+				"esbenp.prettier-vscode"
 			]
 		}
 	},
