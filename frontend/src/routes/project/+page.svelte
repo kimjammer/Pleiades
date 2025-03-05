@@ -2,9 +2,10 @@
     import { connectToProject, ProjectState } from "$lib/project_state.svelte"
     import { onMount } from "svelte"
     import * as Dialog from "$lib/components/ui/dialog"
-    import * as Tabs from "$lib/components/ui/tabs/index.js";
+    import * as Tabs from "$lib/components/ui/tabs/index.js"
     import { Button } from "$lib/components/ui/button"
     import PleiadesNav from "$lib/components/PleiadesNav.svelte"
+    import QrAlert from "./QrAlert.svelte"
 
     let projectId = $state("")
 
@@ -35,11 +36,16 @@
         >
             {project.title}
         </h2>
-        <p class="leading-7 [&:not(:first-child)]:mt-6 my-5">
+        <p class="my-5 leading-7 [&:not(:first-child)]:mt-6">
             {project.description}
         </p>
 
-        <Tabs.Root value="tasks" class="w-[400px]">
+        <QrAlert />
+
+        <Tabs.Root
+            value="tasks"
+            class="w-[400px]"
+        >
             <Tabs.List>
                 <Tabs.Trigger value="tasks">Task Board</Tabs.Trigger>
                 <Tabs.Trigger value="calendar">Calendar</Tabs.Trigger>
@@ -47,16 +53,10 @@
                 <Tabs.Trigger value="debug">Debugging</Tabs.Trigger>
             </Tabs.List>
             <Tabs.Content value="tasks">
-                <div>
-
-                </div>
+                <div></div>
             </Tabs.Content>
 
-
-            <Tabs.Content value="calendar">
-                Todo: Monthly calendar view here!!!
-            </Tabs.Content>
-
+            <Tabs.Content value="calendar">Todo: Monthly calendar view here!!!</Tabs.Content>
 
             <Tabs.Content value="settings">
                 <Dialog.Root bind:open={leaveDialogOpen}>
@@ -68,13 +68,13 @@
                         <div>
                             <Button
                                 onclick={() => {
-                        project.leave()
-                    }}>Confirm</Button
+                                    project.leave()
+                                }}>Confirm</Button
                             >
                             <Button
                                 onclick={() => {
-                        leaveDialogOpen = false
-                    }}>Cancel</Button
+                                    leaveDialogOpen = false
+                                }}>Cancel</Button
                             >
                         </div>
                     </Dialog.Content>
@@ -89,19 +89,18 @@
                         <div>
                             <Button
                                 onclick={() => {
-                        project.delete()
-                    }}>Confirm</Button
+                                    project.delete()
+                                }}>Confirm</Button
                             >
                             <Button
                                 onclick={() => {
-                        deleteDialogOpen = false
-                    }}>Cancel</Button
+                                    deleteDialogOpen = false
+                                }}>Cancel</Button
                             >
                         </div>
                     </Dialog.Content>
                 </Dialog.Root>
             </Tabs.Content>
-
 
             <Tabs.Content value="debug">
                 <h1>Project page for {project.title}!</h1>
@@ -109,15 +108,19 @@
                 <p>Project ID: {project.id}</p>
                 <input
                     value="X"
-                    oninput={e => project.updateInProject("reactive_testing.bruh", e.currentTarget.value)}
+                    oninput={e =>
+                        project.updateInProject("reactive_testing.bruh", e.currentTarget.value)}
                 />
 
                 <p>{project.reactive_testing.bruh}</p>
 
                 <button
                     onclick={() => {
-            project.appendInProject("reactive_testing.list", project.reactive_testing.bruh)
-        }}>Append</button
+                        project.appendInProject(
+                            "reactive_testing.list",
+                            project.reactive_testing.bruh,
+                        )
+                    }}>Append</button
                 >
 
                 <br />
@@ -128,10 +131,10 @@
 
                 <button
                     onclick={() => {
-            project.deleteInProject(
-                `reactive_testing.list[${Math.floor(project.reactive_testing.list.length / 2)}]`,
-            )
-        }}>Delete Halfway</button
+                        project.deleteInProject(
+                            `reactive_testing.list[${Math.floor(project.reactive_testing.list.length / 2)}]`,
+                        )
+                    }}>Delete Halfway</button
                 >
                 <br />
                 <br />
@@ -145,19 +148,19 @@
 
                 <button
                     onclick={() => {
-            if (project.reactive_testing.values[key] == undefined) {
-                project.appendInProject(`reactive_testing.values.${key}`, value)
-            } else {
-                project.updateInProject(`reactive_testing.values.${key}`, value)
-            }
-        }}>Insert/Update</button
+                        if (project.reactive_testing.values[key] == undefined) {
+                            project.appendInProject(`reactive_testing.values.${key}`, value)
+                        } else {
+                            project.updateInProject(`reactive_testing.values.${key}`, value)
+                        }
+                    }}>Insert/Update</button
                 ><br />
                 <button
                     onclick={() => {
-            if (project.reactive_testing.values[key] != undefined) {
-                project.deleteInProject(`reactive_testing.values.${key}`)
-            }
-        }}>Delete</button
+                        if (project.reactive_testing.values[key] != undefined) {
+                            project.deleteInProject(`reactive_testing.values.${key}`)
+                        }
+                    }}>Delete</button
                 >
 
                 <br />
