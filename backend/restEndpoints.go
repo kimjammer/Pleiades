@@ -99,7 +99,7 @@ func newProjectHandler(c *gin.Context) {
 
 	//Add project to user
 	crrUser.Projects = append(crrUser.Projects, project.Id)
-	update := bson.D{{"$set", bson.D{{"projects", crrUser.Projects}}}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "projects", Value: crrUser.Projects}}}}
 	_, err = db.Collection("users").UpdateOne(c, filter, update)
 	if err != nil {
 		log.Println("Error updating user with new project: ", err)
@@ -147,6 +147,7 @@ func registerUser(c *gin.Context) {
 
 	newUser.Id = primitive.NewObjectID()
 	newUser.Availability = []Availability{}
+	newUser.Projects = []string{}
 	//Insert new user into db
 	collection := db.Collection("users")
 	_, err = collection.InsertOne(c.Request.Context(), newUser)
@@ -231,7 +232,7 @@ func invite(c *gin.Context) {
 
 	// Create 1 week ttl TODO: is this ok to do every time or is there a better init location?
 	indexModel := mongo.IndexModel{
-		Keys: bson.D{{"CreatedAt", 1}},
+		Keys: bson.D{{Key: "CreatedAt", Value: 1}},
 		Options: options.Index().SetExpireAfterSeconds(604800).SetName("ttl_index"),
 	}
 	invitations.Indexes().CreateOne(c, indexModel)
