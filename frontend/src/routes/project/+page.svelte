@@ -1,11 +1,9 @@
 <script lang="ts">
     import { connectToProject, ProjectState } from "$lib/project_state.svelte"
     import { onMount } from "svelte"
-    import * as Dialog from "$lib/components/ui/dialog"
     import * as Tabs from "$lib/components/ui/tabs/index.js"
-    import { Button } from "$lib/components/ui/button"
     import PleiadesNav from "$lib/components/PleiadesNav.svelte"
-    import QrAlert from "./QrAlert.svelte"
+    import SettingsTab from "./SettingsTab.svelte"
 
     let projectId = $state("")
 
@@ -13,9 +11,6 @@
 
     let key = $state("Key")
     let value = $state("Value")
-
-    let leaveDialogOpen = $state(false)
-    let deleteDialogOpen = $state(false)
 
     onMount(() => {
         //Grab project ID from URL
@@ -40,8 +35,6 @@
             {project.description}
         </p>
 
-        <QrAlert />
-
         <Tabs.Root
             value="tasks"
             class="w-[400px]"
@@ -58,49 +51,7 @@
 
             <Tabs.Content value="calendar">Todo: Monthly calendar view here!!!</Tabs.Content>
 
-            <Tabs.Content value="settings">
-                <Dialog.Root bind:open={leaveDialogOpen}>
-                    <Dialog.Trigger>
-                        <Button>Leave Project</Button>
-                    </Dialog.Trigger>
-                    <Dialog.Content>
-                        <Dialog.Header>Are you sure you want to leave the project?</Dialog.Header>
-                        <div>
-                            <Button
-                                onclick={() => {
-                                    project.leave()
-                                }}>Confirm</Button
-                            >
-                            <Button
-                                onclick={() => {
-                                    leaveDialogOpen = false
-                                }}>Cancel</Button
-                            >
-                        </div>
-                    </Dialog.Content>
-                </Dialog.Root>
-
-                <Dialog.Root bind:open={deleteDialogOpen}>
-                    <Dialog.Trigger>
-                        <Button>Delete Project</Button>
-                    </Dialog.Trigger>
-                    <Dialog.Content>
-                        <Dialog.Header>Are you sure you want to delete the project?</Dialog.Header>
-                        <div>
-                            <Button
-                                onclick={() => {
-                                    project.delete()
-                                }}>Confirm</Button
-                            >
-                            <Button
-                                onclick={() => {
-                                    deleteDialogOpen = false
-                                }}>Cancel</Button
-                            >
-                        </div>
-                    </Dialog.Content>
-                </Dialog.Root>
-            </Tabs.Content>
+            <SettingsTab {project} />
 
             <Tabs.Content value="debug">
                 <h1>Project page for {project.title}!</h1>
