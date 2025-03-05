@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"sync"
 	"time"
 
@@ -215,7 +216,8 @@ func queryUsers(users []UserAndLeft) []UserInProject {
 	for _, user := range users {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		filter := bson.D{{Key: "_id", Value: user.User}}
+		userObjectId, _ := primitive.ObjectIDFromHex(user.User)
+		filter := bson.D{{Key: "_id", Value: userObjectId}}
 		var userInDB User
 		err := db.Collection("users").FindOne(ctx, filter).Decode(&userInDB)
 		if err != nil {

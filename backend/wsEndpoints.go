@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"net/http"
 	"slices"
@@ -54,7 +55,8 @@ func handleConnection(conn *websocket.Conn, userId string) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	filter := bson.D{{Key: "_id", Value: userId}}
+	userObjectId, _ := primitive.ObjectIDFromHex(userId)
+	filter := bson.D{{Key: "_id", Value: userObjectId}}
 	var crrUser User
 	err := db.Collection("users").FindOne(ctx, filter).Decode(&crrUser)
 	if err != nil {
@@ -163,7 +165,8 @@ func leave(userId string, projectId string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	filter := bson.D{{"_id", userId}}
+	userObjectId, _ := primitive.ObjectIDFromHex(userId)
+	filter := bson.D{{Key: "_id", Value: userObjectId}}
 	update := bson.D{{"$pull", bson.D{{"projects", projectId}}}}
 	_, err := db.Collection("users").UpdateOne(ctx, filter, update)
 	if err != nil {
