@@ -3,7 +3,10 @@
     import { onMount } from "svelte"
     import * as Tabs from "$lib/components/ui/tabs/index.js"
     import PleiadesNav from "$lib/components/PleiadesNav.svelte"
-    import SettingsTab from "./SettingsTab.svelte"
+    import SettingsTab from "./settings/SettingsTab.svelte"
+    import TasksTab from "./tasks/TasksTab.svelte"
+    import AvailabilityTab from "./availability/AvailabilityTab.svelte"
+    import CalendarTab from "./calendar/CalendarTab.svelte"
 
     let projectId = $state("")
 
@@ -42,14 +45,16 @@
             <Tabs.List>
                 <Tabs.Trigger value="tasks">Task Board</Tabs.Trigger>
                 <Tabs.Trigger value="calendar">Calendar</Tabs.Trigger>
+                <Tabs.Trigger value="availability">Availability</Tabs.Trigger>
                 <Tabs.Trigger value="settings">Settings</Tabs.Trigger>
                 <Tabs.Trigger value="debug">Debugging</Tabs.Trigger>
             </Tabs.List>
-            <Tabs.Content value="tasks">
-                <div></div>
-            </Tabs.Content>
 
-            <Tabs.Content value="calendar">Todo: Monthly calendar view here!!!</Tabs.Content>
+            <TasksTab {project} />
+
+            <CalendarTab {project} />
+
+            <AvailabilityTab {project} />
 
             <SettingsTab {project} />
 
