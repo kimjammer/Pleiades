@@ -47,7 +47,7 @@
     /** Write to this with events you want to add */
     export let importedEvents = readable<Availability>({})
 
-    /** Bind and read from this to access the current component state */
+    /** Bind and read from this to access the current component state (READ ONLY) */
     export let workingAvailability = writable<Availability>({})
 
     const dispatch = createEventDispatcher<{
@@ -266,7 +266,7 @@
                         {/if}
                     </div>
                     {#if allParticipants.length && colAvailability[blockIndex]}
-                        <Tooltip class="pointer-events-none z-[1000]">
+                        <Tooltip class="pointer-events-none z-[1000] bg-white">
                             <AvailabilityComponent
                                 everyone={allParticipants}
                                 available={colAvailability[blockIndex]}
