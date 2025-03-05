@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
     import { Input } from "$lib/components/ui/input/index"
     import { Button } from "$lib/components/ui/button/index"
     import { PUBLIC_API_HOST } from "$env/static/public"
-    import {goto} from "$app/navigation";
+    import { goto } from "$app/navigation"
 
     let email = ""
     let password = ""
@@ -19,12 +19,12 @@
             firstname: firstname,
             lastname: lastname,
             password: password,
-        };
+        }
         const res = await fetch("http://" + PUBLIC_API_HOST + "/register/new", {
             method: "POST",
             mode: "cors",
             credentials: "include",
-            body: JSON.stringify(user)
+            body: JSON.stringify(user),
         })
         console.log("registration data sent")
 
@@ -42,42 +42,45 @@
     //This func is activated on submit, confirms validity of input to send to server
     //if input invalid, pops up error
     //NOTE: isValid() does NOT handle already existing accounts.
-    async function isValid() {
-
+    async function isValid(ev: MouseEvent) {
+        ev.preventDefault()
         if (!email.includes("@")) {
             error = "Invalid Email"
             return
         }
         //FIRST: Check for if account exists
         console.log("account Exists checking")
-        const res = await fetch("http://" + PUBLIC_API_HOST + `/register/check?email=${encodeURIComponent(email)}`, {
-            method: "GET",
-            mode: "cors",
-            headers: {
-                'Content-Type': 'application/json'
+        const res = await fetch(
+            "http://" + PUBLIC_API_HOST + `/register/check?email=${encodeURIComponent(email)}`,
+            {
+                method: "GET",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                //body: JSON.stringify({email: email})
             },
-            //body: JSON.stringify({email: email})
-        })
+        )
         console.log("awaiting")
         const data = await res.json()
         console.log(data)
         if (data.exists) {
             error = "There is already an account registered with this email!"
-        }
-        else if (password.length < 8 || !hasUpperandLowerCase() || !/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(password)) {
-            error = "Your password must be at least 8 characters, " +
-                        "have at least one upper case and lower case letter, and contain at least one special character."
-        }
-        else if (password !== passwordConfirm) {
+        } else if (
+            password.length < 8 ||
+            !hasUpperandLowerCase() ||
+            !/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(password)
+        ) {
+            error =
+                "Your password must be at least 8 characters, " +
+                "have at least one upper case and lower case letter, and contain at least one special character."
+        } else if (password !== passwordConfirm) {
             error = "Your passwords do not match"
-        }
-        else {
+        } else {
             error = ""
             await register()
         }
-
     }
-
 </script>
 
 <h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
@@ -88,9 +91,9 @@
     Please enter a valid email and password
 </p>
 <br />
-<div class="grid w-full max-w-sm items-center gap-1.5">
+<form class="grid w-full max-w-sm items-center gap-1.5">
     {#if error}
-        <div class="p-2 bg-red-100 text-red-700 rounded-lg">
+        <div class="rounded-lg bg-red-100 p-2 text-red-700">
             {error}
         </div>
     {/if}
@@ -102,16 +105,16 @@
         bind:value={email}
     />
     <Input
-            type="First Name"
-            id="First name"
-            placeholder="First Name"
-            bind:value={firstname}
+        type="text"
+        id="First name"
+        placeholder="First Name"
+        bind:value={firstname}
     />
     <Input
-            type="Last Name"
-            id="Last Name"
-            placeholder= "Last Name"
-            bind:value={lastname}
+        type="text"
+        id="Last Name"
+        placeholder="Last Name"
+        bind:value={lastname}
     />
     <Input
         type="password"
@@ -126,6 +129,8 @@
         bind:value={passwordConfirm}
     />
     <Button onclick={isValid}>Register</Button>
-    <Button variant="link" onclick={() => goto("/login")}>Login</Button>
-
-</div>
+    <Button
+        variant="link"
+        onclick={() => goto("/login")}>Login</Button
+    >
+</form>
