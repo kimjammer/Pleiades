@@ -2,15 +2,16 @@ package main
 
 import (
 	"context"
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
-	"log"
-	"net/http"
-	"os"
 )
 
 var db *mongo.Database
