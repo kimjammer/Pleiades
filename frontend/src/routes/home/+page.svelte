@@ -23,7 +23,9 @@
     async function loadProjects() {
         const url = "http://" + PUBLIC_API_HOST + "/projects"
         const res = await fetch(url, { mode: "cors", credentials: "include" })
-        if (!res.ok) {
+        if (res.status === 401) {
+            location.assign("/")
+        } else if (!res.ok) {
             toast.error("Failed to load projects")
             return
         }
@@ -71,9 +73,9 @@
     <div class="mb-5 mt-5 flex flex-wrap gap-10">
         {#each response.projects as project}
             <a
-                class="flex h-60 w-60 flex-col justify-end overflow-hidden
-            rounded-xl border-8
-            border-primary p-5
+                class="border-primary flex h-60 w-60 flex-col justify-end
+            overflow-hidden rounded-xl
+            border-8 p-5
             transition duration-300
             hover:bg-slate-300 hover:dark:bg-slate-800"
                 href="/project?id={project.id}"
@@ -89,8 +91,8 @@
         <Dialog.Root bind:open={createDialogOpen}>
             <Dialog.Trigger>
                 <div
-                    class="flex h-60 w-60 flex-col justify-center rounded-xl
-                    border-8 border-dashed border-primary
+                    class="border-primary flex h-60 w-60 flex-col justify-center
+                    rounded-xl border-8 border-dashed
                     p-5 transition
                     duration-300 hover:hover:bg-slate-300
                     hover:dark:bg-slate-800"

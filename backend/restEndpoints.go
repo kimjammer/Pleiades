@@ -3,6 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -10,8 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
-	"log"
-	"net/http"
 )
 
 func projectsHandler(c *gin.Context) {
@@ -60,7 +61,7 @@ func newProjectHandler(c *gin.Context) {
 	if err != nil {
 		//TODO: Add error handling for user not found
 		log.Println("User not found!")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
 	}
 
@@ -176,12 +177,12 @@ func login(c *gin.Context) {
 	} else {
 		//check if passwords match
 		if checkPassword(user.Password, password) {
-			c.JSON(http.StatusOK, gin.H{"exists": true})
 			//set cookie upon successful login (cookie is user id)
 			log.Println("User id: ", user.Id, user.Id.Hex())
 			token := makeToken(user.Id.Hex())
 			c.SetSameSite(http.SameSiteNoneMode)
 			c.SetCookie("token", token, 3600, "/", "", true, true)
+			c.JSON(http.StatusOK, gin.H{"exists": true})
 		} else {
 			c.JSON(http.StatusOK, gin.H{"exists": false})
 		}
