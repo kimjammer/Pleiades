@@ -49,6 +49,6 @@
 		"vite": "^5.4.11"
 	},
 	"dependencies": {
-		"availability-selector": "^0.0.1"
+		"flowbite-svelte": "^0.48.4"
 	}
 }
