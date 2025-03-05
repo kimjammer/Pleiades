@@ -164,7 +164,6 @@ func registerUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"success": true})
-
 	//set cookie upon successful registration (cookie is user id)
 	token := makeToken(newUser.Id.Hex())
 	c.SetSameSite(http.SameSiteNoneMode)
