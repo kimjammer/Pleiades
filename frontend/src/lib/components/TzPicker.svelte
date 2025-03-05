@@ -2,11 +2,11 @@
     import Check from "lucide-svelte/icons/check";
     import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
     import { tick } from "svelte";
-    import * as Command from "$lib/components/ui/command";
-    import * as Popover from "$lib/components/ui/popover";
-    import { Button } from "$lib/components/ui/button";
+    import * as Command from "$lib/components/ui/command/index.js";
+    import * as Popover from "$lib/components/ui/popover/index.js";
+    import { Button } from "$lib/components/ui/button/index.js";
     import { cn } from "$lib/utils.js";
-    import { getAllTzNames, getLocalTzName, getTzOffset } from "$lib/availability/timeutils"
+    import { getAllTzNames, getLocalTzName, getTzOffset } from "./availability/timeutils"
     
     const timezones = getAllTzNames().map(tz => ({
       value: getTzOffset(tz),
