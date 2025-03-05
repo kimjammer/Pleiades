@@ -1,6 +1,10 @@
 package main
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type UserAndLeft struct {
 	User        string
@@ -29,11 +33,7 @@ type User struct {
 	Projects     []string
 }
 
-type Availability struct {
-	DayOfWeek   int
-	StartOffset int
-	EndOffset   int
-}
+type Availability map[string]([]int)
 
 type Poll struct {
 	Id          string
@@ -67,4 +67,9 @@ type Session struct {
 	StartTime string //TODO: Change me to correct type
 	EndTime   string //TODO: Change me to correct type
 	User      string
+}
+
+type Invitation struct {
+	Id              string `bson:"_id"`
+	CreatedAt       time.Time
 }

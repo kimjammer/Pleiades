@@ -5,12 +5,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"slices"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
 )
@@ -188,6 +191,62 @@ func login(c *gin.Context) {
 		}
 	}
 
+}
+
+func userExists(userId string, c context.Context) (crrUser *User) {
+	objId, _ := primitive.ObjectIDFromHex(userId)
+	filter := bson.D{{Key: "_id", Value: objId}}
+	err := db.Collection("users").FindOne(c, filter).Decode(&crrUser)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil
+		} else {
+			panic(err)
+		}
+	}
+	return
+}
+
+func invite(c *gin.Context) {
+	//Get current user
+	projectId := c.Query("id")
+	userId := c.GetString("userId")
+	crrUser := userExists(userId, c);
+	if crrUser == nil {
+		// TODO: convert to middleware
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+	log.Println(crrUser.FirstName)
+
+	// Validate permissions (is project member)
+	isMember := slices.Contains(crrUser.Projects, projectId)
+	if !isMember {
+		// TODO: convert to middleware
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Not a project member"})
+		return
+	}
+
+	invitations := db.Collection("invitations")
+
+	// Create 1 week ttl TODO: is this ok to do every time or is there a better init location?
+	indexModel := mongo.IndexModel{
+		Keys: bson.D{{"CreatedAt", 1}},
+		Options: options.Index().SetExpireAfterSeconds(604800).SetName("ttl_index"),
+	}
+	invitations.Indexes().CreateOne(c, indexModel)
+
+	// Create record
+	invitation := Invitation{
+		Id:          uuid.New().String(),
+		CreatedAt:   time.Now(),
+	}
+	_, err := invitations.InsertOne(c, invitation)
+	if err != nil {
+		panic(err)
+	}
+
+	c.String(http.StatusOK, invitation.Id)
 }
 
 func encryptPassword(password string) (string, error) {
