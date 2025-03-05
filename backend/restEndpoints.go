@@ -158,6 +158,7 @@ func registerUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"success": true})
+	log.Println("Created user with ID: ", newUser.Id)
 	//set cookie upon successful registration (cookie is user id)
 	token := makeToken(newUser.Id.Hex())
 	c.SetSameSite(http.SameSiteNoneMode)
@@ -185,6 +186,7 @@ func login(c *gin.Context) {
 			log.Println("User id: ", user.Id, user.Id.Hex())
 			token := makeToken(user.Id.Hex())
 			c.SetSameSite(http.SameSiteNoneMode)
+			log.Println("Token:", token)
 			c.SetCookie("token", token, 3600, "/", "", true, true)
 			c.JSON(http.StatusOK, gin.H{"exists": true})
 		} else {
@@ -211,7 +213,7 @@ func userExists(userId string, c context.Context) (crrUser *User) {
 func invite(c *gin.Context) {
 	//Get current user
 	userId := c.GetString("userId")
-	crrUser := userExists(userId, c);
+	crrUser := userExists(userId, c)
 	if crrUser == nil {
 		// TODO: convert to middleware
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
@@ -232,16 +234,16 @@ func invite(c *gin.Context) {
 
 	// Create 1 week ttl TODO: is this ok to do every time or is there a better init location?
 	indexModel := mongo.IndexModel{
-		Keys: bson.D{{Key: "CreatedAt", Value: 1}},
+		Keys:    bson.D{{Key: "CreatedAt", Value: 1}},
 		Options: options.Index().SetExpireAfterSeconds(604800).SetName("ttl_index"),
 	}
 	invitations.Indexes().CreateOne(c, indexModel)
 
 	// Create record
 	invitation := Invitation{
-		Id:          uuid.New().String(),
-		CreatedAt:   time.Now(),
-		Project:     projectId,
+		Id:        uuid.New().String(),
+		CreatedAt: time.Now(),
+		Project:   projectId,
 	}
 	_, err := invitations.InsertOne(c, invitation)
 	if err != nil {
@@ -362,6 +364,16 @@ func deleteAllUsers() {
 	result, err := collection.DeleteMany(context.TODO(), bson.M{}) // Empty filter {} means delete all
 	if err != nil {
 		log.Fatal("Error deleting users:", err)
+	}
+
+	log.Printf("Deleted %d users from the database\n", result.DeletedCount)
+}
+func deleteAllProjects() {
+	collection := db.Collection("projects") // Reference the "users" collection
+
+	result, err := collection.DeleteMany(context.TODO(), bson.M{}) // Empty filter {} means delete all
+	if err != nil {
+		log.Fatal("Error deleting projects:", err)
 	}
 
 	log.Printf("Deleted %d users from the database\n", result.DeletedCount)

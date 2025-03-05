@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"log"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -33,7 +34,7 @@ func makeToken(userId string) string {
 
 // Validate the token for the given user ID, returns an error if the token is invalid.
 func verifyToken(tokenString string) (string, error) {
-	// Parse the token
+	log.Println(tokenString)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Ensure the signing method is HMAC
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -46,12 +47,12 @@ func verifyToken(tokenString string) (string, error) {
 		return "", err
 	}
 
-	// Extract and return claims if the token is valid
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		userId, ok := claims["userId"].(string)
 		if !ok {
 			return "", errors.New("invalid token payload")
 		}
+		log.Println("returning userId from verifyToken() ", userId)
 		return userId, nil
 	}
 
