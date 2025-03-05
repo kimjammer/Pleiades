@@ -5,6 +5,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"golang.org/x/crypto/bcrypt"
@@ -42,9 +43,11 @@ func TestMain(m *testing.M) {
 func resetDB() {
 	_ = db.Drop(context.TODO())
 
+	userId, _ := primitive.ObjectIDFromHex("67c7b20021675682e4395270")
+
 	//Create a user
 	user := User{
-		Id:           "c8478bcd-51fe-486d-965d-c8a8837c577c",
+		Id:           userId,
 		FirstName:    "Joe",
 		LastName:     "Smith",
 		Email:        "example@example.com",
@@ -62,7 +65,7 @@ func resetDB() {
 		Id:          "53ed4d28-9279-4b4e-9256-b1e693332625",
 		Title:       "Test Project",
 		Description: "Test Description",
-		Users:       []UserAndLeft{{"c8478bcd-51fe-486d-965d-c8a8837c577c", false}},
+		Users:       []UserAndLeft{{"67c7b20021675682e4395270", false}},
 		Tasks:       []Task{},
 		Polls:       []Poll{},
 	}
@@ -73,7 +76,7 @@ func resetDB() {
 // Manually set the token for testing
 func tokenOverride() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set("userId", "c8478bcd-51fe-486d-965d-c8a8837c577c")
+		c.Set("userId", "67c7b20021675682e4395270")
 		c.Next()
 	}
 }

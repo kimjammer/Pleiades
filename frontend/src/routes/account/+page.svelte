@@ -1,7 +1,7 @@
 <script lang="ts">
-    import ManualInput from "$lib/availability/ManualInput.svelte";
-    import {weekdayDateRanges} from "$lib/availability/timeutils";
-    import TzPicker from "$lib/components/ui/TzPicker.svelte"
+    import ManualInput from "$lib/components/availability/ManualInput.svelte";
+    import {weekdayDateRanges} from "$lib/components/availability/timeutils";
+    import TzPicker from "$lib/components/TzPicker.svelte"
   
     let tzOffset = 0;
     const ranges = weekdayDateRanges();

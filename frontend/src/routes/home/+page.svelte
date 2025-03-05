@@ -1,12 +1,11 @@
 <script lang="ts">
     import { onMount } from "svelte"
-    import { toggleMode } from "mode-watcher"
     import { Button } from "$lib/components/ui/button"
     import { Label } from "$lib/components/ui/label"
     import { Input } from "$lib/components/ui/input"
+    import PleiadesNav from "$lib/components/PleiadesNav.svelte"
     import * as Dialog from "$lib/components/ui/dialog"
     import { toast } from "svelte-sonner"
-    import { Sun, Moon } from "lucide-svelte"
     import type { ProjectsResponse, newProjectRequest } from "$lib/schema.js"
     import { PUBLIC_API_HOST } from "$env/static/public"
 
@@ -60,28 +59,7 @@
     }
 </script>
 
-<div class="flex justify-between border-b p-5">
-    <div>
-        <h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Pleiades</h1>
-    </div>
-    <div class="flex gap-5">
-        <Button
-            onclick={toggleMode}
-            variant="outline"
-            size="icon"
-        >
-            <Sun
-                class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
-            />
-            <Moon
-                class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
-            />
-            <span class="sr-only">Toggle theme</span>
-        </Button>
-        <Button>Logout</Button>
-    </div>
-</div>
-
+<PleiadesNav></PleiadesNav>
 <div class="p-5">
     <div>
         <h2

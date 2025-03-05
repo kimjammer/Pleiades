@@ -2,7 +2,9 @@
     import { connectToProject, ProjectState } from "$lib/project_state.svelte"
     import { onMount } from "svelte"
     import * as Dialog from "$lib/components/ui/dialog"
+    import * as Tabs from "$lib/components/ui/tabs/index.js";
     import { Button } from "$lib/components/ui/button"
+    import PleiadesNav from "$lib/components/PleiadesNav.svelte"
 
     let projectId = $state("")
 
@@ -23,131 +25,168 @@
     })
 </script>
 
+<PleiadesNav></PleiadesNav>
 {#await project}
     <p>Loading project</p>
 {:then project}
-    <h1>Project page for {project.title}!</h1>
-    <p>Description: {project.description}</p>
-    <p>Project ID: {project.id}</p>
-    <input
-        value="X"
-        oninput={e => project.updateInProject("reactive_testing.bruh", e.currentTarget.value)}
-    />
+    <div class="p-5">
+        <h2
+            class="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
+        >
+            {project.title}
+        </h2>
+        <p class="leading-7 [&:not(:first-child)]:mt-6 my-5">
+            {project.description}
+        </p>
 
-    <Dialog.Root bind:open={leaveDialogOpen}>
-        <Dialog.Trigger>
-            <Button>Leave Project</Button>
-        </Dialog.Trigger>
-        <Dialog.Content>
-            <Dialog.Header>Are you sure you want to leave the project?</Dialog.Header>
-            <div>
-                <Button
-                    onclick={() => {
+        <Tabs.Root value="tasks" class="w-[400px]">
+            <Tabs.List>
+                <Tabs.Trigger value="tasks">Task Board</Tabs.Trigger>
+                <Tabs.Trigger value="calendar">Calendar</Tabs.Trigger>
+                <Tabs.Trigger value="settings">Settings</Tabs.Trigger>
+                <Tabs.Trigger value="debug">Debugging</Tabs.Trigger>
+            </Tabs.List>
+            <Tabs.Content value="tasks">
+                <div>
+
+                </div>
+            </Tabs.Content>
+
+
+            <Tabs.Content value="calendar">
+                Todo: Monthly calendar view here!!!
+            </Tabs.Content>
+
+
+            <Tabs.Content value="settings">
+                <Dialog.Root bind:open={leaveDialogOpen}>
+                    <Dialog.Trigger>
+                        <Button>Leave Project</Button>
+                    </Dialog.Trigger>
+                    <Dialog.Content>
+                        <Dialog.Header>Are you sure you want to leave the project?</Dialog.Header>
+                        <div>
+                            <Button
+                                onclick={() => {
                         project.leave()
                     }}>Confirm</Button
-                >
-                <Button
-                    onclick={() => {
+                            >
+                            <Button
+                                onclick={() => {
                         leaveDialogOpen = false
                     }}>Cancel</Button
-                >
-            </div>
-        </Dialog.Content>
-    </Dialog.Root>
+                            >
+                        </div>
+                    </Dialog.Content>
+                </Dialog.Root>
 
-    <Dialog.Root bind:open={deleteDialogOpen}>
-        <Dialog.Trigger>
-            <Button>Delete Project</Button>
-        </Dialog.Trigger>
-        <Dialog.Content>
-            <Dialog.Header>Are you sure you want to delete the project?</Dialog.Header>
-            <div>
-                <Button
-                    onclick={() => {
+                <Dialog.Root bind:open={deleteDialogOpen}>
+                    <Dialog.Trigger>
+                        <Button>Delete Project</Button>
+                    </Dialog.Trigger>
+                    <Dialog.Content>
+                        <Dialog.Header>Are you sure you want to delete the project?</Dialog.Header>
+                        <div>
+                            <Button
+                                onclick={() => {
                         project.delete()
                     }}>Confirm</Button
-                >
-                <Button
-                    onclick={() => {
+                            >
+                            <Button
+                                onclick={() => {
                         deleteDialogOpen = false
                     }}>Cancel</Button
-                >
-            </div>
-        </Dialog.Content>
-    </Dialog.Root>
+                            >
+                        </div>
+                    </Dialog.Content>
+                </Dialog.Root>
+            </Tabs.Content>
 
-    <p>{project.reactive_testing.bruh}</p>
 
-    <button
-        onclick={() => {
+            <Tabs.Content value="debug">
+                <h1>Project page for {project.title}!</h1>
+                <p>Description: {project.description}</p>
+                <p>Project ID: {project.id}</p>
+                <input
+                    value="X"
+                    oninput={e => project.updateInProject("reactive_testing.bruh", e.currentTarget.value)}
+                />
+
+                <p>{project.reactive_testing.bruh}</p>
+
+                <button
+                    onclick={() => {
             project.appendInProject("reactive_testing.list", project.reactive_testing.bruh)
         }}>Append</button
-    >
+                >
 
-    <br />
+                <br />
 
-    {#each project.reactive_testing.list as value}
-        <p>{value}</p>
-    {/each}
+                {#each project.reactive_testing.list as value}
+                    <p>{value}</p>
+                {/each}
 
-    <button
-        onclick={() => {
+                <button
+                    onclick={() => {
             project.deleteInProject(
                 `reactive_testing.list[${Math.floor(project.reactive_testing.list.length / 2)}]`,
             )
         }}>Delete Halfway</button
-    >
-    <br />
-    <br />
+                >
+                <br />
+                <br />
 
-    {#each Object.keys(project.reactive_testing.values) as value}
-        <p>{value}: {project.reactive_testing.values[value]}</p>
-    {/each}
+                {#each Object.keys(project.reactive_testing.values) as value}
+                    <p>{value}: {project.reactive_testing.values[value]}</p>
+                {/each}
 
-    <input bind:value={key} />
-    <input bind:value /><br />
+                <input bind:value={key} />
+                <input bind:value /><br />
 
-    <button
-        onclick={() => {
+                <button
+                    onclick={() => {
             if (project.reactive_testing.values[key] == undefined) {
                 project.appendInProject(`reactive_testing.values.${key}`, value)
             } else {
                 project.updateInProject(`reactive_testing.values.${key}`, value)
             }
         }}>Insert/Update</button
-    ><br />
-    <button
-        onclick={() => {
+                ><br />
+                <button
+                    onclick={() => {
             if (project.reactive_testing.values[key] != undefined) {
                 project.deleteInProject(`reactive_testing.values.${key}`)
             }
         }}>Delete</button
-    >
+                >
 
-    <br />
-    <br />
+                <br />
+                <br />
 
-    <button onclick={() => project.select("")}>Enable selector</button>
-    <input
-        type="radio"
-        name="options"
-        id="A"
-        value="A"
-        checked={project.demoButtonState == "a"}
-        disabled={project.demoButtonState != ""}
-        oninput={() => project.select("a")}
-    />
-    <label for="A">A</label>
-    <input
-        type="radio"
-        name="options"
-        id="B"
-        value="B"
-        checked={project.demoButtonState == "b"}
-        disabled={project.demoButtonState != ""}
-        oninput={() => project.select("b")}
-    />
-    <label for="B">B</label>
+                <button onclick={() => project.select("")}>Enable selector</button>
+                <input
+                    type="radio"
+                    name="options"
+                    id="A"
+                    value="A"
+                    checked={project.demoButtonState == "a"}
+                    disabled={project.demoButtonState != ""}
+                    oninput={() => project.select("a")}
+                />
+                <label for="A">A</label>
+                <input
+                    type="radio"
+                    name="options"
+                    id="B"
+                    value="B"
+                    checked={project.demoButtonState == "b"}
+                    disabled={project.demoButtonState != ""}
+                    oninput={() => project.select("b")}
+                />
+                <label for="B">B</label>
+            </Tabs.Content>
+        </Tabs.Root>
+    </div>
 {:catch err}
     <p>{err}</p>
 {/await}

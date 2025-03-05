@@ -127,3 +127,24 @@ func TestGetProjects(t *testing.T) {
 
 	require.Equal(t, 1, len(data.Projects))
 }
+
+func TestVerifySessionNoAuth(t *testing.T) {
+	router := setupRouter()
+	defineRoutes(router)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/verifySession", nil)
+	router.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusUnauthorized, w.Code)
+}
+
+func TestVerifySession(t *testing.T) {
+	router := setupTestRouter()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/verifySession", nil)
+	router.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusOK, w.Code)
+}

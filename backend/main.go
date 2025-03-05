@@ -25,6 +25,8 @@ func loadToken() gin.HandlerFunc {
 		} else {
 			userId, err := verifyToken(cookie)
 
+			log.Println("Verfied token: ", userId)
+
 			if err == nil {
 				c.Set("userId", userId)
 			}
@@ -65,6 +67,8 @@ func defineRoutes(router *gin.Engine) {
 	router.GET("/register/check", checkEmail)
 	router.POST("/register/new", registerUser)
 	router.GET("/login", login)
+	router.POST("/logout", logout)
+	router.GET("/verifySession", authRequired(), verifySession)
 
 	//TODO: Remove testing route that only sets cookie
 	router.GET("/fakelogin", fakeLogin)
