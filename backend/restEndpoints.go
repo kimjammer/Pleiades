@@ -251,15 +251,6 @@ func invite(c *gin.Context) {
 }
 
 func join(c *gin.Context) {
-	//Get current user
-	userId := c.GetString("userId")
-	crrUser := userExists(userId, c);
-	if crrUser == nil {
-		// TODO: convert to middleware
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
-		return
-	}
-	
 	// get invite entry
 	joinId := c.Query("id")
 	filter := bson.D{{Key: "_id", Value: joinId}}
@@ -275,16 +266,25 @@ func join(c *gin.Context) {
 	}
 
 	// Add project to user
+	userId := c.GetString("userId")
+	filter = bson.D{{Key: "_id", Value: userId}}
+	update := bson.M{"$push": bson.M{"projects": invitation.Project}}
+	_, err = db.Collection("users").UpdateOne(c, filter, update)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
 
 	// Add user to project
 	filter = bson.D{{Key: "_id", Value: invitation.Project}}
-	update := bson.M{"$push": bson.M{"users": UserAndLeft{User: userId, LeftProject: false}}}
+	update = bson.M{"$push": bson.M{"users": UserAndLeft{User: userId, LeftProject: false}}}
 	_, err = db.Collection("projects").UpdateOne(c, filter, update)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invited project doesn't exist"})
+		return
 	}
 
-	c.Status(http.StatusOK)
+	c.String(http.StatusOK, "success")
 }
 
 func encryptPassword(password string) (string, error) {
