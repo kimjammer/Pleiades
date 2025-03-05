@@ -157,13 +157,13 @@ func registerUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"success": true})
 	log.Println("Created user with ID: ", newUser.Id)
 	//set cookie upon successful registration (cookie is user id)
 	token := makeToken(newUser.Id.Hex())
 	c.SetSameSite(http.SameSiteNoneMode)
 	c.SetCookie("token", token, 3600, "/", "", true, true)
 	log.Println("Created User with Id: ", newUser.Id)
+	c.JSON(http.StatusCreated, gin.H{"success": true})
 }
 
 func login(c *gin.Context) {

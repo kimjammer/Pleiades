@@ -50,17 +50,15 @@
         }
         //FIRST: Check for if account exists
         console.log("account Exists checking")
-        const res = await fetch(
-            "http://" + PUBLIC_API_HOST + `/register/check?email=${encodeURIComponent(email)}`,
-            {
-                method: "GET",
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                //body: JSON.stringify({email: email})
+
+        const res = await fetch("http://" + PUBLIC_API_HOST + `/register/check?email=${encodeURIComponent(email)}`, {
+            method: "GET",
+            mode: "cors",
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json'
             },
-        )
+        })
         console.log("awaiting")
         const data = await res.json()
         console.log(data)
