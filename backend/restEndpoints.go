@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -11,23 +10,17 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
-
 	"log"
 	"net/http"
 )
 
 func projectsHandler(c *gin.Context) {
 	//Get current user
-	userId, _ := c.Cookie("token")
-	userId, err := verifyToken(userId)
-	if err != nil {
-		log.Println("Invalid token:", err)
-	}
-	log.Println("Token belongs to user:", userId)
+	userId := c.GetString("userId")
 	objId, _ := primitive.ObjectIDFromHex(userId)
 	filter := bson.D{{Key: "_id", Value: objId}}
 	var crrUser User
-	err = db.Collection("users").FindOne(c, filter).Decode(&crrUser)
+	err := db.Collection("users").FindOne(c, filter).Decode(&crrUser)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			//TODO: Add error handling for user not found
@@ -58,17 +51,12 @@ func projectsHandler(c *gin.Context) {
 func newProjectHandler(c *gin.Context) {
 	log.Println("Creating New Project")
 	//Get current user
-	userId, _ := c.Cookie("token")
-	userId, err := verifyToken(userId)
-	if err != nil {
-		log.Println("Invalid token:", err)
-	}
-	log.Println("Token belongs to user:", userId)
+	userId := c.GetString("userId")
 	objId, _ := primitive.ObjectIDFromHex(userId)
 	filter := bson.D{{Key: "_id", Value: objId}}
 
 	var crrUser User
-	err = db.Collection("users").FindOne(c, filter).Decode(&crrUser)
+	err := db.Collection("users").FindOne(c, filter).Decode(&crrUser)
 	if err != nil {
 		//TODO: Add error handling for user not found
 		log.Println("User not found!")
@@ -198,17 +186,6 @@ func login(c *gin.Context) {
 		}
 	}
 
-}
-
-// TODO: Frontend e2e testing uses this button/route. Figure out solution for this before removing
-func fakeLogin(c *gin.Context) {
-	var user User
-	_ = db.Collection("users").FindOne(c.Request.Context(), bson.D{}).Decode(&user)
-
-	token := makeToken(user.Id.Hex())
-	c.SetSameSite(http.SameSiteNoneMode)
-	c.SetCookie("token", token, 3600, "/", "", true, true)
-	c.Status(http.StatusOK)
 }
 
 func encryptPassword(password string) (string, error) {
