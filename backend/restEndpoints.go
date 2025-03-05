@@ -196,7 +196,7 @@ func login(c *gin.Context) {
 
 }
 
-func userExists(userId string, c context.Context) (crrUser *User) {
+func getUser(userId string, c context.Context) (crrUser *User) {
 	objId, _ := primitive.ObjectIDFromHex(userId)
 	filter := bson.D{{Key: "_id", Value: objId}}
 	err := db.Collection("users").FindOne(c, filter).Decode(&crrUser)
@@ -213,13 +213,12 @@ func userExists(userId string, c context.Context) (crrUser *User) {
 func invite(c *gin.Context) {
 	//Get current user
 	userId := c.GetString("userId")
-	crrUser := userExists(userId, c)
+	crrUser := getUser(userId, c);
 	if crrUser == nil {
 		// TODO: convert to middleware
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
 	}
-	log.Println(crrUser.FirstName)
 
 	// Validate permissions (is project member)
 	projectId := c.Query("id")
@@ -255,25 +254,16 @@ func invite(c *gin.Context) {
 
 func join(c *gin.Context) {
 	// get invite entry
-	joinId := c.Query("id")
-	filter := bson.D{{Key: "_id", Value: joinId}}
-	var invitation Invitation
-	err := db.Collection("invitations").FindOne(c, filter).Decode(&invitation)
-	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invite not found"})
-			return
-		} else {
-			panic(err)
-		}
-	}
+	a, _ := c.Get("invitation")
+    invitation, _ := a.(Invitation)
+	
 
 	// Add project to user
 	userId := c.GetString("userId")
 	objId, _ := primitive.ObjectIDFromHex(userId)
-	filter = bson.D{{Key: "_id", Value: objId}, {Key: "projects", Value: bson.M{"$ne": invitation.Project}}}
+	filter := bson.D{{Key: "_id", Value: objId}, {Key: "projects", Value: bson.M{"$ne": invitation.Project}}}
 	update := bson.M{"$push": bson.M{"projects": invitation.Project}}
-	_, err = db.Collection("users").UpdateOne(c, filter, update)
+	_, err := db.Collection("users").UpdateOne(c, filter, update)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return

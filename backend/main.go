@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/gin-contrib/cors"
@@ -15,39 +14,6 @@ import (
 )
 
 var db *mongo.Database
-
-// Middleware to load token from cookie
-func loadToken() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		cookie, err := c.Cookie("token")
-
-		if err != nil {
-			log.Println("No token found")
-		} else {
-			userId, err := verifyToken(cookie)
-
-			log.Println("Verfied token: ", userId)
-
-			if err == nil {
-				c.Set("userId", userId)
-			}
-		}
-
-		c.Next()
-	}
-}
-
-// Middleware to deny access to unauthenticated users, for routes that are only for logged-in users
-func authRequired() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		_, exists := c.Get("userId")
-		if exists == false {
-			c.AbortWithStatus(http.StatusUnauthorized)
-		}
-
-		c.Next()
-	}
-}
 
 func setupRouter() *gin.Engine {
 	// Setup webserver
@@ -71,7 +37,7 @@ func defineRoutes(router *gin.Engine) {
 	router.POST("/logout", logout)
 	router.GET("/verifySession", authRequired(), verifySession)
 	router.GET("/invite", authRequired(), invite)
-	router.GET("/join", authRequired(), join)
+	router.GET("/join", authRequired(), getInvite(), join)
 
 	//TODO: Remove testing route that only sets cookie
 	router.GET("/fakelogin", fakeLogin)
