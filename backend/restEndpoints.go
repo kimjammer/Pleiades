@@ -268,7 +268,7 @@ func join(c *gin.Context) {
 	// Add project to user
 	userId := c.GetString("userId")
 	objId, _ := primitive.ObjectIDFromHex(userId)
-	filter = bson.D{{Key: "_id", Value: objId}}
+	filter = bson.D{{Key: "_id", Value: objId}, {Key: "projects", Value: bson.M{"$ne": invitation.Project}}}
 	update := bson.M{"$push": bson.M{"projects": invitation.Project}}
 	_, err = db.Collection("users").UpdateOne(c, filter, update)
 	if err != nil {
@@ -277,7 +277,7 @@ func join(c *gin.Context) {
 	}
 
 	// Add user to project
-	filter = bson.D{{Key: "_id", Value: invitation.Project}}
+	filter = bson.D{{Key: "_id", Value: invitation.Project}, {Key: "users.user", Value: bson.M{"$ne": userId}}}
 	update = bson.M{"$push": bson.M{"users": UserAndLeft{User: userId, LeftProject: false}}}
 	_, err = db.Collection("projects").UpdateOne(c, filter, update)
 	if err != nil {
