@@ -21,3 +21,11 @@ test("Create Project Modal dismisses on success", async ({ page }) => {
     await page.getByRole("button", { name: "Create!" }).click()
     await expect(page.getByRole("dialog", { name: "Create new Project" })).toHaveCount(0)
 })
+
+// test('Create Project and open Project Page', async ({ page }) => {
+//     await page.goto('/home');
+//     await page.getByRole('link', { name: 'Title Description' }).click();
+//     await new Promise(r => setTimeout(r, 1000));
+//     await expect(page.locator('h2')).toContainText('Title');
+//     await expect(page.getByRole('paragraph')).toContainText('Description');
+// });
