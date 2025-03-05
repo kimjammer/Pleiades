@@ -209,7 +209,6 @@ func userExists(userId string, c context.Context) (crrUser *User) {
 
 func invite(c *gin.Context) {
 	//Get current user
-	projectId := c.Query("id")
 	userId := c.GetString("userId")
 	crrUser := userExists(userId, c);
 	if crrUser == nil {
@@ -220,6 +219,7 @@ func invite(c *gin.Context) {
 	log.Println(crrUser.FirstName)
 
 	// Validate permissions (is project member)
+	projectId := c.Query("id")
 	isMember := slices.Contains(crrUser.Projects, projectId)
 	if !isMember {
 		// TODO: convert to middleware
@@ -240,6 +240,7 @@ func invite(c *gin.Context) {
 	invitation := Invitation{
 		Id:          uuid.New().String(),
 		CreatedAt:   time.Now(),
+		Project:     projectId,
 	}
 	_, err := invitations.InsertOne(c, invitation)
 	if err != nil {
@@ -247,6 +248,43 @@ func invite(c *gin.Context) {
 	}
 
 	c.String(http.StatusOK, invitation.Id)
+}
+
+func join(c *gin.Context) {
+	//Get current user
+	userId := c.GetString("userId")
+	crrUser := userExists(userId, c);
+	if crrUser == nil {
+		// TODO: convert to middleware
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+	
+	// get invite entry
+	joinId := c.Query("id")
+	filter := bson.D{{Key: "_id", Value: joinId}}
+	var invitation Invitation
+	err := db.Collection("invitations").FindOne(c, filter).Decode(&invitation)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invite not found"})
+			return
+		} else {
+			panic(err)
+		}
+	}
+
+	// Add project to user
+
+	// Add user to project
+	filter = bson.D{{Key: "_id", Value: invitation.Project}}
+	update := bson.M{"$push": bson.M{"users": UserAndLeft{User: userId, LeftProject: false}}}
+	_, err = db.Collection("projects").UpdateOne(c, filter, update)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invited project doesn't exist"})
+	}
+
+	c.Status(http.StatusOK)
 }
 
 func encryptPassword(password string) (string, error) {

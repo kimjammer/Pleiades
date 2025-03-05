@@ -70,6 +70,7 @@ func defineRoutes(router *gin.Engine) {
 	router.POST("/logout", logout)
 	router.GET("/verifySession", authRequired(), verifySession)
 	router.GET("/invite", authRequired(), invite)
+	router.GET("/join", authRequired(), join)
 
 	//TODO: Remove testing route that only sets cookie
 	router.GET("/fakelogin", fakeLogin)
