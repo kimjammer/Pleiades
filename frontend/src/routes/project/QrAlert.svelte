@@ -1,6 +1,6 @@
 <script lang="ts">
     import { PUBLIC_API_HOST } from "$env/static/public"
-    import { Button, buttonVariants } from "$lib/components/ui/button/index.js"
+    import { buttonVariants } from "$lib/components/ui/button/index.js"
     import * as Dialog from "$lib/components/ui/dialog/index.js"
 
     let url = new Promise<string>(() => {})
@@ -13,7 +13,7 @@
             })
         )
             .text()
-            .then(token => "http://" + PUBLIC_API_HOST + "/join?id=" + token)
+            .then(token => location.origin + "/join?id=" + token)
     }
 </script>
 

@@ -254,7 +254,11 @@ func invite(c *gin.Context) {
 
 func join(c *gin.Context) {
 	// get invite entry
-	a, _ := c.Get("invitation")
+	a, exists := c.Get("invitation")
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invite not found"})
+		return
+	}
     invitation, _ := a.(Invitation)
 	
 
@@ -279,6 +283,15 @@ func join(c *gin.Context) {
 	}
 
 	c.String(http.StatusOK, "success")
+}
+
+func validateJoin(c *gin.Context) {
+	_, exists := c.Get("invitation")
+	if exists {
+		c.String(http.StatusOK, "true")
+	} else {
+		c.String(http.StatusOK, "false")
+	}
 }
 
 func encryptPassword(password string) (string, error) {

@@ -35,7 +35,7 @@ func loadToken() gin.HandlerFunc {
 func authRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, exists := c.Get("userId")
-		if exists == false {
+		if !exists {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 
@@ -57,12 +57,12 @@ func getInvite() gin.HandlerFunc {
 		err := db.Collection("invitations").FindOne(c, filter).Decode(&invitation)
 		if err != nil {
 			if errors.Is(err, mongo.ErrNoDocuments) {
-				c.JSON(http.StatusBadRequest, gin.H{"error": "Invite not found"})
-				c.Abort()
-				return
+				// No op
 			} else {
 				panic(err)
 			}
+		} else {
+			c.Set("invitation", invitation)
 		}
 
 		c.Next()
