@@ -11,12 +11,17 @@ export default defineConfig({
     projects: [
         {
             name: "setup",
+            use: {
+                ...devices["Desktop Chrome"],
+                channel: "chromium",
+            },
             testMatch: /.*\.setup\.ts/,
         },
         {
             name: "chromium",
             use: {
                 ...devices["Desktop Chrome"],
+                channel: "chromium",
                 // Use prepared auth state.
                 storageState: "test-results/.auth/user.json",
             },

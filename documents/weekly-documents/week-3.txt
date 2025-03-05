@@ -4,10 +4,12 @@ Week 3 (Summary) (Scrum Master: Ethan Dawes)
 3/4 1.5hr 4f525ee UI and basic handling for leaving groups
 3/4 1.5hr 2adcc5b Leaving groups works
 3/4 1hr   4c79625 Deleting groups works
+<<<<<<< Updated upstream
 3/4 2.5hr 60a00c1 tokens/cookies work
 3/4 0.5hr b0dd5978e1240cebf2c642ccbb8a7b573d12e7f6 8226a94ebe4ca135963ebf9d60de2e8ca24e31c7 e507e8ec6ed8a6795eaaabbac1b718fd27471665 eabc83f23bd72a4438bb2317b383016ea092181d Undo my package organization of availability picker (b/c super buggy)
 3/4 0.5hr e9c91f58ace430fab2620ac720120fc7634bd2c0 ad571880879573905f64537f1d5ee6eb0e86d7ed b381e92b411c325c453176b86780c194e93b392a 57670851bcb90cdfcb9c047c4ca00a9b9ca96e82 Break & fix the build (shadcn outdated)
 3/4 0.5hr 4d3a5077eabce59acc59c244ea743eb422061c9d cf4d8395477d4c71dfc66c34362ce8393f110634 d5d6a9df60b4046adfdbb13cfb459200aa01a0f8 e2d92ef7b79ae23a6c147d4ab1461013246d3267 Integrate time zone picker
+3/4 1hr   7ec7d2f Make the server transmit user data relevant to projects
 3/5 0.5hr 2f75d10e7895942c7593218e1092b053cd5772d1 Support showing group availability
 3/5 1hr 0129ae0fa5e429f89f01e38f7587c0d65023087a Understand server
 3/5 3hr 5cecf42207b4d09cdd3195c9fa4878a21aec2704 generate invite tokens

@@ -17,12 +17,14 @@ in pkgs.mkShell {
     gopls
     mongodb-ce
     mongosh
+    playwright-driver.browsers
   ];
 
   inherit NPM_CONFIG_PREFIX;
 
   shellHook = ''
     export PATH="${NPM_CONFIG_PREFIX}/bin:$PATH"
+    export PLAYWRIGHT_BROWSERS_PATH=${pkgs.playwright-driver.browsers}
 
     if ! [[ -d ./database ]]; then
       mkdir database
