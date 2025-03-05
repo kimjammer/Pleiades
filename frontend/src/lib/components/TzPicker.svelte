@@ -14,11 +14,11 @@
      }));
     
     let open = false;
-    let value = getLocalTzName();
-    $: console.log(value, selectedValue);
+    let selectedName = getLocalTzName();
+    export let selectedValue: number;
     
     $: selectedValue =
-     timezones.find((f) => f.label === value)?.value;
+     timezones.find((f) => f.label === selectedName)?.value ?? 0;
     
     // We want to refocus the trigger button when the user selects
     // an item from the list so users can continue navigating the
@@ -40,7 +40,7 @@
       aria-expanded={open}
       class="w-[200px] justify-between"
      >
-      {value}
+      {selectedName}
       <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
      </Button>
     </Popover.Trigger>
@@ -53,14 +53,14 @@
         <Command.Item
          value={timezone.label}
          onSelect={(currentValue) => {
-          value = currentValue;
+          selectedName = currentValue;
           closeAndFocusTrigger(ids.trigger);
          }}
         >
          <Check
           class={cn(
            "mr-2 h-4 w-4",
-           value !== timezone.label && "text-transparent"
+           selectedName !== timezone.label && "text-transparent"
           )}
          />
          {timezone.label}

@@ -4,14 +4,17 @@
     import TzPicker from "$lib/components/TzPicker.svelte"
   
     let tzOffset = 0;
-    const ranges = weekdayDateRanges();
+    const ranges = weekdayDateRanges()
 </script>
   
-<TzPicker />
+<TzPicker bind:selectedValue={tzOffset} />
 
-<ManualInput
+<div>
+    <ManualInput
     {ranges}
     {tzOffset}
     shouldUseWeekdays={true}
 />
+</div>
+
   
