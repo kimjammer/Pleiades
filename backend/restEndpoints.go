@@ -163,7 +163,7 @@ func registerUser(c *gin.Context) {
 	c.SetSameSite(http.SameSiteNoneMode)
 	c.SetCookie("token", token, 3600, "/", "", true, true)
 	log.Println("Created User with Id: ", newUser.Id)
-	c.JSON(http.StatusCreated, gin.H{"success": true})
+	c.JSON(http.StatusCreated, gin.H{"success": true, "userId": newUser.Id})
 }
 
 func login(c *gin.Context) {
@@ -188,7 +188,7 @@ func login(c *gin.Context) {
 			c.SetSameSite(http.SameSiteNoneMode)
 			log.Println("Token:", token)
 			c.SetCookie("token", token, 3600, "/", "", true, true)
-			c.JSON(http.StatusOK, gin.H{"exists": true})
+			c.JSON(http.StatusOK, gin.H{"exists": true, "userId": user.Id})
 		} else {
 			c.JSON(http.StatusOK, gin.H{"exists": false})
 		}

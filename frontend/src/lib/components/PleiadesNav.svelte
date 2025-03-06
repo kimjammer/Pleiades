@@ -11,9 +11,9 @@
         const url = "http://" + PUBLIC_API_HOST + "/projects"
         const res = await fetch(url, { mode: "cors", credentials: "include" })
         if (res.ok) {
-            loggedIn = true;
+            loggedIn = true
         } else {
-            loggedIn = false;
+            loggedIn = false
         }
     }
 
@@ -31,6 +31,7 @@
             toast.error("Failed to logout")
             return
         }
+        localStorage.removeItem("myId")
         window.location.replace("/")
     }
 
@@ -42,6 +43,7 @@
         await verifySession()
     })
 </script>
+
 <div class="flex justify-between border-b p-5">
     <div>
         <h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Pleiades</h1>

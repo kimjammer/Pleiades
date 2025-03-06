@@ -2,7 +2,7 @@
     import { Input } from "$lib/components/ui/input/index"
     import { Button } from "$lib/components/ui/button/index"
     import { PUBLIC_API_HOST } from "$env/static/public"
-    import {goto} from "$app/navigation";
+    import { goto } from "$app/navigation"
 
     //TODO: implement password recovery link & page?
 
@@ -10,37 +10,28 @@
     let password = ""
     let error = ""
 
-    async function register() {
-        const res = await fetch("http://" + PUBLIC_API_HOST + "/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({ email, password }),
-        })
-
-        const data = await res.json()
-        console.log(data) // Handle success or error messages
-    }
-
     async function login() {
         //TODO: Implement email and password checking
-        const res = await fetch("http://" + PUBLIC_API_HOST +
-                                    `/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
-            method: "GET",
-            mode: "cors",
-            credentials: "include", //for cookies
-            headers: { "Content-Type": "application/json" },
-        })
+        const res = await fetch(
+            "http://" +
+                PUBLIC_API_HOST +
+                `/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
+            {
+                method: "GET",
+                mode: "cors",
+                credentials: "include", //for cookies
+                headers: { "Content-Type": "application/json" },
+            },
+        )
 
         const data = await res.json()
         if (data.exists) {
             error = ""
+            localStorage.myId = data.userId
             await goto("/home")
-        }
-        else {
+        } else {
             error = "Invalid Login"
         }
-
     }
 </script>
 
@@ -48,7 +39,7 @@
 <br />
 <div class="grid w-full max-w-sm items-center gap-1.5">
     {#if error}
-        <div class="p-2 bg-red-100 text-red-700 rounded-lg">
+        <div class="rounded-lg bg-red-100 p-2 text-red-700">
             {error}
         </div>
     {/if}
@@ -65,5 +56,8 @@
         bind:value={password}
     />
     <Button onclick={login}>Login</Button>
-    <Button variant="link" onclick={() => goto("/registration")}>Register New Account</Button>
+    <Button
+        variant="link"
+        onclick={() => goto("/registration")}>Register New Account</Button
+    >
 </div>

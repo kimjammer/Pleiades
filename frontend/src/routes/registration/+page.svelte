@@ -31,6 +31,7 @@
         const data = await res.json()
         console.log(data) // Handle success or error messages
         if (data.success) {
+            localStorage.myId = data.userId
             await goto("/home")
         }
     }
@@ -51,14 +52,17 @@
         //FIRST: Check for if account exists
         console.log("account Exists checking")
 
-        const res = await fetch("http://" + PUBLIC_API_HOST + `/register/check?email=${encodeURIComponent(email)}`, {
-            method: "GET",
-            mode: "cors",
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json'
+        const res = await fetch(
+            "http://" + PUBLIC_API_HOST + `/register/check?email=${encodeURIComponent(email)}`,
+            {
+                method: "GET",
+                mode: "cors",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
             },
-        })
+        )
         console.log("awaiting")
         const data = await res.json()
         console.log(data)
