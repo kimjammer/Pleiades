@@ -5,6 +5,7 @@
     import { onMount } from "svelte"
     import { Button } from "$lib/components/ui/button"
     import { Sun, Moon } from "lucide-svelte"
+    import { goto } from "$app/navigation"
 
     let loggedIn = $state(false)
     async function verifySession() {
@@ -32,11 +33,11 @@
             return
         }
         localStorage.removeItem("myId")
-        window.location.replace("/")
+        goto("/")
     }
 
     function login() {
-        window.location.replace("/login")
+        goto("/login")
     }
 
     onMount(async () => {

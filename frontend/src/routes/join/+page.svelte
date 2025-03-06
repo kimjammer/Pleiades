@@ -11,7 +11,7 @@
 
     function decline() {
         window.close.bind(window)
-        location.assign("/")
+        goto("/")
     }
 
     async function accept() {

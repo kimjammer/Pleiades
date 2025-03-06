@@ -8,6 +8,7 @@
     import { toast } from "svelte-sonner"
     import type { ProjectsResponse, newProjectRequest } from "$lib/schema.js"
     import { PUBLIC_API_HOST } from "$env/static/public"
+    import { goto } from "$app/navigation"
 
     let title = $state("")
     let description = $state("")
@@ -24,7 +25,7 @@
         const url = "http://" + PUBLIC_API_HOST + "/projects"
         const res = await fetch(url, { mode: "cors", credentials: "include" })
         if (res.status === 401) {
-            location.assign("/")
+            goto("/")
         } else if (!res.ok) {
             toast.error("Failed to load projects")
             return

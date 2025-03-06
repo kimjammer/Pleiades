@@ -1,3 +1,4 @@
+import { goto } from "$app/navigation"
 import { PUBLIC_API_HOST } from "$env/static/public"
 
 class ReactiveTesting {
@@ -37,12 +38,12 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
 
             if (text == "UNAUTHORIZED") {
                 this.close()
-                window.location.replace("/login")
+                goto("/login")
             }
 
             if (text == "PROJECT ID DNE") {
                 this.close()
-                window.location.replace("/home")
+                goto("/home")
                 return
             }
 
@@ -298,7 +299,7 @@ export class ProjectState {
                 Args: {},
             }),
         )
-        window.location.replace("/home")
+        goto("/home")
     }
 
     delete() {
@@ -308,7 +309,7 @@ export class ProjectState {
                 Args: {},
             }),
         )
-        window.location.replace("/home")
+        goto("/home")
     }
 
     appendInProject(key: string, value: any) {
