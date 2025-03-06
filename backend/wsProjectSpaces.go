@@ -15,7 +15,8 @@ type Command interface {
 }
 
 type ConnectionForSpace struct {
-	state_tx   chan<- []byte
+	// This channel must be "two way" because the project space goroutine needs to clear the state if the buffer is full
+	state_tx   chan []byte
 	command_rx <-chan Command
 }
 
@@ -46,10 +47,39 @@ func requeryUser(user User) {
 	defer projectSpacesMutex.Unlock()
 
 	for _, project := range user.Projects {
-		if contactPoint, exists := projectSpaces[project]; exists {
-			contactPoint.requeryRequest <- struct{}{}
-		}
+		requeryUsersForProject(project)
 	}
+}
+
+// Requery the users for a particular project ID
+func requeryUsersForProject(projectId string) {
+	if contactPoint, exists := projectSpaces[projectId]; exists {
+		contactPoint.requeryRequest <- struct{}{}
+	}
+}
+
+// Apply a one-off command to a project server side
+//
+// This will automatically update all connected users of the change.
+func applyCommandToProject(projectId string, command Command) {
+	connection := joinSpace(projectId)
+
+	connection.command_tx <- command
+}
+
+type FunctionCommand struct {
+	function func(*Project)
+}
+
+func (self FunctionCommand) apply(project *Project) {
+	self.function(project)
+}
+
+// Update the project via a function
+//
+// This will automatically update all connected users of the change.
+func updateProject(projectId string, updater func(*Project)) {
+	applyCommandToProject(projectId, FunctionCommand{function: updater})
 }
 
 func joinSpace(projectId string) ConnectionForSocket {
@@ -65,8 +95,8 @@ func joinSpace(projectId string) ConnectionForSocket {
 		projectSpaces[projectId] = contactPoint
 	}
 
-	state_chan := make(chan []byte)
-	command_chan := make(chan Command)
+	state_chan := make(chan []byte, 1)
+	command_chan := make(chan Command, 1)
 
 	projectSpaces[projectId].sendNewConnection <- ConnectionForSpace{state_tx: state_chan, command_rx: command_chan}
 
@@ -137,6 +167,7 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 	for {
 		select {
 		case newConnection := <-connectionsChannel:
+			// Guaranteed not to block since it's the first one and there's a buffer of one
 			newConnection.state_tx <- encodeProject(project, users)
 			connections = append(connections, newConnection)
 		case _ = <-noConnectionsTimeout:
@@ -196,7 +227,13 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 			encoded := encodeProject(project, users)
 
 			for _, connection := range connections {
-				connection.state_tx <- encoded
+				select {
+				case connection.state_tx <- encoded:
+				default:
+					// Clear the buffer and try again
+					<-connection.state_tx
+					connection.state_tx <- encoded
+				}
 			}
 
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -239,7 +276,7 @@ func queryUsers(users []UserAndLeft) []UserInProject {
 }
 
 func existingInviteLinks(project Project) bool {
-	// TODO
+
 	return true
 }
 

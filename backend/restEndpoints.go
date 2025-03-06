@@ -213,7 +213,7 @@ func getUser(userId string, c context.Context) (crrUser *User) {
 func invite(c *gin.Context) {
 	//Get current user
 	userId := c.GetString("userId")
-	crrUser := getUser(userId, c);
+	crrUser := getUser(userId, c)
 	if crrUser == nil {
 		// TODO: convert to middleware
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
@@ -240,9 +240,9 @@ func invite(c *gin.Context) {
 
 	// Create record
 	invitation := Invitation{
-		Id:        	uuid.New().String(),
-		CreatedAt: 	time.Now(),
-		ProjectId:	projectId,	
+		Id:        uuid.New().String(),
+		CreatedAt: time.Now(),
+		ProjectId: projectId,
 	}
 	_, err := invitations.InsertOne(c, invitation)
 	if err != nil {
@@ -259,8 +259,7 @@ func join(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invite not found"})
 		return
 	}
-    invitation, _ := a.(Invitation)
-	
+	invitation, _ := a.(Invitation)
 
 	// Add project to user
 	userId := c.GetString("userId")
@@ -274,13 +273,18 @@ func join(c *gin.Context) {
 	}
 
 	// Add user to project
-	filter = bson.D{{Key: "_id", Value: invitation.ProjectId}, {Key: "users.user", Value: bson.M{"$ne": userId}}}
-	update = bson.M{"$push": bson.M{"users": UserAndLeft{User: userId, LeftProject: false}}}
-	_, err = db.Collection("projects").UpdateOne(c, filter, update)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invited project doesn't exist"})
-		return
-	}
+	updateProject(invitation.ProjectId, func(project *Project) {
+		for i, user := range project.Users {
+			if user.User == userId {
+				project.Users[i].LeftProject = false
+				return
+			}
+		}
+
+		project.Users = append(project.Users, UserAndLeft{User: userId, LeftProject: false})
+	})
+
+	requeryUsersForProject(invitation.ProjectId)
 
 	c.String(http.StatusOK, "success")
 }
@@ -291,7 +295,7 @@ func joinInfo(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"exists": false})
 		return
 	}
-    invitation, _ := a.(Invitation)
+	invitation, _ := a.(Invitation)
 
 	// Get addl project info TODO: abstract
 	filter := bson.D{{Key: "_id", Value: invitation.ProjectId}}
