@@ -4,7 +4,6 @@ Week 3 (Summary) (Scrum Master: Ethan Dawes)
 3/4 1.5hr 4f525ee UI and basic handling for leaving groups
 3/4 1.5hr 2adcc5b Leaving groups works
 3/4 1hr   4c79625 Deleting groups works
-<<<<<<< Updated upstream
 3/4 2.5hr 60a00c1 tokens/cookies work
 3/4 0.5hr b0dd5978e1240cebf2c642ccbb8a7b573d12e7f6 8226a94ebe4ca135963ebf9d60de2e8ca24e31c7 e507e8ec6ed8a6795eaaabbac1b718fd27471665 eabc83f23bd72a4438bb2317b383016ea092181d Undo my package organization of availability picker (b/c super buggy)
 3/4 0.5hr e9c91f58ace430fab2620ac720120fc7634bd2c0 ad571880879573905f64537f1d5ee6eb0e86d7ed b381e92b411c325c453176b86780c194e93b392a 57670851bcb90cdfcb9c047c4ca00a9b9ca96e82 Break & fix the build (shadcn outdated)
@@ -15,6 +14,7 @@ Week 3 (Summary) (Scrum Master: Ethan Dawes)
 3/5 3hr 5cecf42207b4d09cdd3195c9fa4878a21aec2704 generate invite tokens
 3/5 1hr 442229714527b5d1152ce86afce054c3f1405c00 UI for inviting members
 3/5 0.75hr 387ca5bfd974c352d64a1db0ff9ce66f5f19f64d 19f8e04691974ca9f9f5a350fdbd0c05f487ddf5 validate join codes
+3/6 1hr 2ca3089 Refactor project updating on the server side
 
 Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
 [Meetings]

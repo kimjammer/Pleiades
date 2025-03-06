@@ -42,9 +42,9 @@
                     <Card.Description>{inviteInfo.description}</Card.Description>
                 </Card.Header>
                 <Card.Footer class="flex justify-between">
-                    <Button on:click={accept}>Accept</Button>
+                    <Button onclick={accept}>Accept</Button>
                     <Button
-                        on:click={decline}
+                        onclick={decline}
                         variant="outline">Decline</Button
                     >
                 </Card.Footer>
@@ -53,7 +53,7 @@
                     <Card.Title>Invalid or expired invite :(</Card.Title>
                 </Card.Header>
                 <Card.Footer>
-                    <Button on:click={decline}>Close</Button>
+                    <Button onclick={decline}>Close</Button>
                 </Card.Footer>
             {/if}
         {/await}

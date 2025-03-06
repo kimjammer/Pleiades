@@ -28,7 +28,7 @@
         isLink: boolean
     }
     let words = $derived.by(async () => {
-        return (await project).description.split(" ").map((word) => {
+        return (await project).description.split(" ").map(word => {
             const section: word = {
                 content: word + " ",
                 isLink: word.startsWith("http"),
@@ -52,7 +52,11 @@
             {#await words then words}
                 {#each words as word}
                     {#if word.isLink}
-                        <a href={word.content} target="_blank" class="text-blue-500">
+                        <a
+                            href={word.content}
+                            target="_blank"
+                            class="text-blue-500"
+                        >
                             {word.content}
                         </a>
                     {:else}
@@ -78,7 +82,7 @@
 
             <CalendarTab {project} />
 
-            <AvailabilityTab {project} />
+            <!--<AvailabilityTab {project} /> -->
 
             <SettingsTab {project} />
 

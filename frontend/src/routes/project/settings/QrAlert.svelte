@@ -5,22 +5,22 @@
 
     let url = new Promise<string>(() => {})
 
-    async function generateLink() {
-        url = (
-            await fetch("http://" + PUBLIC_API_HOST + "/invite" + location.search, {
-                mode: "cors",
-                credentials: "include",
-            })
-        )
-            .text()
-            .then(token => location.origin + "/join?id=" + token)
+    async function generateLink(): Promise<string> {
+        let response = await fetch("http://" + PUBLIC_API_HOST + "/invite" + location.search, {
+            mode: "cors",
+            credentials: "include",
+        })
+
+        let token = await response.text()
+
+        return location.origin + "/join?id=" + token
     }
 </script>
 
 <Dialog.Root>
     <Dialog.Trigger
         class={buttonVariants({ variant: "outline" })}
-        on:click={generateLink}>Invite</Dialog.Trigger
+        onclick={() => (url = generateLink())}>Invite</Dialog.Trigger
     >
     <Dialog.Content class="sm:max-w-[425px]">
         <Dialog.Header>
