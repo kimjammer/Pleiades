@@ -240,9 +240,9 @@ func invite(c *gin.Context) {
 
 	// Create record
 	invitation := Invitation{
-		Id:        uuid.New().String(),
-		CreatedAt: time.Now(),
-		Project:   projectId,
+		Id:        	uuid.New().String(),
+		CreatedAt: 	time.Now(),
+		ProjectId:	projectId,	
 	}
 	_, err := invitations.InsertOne(c, invitation)
 	if err != nil {
@@ -265,8 +265,8 @@ func join(c *gin.Context) {
 	// Add project to user
 	userId := c.GetString("userId")
 	objId, _ := primitive.ObjectIDFromHex(userId)
-	filter := bson.D{{Key: "_id", Value: objId}, {Key: "projects", Value: bson.M{"$ne": invitation.Project}}}
-	update := bson.M{"$push": bson.M{"projects": invitation.Project}}
+	filter := bson.D{{Key: "_id", Value: objId}, {Key: "projects", Value: bson.M{"$ne": invitation.ProjectId}}}
+	update := bson.M{"$push": bson.M{"projects": invitation.ProjectId}}
 	_, err := db.Collection("users").UpdateOne(c, filter, update)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
@@ -274,7 +274,7 @@ func join(c *gin.Context) {
 	}
 
 	// Add user to project
-	filter = bson.D{{Key: "_id", Value: invitation.Project}, {Key: "users.user", Value: bson.M{"$ne": userId}}}
+	filter = bson.D{{Key: "_id", Value: invitation.ProjectId}, {Key: "users.user", Value: bson.M{"$ne": userId}}}
 	update = bson.M{"$push": bson.M{"users": UserAndLeft{User: userId, LeftProject: false}}}
 	_, err = db.Collection("projects").UpdateOne(c, filter, update)
 	if err != nil {
@@ -285,13 +285,24 @@ func join(c *gin.Context) {
 	c.String(http.StatusOK, "success")
 }
 
-func validateJoin(c *gin.Context) {
-	_, exists := c.Get("invitation")
-	if exists {
-		c.String(http.StatusOK, "true")
-	} else {
-		c.String(http.StatusOK, "false")
+func joinInfo(c *gin.Context) {
+	a, exists := c.Get("invitation")
+	if !exists {
+		c.JSON(http.StatusOK, gin.H{"exists": false})
+		return
 	}
+    invitation, _ := a.(Invitation)
+
+	// Get addl project info TODO: abstract
+	filter := bson.D{{Key: "_id", Value: invitation.ProjectId}}
+	var project Project
+	err := db.Collection("projects").FindOne(c, filter).Decode(&project)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"exists": false})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"exists": true, "id": invitation.ProjectId, "title": project.Title, "description": project.Description})
 }
 
 func encryptPassword(password string) (string, error) {

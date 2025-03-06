@@ -76,5 +76,5 @@ type Session struct {
 type Invitation struct {
 	Id              string `bson:"_id"`
 	CreatedAt       time.Time
-	Project         string
+	ProjectId       string
 }

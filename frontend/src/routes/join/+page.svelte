@@ -1,14 +1,13 @@
 <script lang="ts">
+    import { goto } from "$app/navigation"
     import { PUBLIC_API_HOST } from "$env/static/public"
     import Button from "$lib/components/ui/button/button.svelte"
     import * as Card from "$lib/components/ui/card"
 
-    const isValid = fetch("http://" + PUBLIC_API_HOST + "/join/validate" + location.search, {
+    const inviteInfo = fetch("http://" + PUBLIC_API_HOST + "/join/info" + location.search, {
         mode: "cors",
         credentials: "include",
-    })
-        .then(res => res.text())
-        .then(validity => validity === "true")
+    }).then(res => res.json())
 
     function decline() {
         window.close.bind(window)
@@ -16,6 +15,7 @@
     }
 
     async function accept() {
+        const projectId = (await inviteInfo).id
         if (
             (
                 await fetch("http://" + PUBLIC_API_HOST + "/join" + location.search, {
@@ -24,22 +24,22 @@
                 })
             ).status === 200
         ) {
-            location.assign(location.origin + "/project" + location.search)
+            goto(location.origin + "/project?id=" + projectId)
         }
     }
 </script>
 
 <div class="flex items-center justify-center">
     <Card.Root>
-        {#await isValid}
+        {#await inviteInfo}
             <Card.Header>
                 <Card.Title>Validating invite...</Card.Title>
             </Card.Header>
-        {:then isValid}
-            {#if isValid}
+        {:then inviteInfo}
+            {#if inviteInfo.exists}
                 <Card.Header>
-                    <Card.Title>You've been invited to "project"</Card.Title>
-                    <Card.Description>Card Description</Card.Description>
+                    <Card.Title>You've been invited to "{inviteInfo.title}"</Card.Title>
+                    <Card.Description>{inviteInfo.description}</Card.Description>
                 </Card.Header>
                 <Card.Footer class="flex justify-between">
                     <Button on:click={accept}>Accept</Button>
