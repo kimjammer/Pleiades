@@ -14,9 +14,9 @@
     import type { ProjectState } from "$lib/project_state.svelte"
     import { Availability as DbAvailability } from "$lib/project_state.svelte.js"
 
-    export let project: ProjectState
+    let { project }: { project: ProjectState } = $props()
 
-    let tzOffset = 0
+    let tzOffset = $state(0)
     const ranges = weekdayDateRanges()
 
     function save(ev: CustomEvent<Availability>) {
@@ -35,6 +35,8 @@
             startOffset: 10,
             endOffset: 11,
         } satisfies DbAvailability)
+        project.users[myIndex].firstName = "joe"
+        project.updateInProject("users.0.firstName", "joe")
     }
 
     let groupAvailabilities: UserAvailability[] = [
