@@ -254,19 +254,18 @@ func invite(c *gin.Context) {
 
 func join(c *gin.Context) {
 	// get invite entry
-	a, exists := c.Get("invitation")
-	if !exists {
+	invitation, err := getInvite(c)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invite not found"})
 		return
 	}
-	invitation, _ := a.(Invitation)
 
 	// Add project to user
 	userId := c.GetString("userId")
 	objId, _ := primitive.ObjectIDFromHex(userId)
 	filter := bson.D{{Key: "_id", Value: objId}, {Key: "projects", Value: bson.M{"$ne": invitation.ProjectId}}}
 	update := bson.M{"$push": bson.M{"projects": invitation.ProjectId}}
-	_, err := db.Collection("users").UpdateOne(c, filter, update)
+	_, err = db.Collection("users").UpdateOne(c, filter, update)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
@@ -290,17 +289,16 @@ func join(c *gin.Context) {
 }
 
 func joinInfo(c *gin.Context) {
-	a, exists := c.Get("invitation")
-	if !exists {
+	invitation, err := getInvite(c)
+	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"exists": false})
 		return
 	}
-	invitation, _ := a.(Invitation)
 
 	// Get addl project info TODO: abstract
 	filter := bson.D{{Key: "_id", Value: invitation.ProjectId}}
 	var project Project
-	err := db.Collection("projects").FindOne(c, filter).Decode(&project)
+	err = db.Collection("projects").FindOne(c, filter).Decode(&project)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"exists": false})
 		return

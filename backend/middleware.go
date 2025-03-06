@@ -1,13 +1,10 @@
 package main
 
 import (
-	"errors"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/v2/bson"
-	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 // Middleware to load token from cookie
@@ -37,32 +34,6 @@ func authRequired() gin.HandlerFunc {
 		_, exists := c.Get("userId")
 		if !exists {
 			c.AbortWithStatus(http.StatusUnauthorized)
-		}
-
-		c.Next()
-	}
-}
-
-/**
- * Middleware to set the 'invitation' context variable
- * Usage:
- * a, _ := c.Get("invitation")
- * b, _ := a.(Invitation)
- */
-func getInvite() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var invitation Invitation
-		joinId := c.Query("id")
-		filter := bson.D{{Key: "_id", Value: joinId}}
-		err := db.Collection("invitations").FindOne(c, filter).Decode(&invitation)
-		if err != nil {
-			if errors.Is(err, mongo.ErrNoDocuments) {
-				// No op
-			} else {
-				panic(err)
-			}
-		} else {
-			c.Set("invitation", invitation)
 		}
 
 		c.Next()
