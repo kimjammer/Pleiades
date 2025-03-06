@@ -20,15 +20,16 @@ var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 	CheckOrigin: func(r *http.Request) bool {
-		return r.Header.Get("Origin") == "http://localhost:5173"
+		allowedOrigins := []string{"http://localhost:5173", "http://localhost:4173"}
+		return slices.Contains(allowedOrigins, r.Header.Get("Origin"))
 	},
 }
 
 func wsEndpoint(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		conn.Close()
 		log.Println(err)
+		conn.Close()
 		return
 	}
 
