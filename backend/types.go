@@ -33,7 +33,11 @@ type User struct {
 	Projects     []string
 }
 
-type Availability map[string]([]int)
+type Availability struct {
+	DayOfWeek   int
+	StartOffset int
+	EndOffset   int
+}
 
 type Poll struct {
 	Id          string

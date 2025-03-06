@@ -12,6 +12,7 @@
     } from "$lib/components/availability/Availability"
     import * as Tabs from "$lib/components/ui/tabs"
     import type { ProjectState } from "$lib/project_state.svelte"
+    import { Availability as DbAvailability } from "$lib/project_state.svelte.js"
 
     export let project: ProjectState
 
@@ -20,7 +21,20 @@
 
     function save(ev: CustomEvent<Availability>) {
         const detail = ev.detail
+        const myIndex = project.users.findIndex(user => user.id === localStorage.myId)
         console.log("TODO: websocket", detail)
+        project.updateInProject(`users.${myIndex}.availability`, [
+            {
+                dayOfWeek: 0,
+                startOffset: 10,
+                endOffset: 11,
+            },
+        ] satisfies DbAvailability[])
+        project.appendInProject(`users.${myIndex}.availability`, {
+            dayOfWeek: 0,
+            startOffset: 10,
+            endOffset: 11,
+        } satisfies DbAvailability)
     }
 
     let groupAvailabilities: UserAvailability[] = [
