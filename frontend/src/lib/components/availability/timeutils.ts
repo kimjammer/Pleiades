@@ -1,38 +1,38 @@
-import {DAY, HOUR, MILLISECOND, MINUTE, TIME_STEP} from "./units.js";
+import { DAY, HOUR, MILLISECOND, MINUTE, TIME_STEP } from "./units.js"
 
 /** Date formatted in en-US locale, m/dd/yy. TODO: tighten this type */
-export type DateStr = `${number}/${number}/${number}` | string;
+export type DateStr = `${number}/${number}/${number}` | string
 
 /** Minutes since epoch representing start and stop datetimes */
-export type DatetimeRange = [number, number];
+export type DatetimeRange = [number, number]
 
 /** Represents [Date (as ms since epoch), block idx since midnight] */
-export type Coord = [number, number];
+export type Coord = [number, number]
 
 /** convert "2:50 AM" or "15:43" to minutes since midnight */
 export function timeToInt(timeString: string) {
-  const [hours, minutes, ampm] = timeString.split(/[: ]/);
+    const [hours, minutes, ampm] = timeString.split(/[: ]/)
 
-  // Calculate the total minutes since midnight
-  return (Number(hours) + Number(ampm?.toLowerCase() === "pm") * 12) * HOUR + Number(minutes);
+    // Calculate the total minutes since midnight
+    return (Number(hours) + Number(ampm?.toLowerCase() === "pm") * 12) * HOUR + Number(minutes)
 }
 
 /** Converts minutes since midnight to "2:50 AM" or "15:43" */
 export function intToTime(midnightOffset: number, military = false) {
-  let hours = Math.floor(midnightOffset / HOUR);
-  const minutes = midnightOffset % HOUR;
-  const isPM = hours >= 12;
-  hours = military ? hours : (isPM ? hours % 13 + 1 : hours);
-  if (hours === 0 && !military) hours = 12;
-  return `${hours}:${String(minutes).padStart(2, "0")}` + (military ? "" : (isPM ? " PM" : " AM"));
+    let hours = Math.floor(midnightOffset / HOUR)
+    const minutes = midnightOffset % HOUR
+    const isPM = hours >= 12
+    hours = military ? hours : isPM ? (hours % 13) + 1 : hours
+    if (hours === 0 && !military) hours = 12
+    return `${hours}:${String(minutes).padStart(2, "0")}` + (military ? "" : isPM ? " PM" : " AM")
 }
 
 /** Milliseconds since epoch for date string */
-export const dateStrToEpoch = (dateStr: string) => new Date(dateStr).getTime();
+export const dateStrToEpoch = (dateStr: string) => new Date(dateStr).getTime()
 
 /** Converts a date to the format yyyy-mm-dd, regardless of locale or timezone. Not displayed, used internally */
 export function canonicalDateStr(date: Date) {
-  return date.toISOString().substring(0, 10) as DateStr;  // Remove the time component
+    return date.toISOString().substring(0, 10) as DateStr // Remove the time component
 }
 
 /**
@@ -41,15 +41,17 @@ export function canonicalDateStr(date: Date) {
  * @param target index of 15-minute block since midnight
  */
 export function timeInRange(ranges: DatetimeRange[], target: number) {
-  target *= TIME_STEP;
-  return ranges.some(([rangeStart, rangeEnd]) => {
-    console.assert(rangeEnd > rangeStart);
-    // Convert to minutes since day start
-    rangeStart %= DAY;
-    rangeEnd %= DAY;
-    const isDisjoint = rangeEnd < rangeStart;  // AKA spans multiple days
-    return isDisjoint ? (target <= rangeEnd || target >= rangeStart) : (target >= rangeStart && target <= rangeEnd);
-  });
+    target *= TIME_STEP
+    return ranges.some(([rangeStart, rangeEnd]) => {
+        console.assert(rangeEnd > rangeStart)
+        // Convert to minutes since day start
+        rangeStart %= DAY
+        rangeEnd %= DAY
+        const isDisjoint = rangeEnd < rangeStart // AKA spans multiple days
+        return isDisjoint
+            ? target <= rangeEnd || target >= rangeStart
+            : target >= rangeStart && target <= rangeEnd
+    })
 }
 
 /** Checks if `target` is in any of the ranges
@@ -57,29 +59,30 @@ export function timeInRange(ranges: DatetimeRange[], target: number) {
  * @param target minutes since epoch
  */
 export function datetimeInRange(ranges: DatetimeRange[], target: Date | number) {
-  if (target instanceof Date)
-    target = target.getTime() * MILLISECOND;
-  // end time is excluded so last cell is labeled but extra row not made (issue #95)
-  // @ts-ignore `target` is guaranteed to be a number here
-  return ranges.some(([rangeStart, rangeEnd]) => target < rangeEnd && target >= rangeStart);
+    if (target instanceof Date) target = target.getTime() * MILLISECOND
+    // end time is excluded so last cell is labeled but extra row not made (issue #95)
+    // @ts-ignore `target` is guaranteed to be a number here
+    return ranges.some(([rangeStart, rangeEnd]) => target < rangeEnd && target >= rangeStart)
 }
 
 /** Convert a list of [start, stop] ranges (minutes since epoch) to unique dates they cover. Preserves order */
 export function rangesToDate(ranges: DatetimeRange[]) {
-  return ranges.flat().reduce((acc, cur) => {
-    cur = Math.floor(cur / DAY) * DAY;  // Set time to midnight
-    if (!acc.includes(cur))
-      acc.push(cur);
-    return acc;
-  }, [] as number[]).map(timestamp => new Date(timestamp / MILLISECOND));
+    return ranges
+        .flat()
+        .reduce((acc, cur) => {
+            cur = Math.floor(cur / DAY) * DAY // Set time to midnight
+            if (!acc.includes(cur)) acc.push(cur)
+            return acc
+        }, [] as number[])
+        .map(timestamp => new Date(timestamp / MILLISECOND))
 }
 
 /** Add offset in minutes to a `Coord`, return copy */
 export function offsetDatetime(coord: Coord, offsetMin: number) {
-  const [dateMs, blockIdx] = coord;
-  const sumMin = dateMs * MILLISECOND + blockIdx * TIME_STEP + offsetMin;
-  const DAYS_TO_MS = DAY / MILLISECOND;
-  return [Math.floor(sumMin / DAY) * DAYS_TO_MS, (sumMin % DAY) * DAYS_TO_MS] as Coord;
+    const [dateMs, blockIdx] = coord
+    const sumMin = dateMs * MILLISECOND + blockIdx * TIME_STEP + offsetMin
+    const DAYS_TO_MS = DAY / MILLISECOND
+    return [Math.floor(sumMin / DAY) * DAYS_TO_MS, (sumMin % DAY) * DAYS_TO_MS] as Coord
 }
 
 /** Add the specified number of minutes to `date` copy & return it
@@ -87,10 +90,9 @@ export function offsetDatetime(coord: Coord, offsetMin: number) {
  * @param offsetMin minutes to add
  */
 export function offsetDate(date: Date | string | number, offsetMin: number) {
-  if (typeof date === "number")
-    date /= MILLISECOND;
-  const dateObj = new Date(date);
-  return new Date(dateObj.getTime() + offsetMin / MILLISECOND);
+    if (typeof date === "number") date /= MILLISECOND
+    const dateObj = new Date(date)
+    return new Date(dateObj.getTime() + offsetMin / MILLISECOND)
 }
 
 /** Offsets all provided ranges by specified offset
@@ -98,7 +100,12 @@ export function offsetDate(date: Date | string | number, offsetMin: number) {
  * @param offsetMin minutes to add
  */
 export function offsetRange(ranges: DatetimeRange[], offsetMin: number) {
-  return ranges.map(range => range.map(timestamp => offsetDate(timestamp, offsetMin).getTime() * MILLISECOND) as DatetimeRange);
+    return ranges.map(
+        range =>
+            range.map(
+                timestamp => offsetDate(timestamp, offsetMin).getTime() * MILLISECOND,
+            ) as DatetimeRange,
+    )
 }
 
 /**
@@ -106,33 +113,39 @@ export function offsetRange(ranges: DatetimeRange[], offsetMin: number) {
  * @see https://stackoverflow.com/a/68593283
  */
 export function getTzOffset(timeZone = "UTC", date = new Date()) {
-  const utcDate = new Date(date.toLocaleString("en-US", { timeZone: "UTC" }));
-  const tzDate = new Date(date.toLocaleString("en-US", { timeZone }));
-  return (tzDate.getTime() - utcDate.getTime()) * MILLISECOND;
+    const utcDate = new Date(date.toLocaleString("en-US", { timeZone: "UTC" }))
+    const tzDate = new Date(date.toLocaleString("en-US", { timeZone }))
+    return (tzDate.getTime() - utcDate.getTime()) * MILLISECOND
 }
 
 // get local tz offset with `new Date().getTimezoneOffset()`
 
-export const getLocalTzName = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
+export const getLocalTzName = () => Intl.DateTimeFormat().resolvedOptions().timeZone
 
-export const getAllTzNames = () => Intl.supportedValuesOf("timeZone");
+export const getAllTzNames = () => Intl.supportedValuesOf("timeZone")
 
 /**
  * Arbitrary dates within one week, one for each day from Monday to Sunday in that order
  * Generated from https://stackoverflow.com/a/43008875 (exact day doesn't matter)
  * @param tzOffset offset in minutes from UTC. Defaults to local time
  */
-export const weekdayDates = (tzOffset = new Date().getTimezoneOffset()) => ([
-  new Date("2017-02-27T00:00:00.000Z"),
-  new Date("2017-02-28T00:00:00.000Z"),
-  new Date("2017-03-01T00:00:00.000Z"),
-  new Date("2017-03-02T00:00:00.000Z"),
-  new Date("2017-03-03T00:00:00.000Z"),
-  new Date("2017-03-04T00:00:00.000Z"),
-  new Date("2017-03-05T00:00:00.000Z"),
-].map(date => offsetDate(date, tzOffset)));
+export const weekdayDates = (tzOffset = new Date().getTimezoneOffset()) =>
+    [
+        new Date("2017-02-27T00:00:00.000Z"),
+        new Date("2017-02-28T00:00:00.000Z"),
+        new Date("2017-03-01T00:00:00.000Z"),
+        new Date("2017-03-02T00:00:00.000Z"),
+        new Date("2017-03-03T00:00:00.000Z"),
+        new Date("2017-03-04T00:00:00.000Z"),
+        new Date("2017-03-05T00:00:00.000Z"),
+    ].map(date => offsetDate(date, tzOffset))
 
-export const weekdayDateRanges = (tzOffset = new Date().getTimezoneOffset()) => weekdayDates(tzOffset).map(weekdayDate => ([
-  weekdayDate.getTime() * MILLISECOND,
-  weekdayDate.getTime() * MILLISECOND + 11 * HOUR + 59 * MINUTE,
-] as DatetimeRange));
+// Uses reasonable default for college students: 7am-10pm
+export const weekdayDateRanges = (tzOffset = new Date().getTimezoneOffset()) =>
+    weekdayDates(tzOffset).map(
+        weekdayDate =>
+            [
+                weekdayDate.getTime() * MILLISECOND + 7 * HOUR,
+                weekdayDate.getTime() * MILLISECOND + (12 + 10) * HOUR,
+            ] as DatetimeRange,
+    )

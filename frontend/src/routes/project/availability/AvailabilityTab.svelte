@@ -3,7 +3,6 @@
     import { weekdayDateRanges } from "$lib/components/availability/timeutils"
     import TzPicker from "$lib/components/TzPicker.svelte"
     import { writable } from "svelte/store"
-    import { dummy1, dummy2, dummy3 } from "./dummy"
     import {
         loadAvailability,
         loadAvailabilityOne,
@@ -13,6 +12,7 @@
     import * as Tabs from "$lib/components/ui/tabs"
     import type { ProjectState } from "$lib/project_state.svelte"
     import { Availability as DbAvailability } from "$lib/project_state.svelte.js"
+    import { availabilityToDateMap, dateMapToAvailability } from "./adapter"
 
     let { project }: { project: ProjectState } = $props()
 
@@ -20,30 +20,24 @@
     const ranges = weekdayDateRanges()
 
     function save(ev: CustomEvent<Availability>) {
-        const detail = ev.detail
+        const availability = dateMapToAvailability(ev.detail)
+        console.log("db availability", availability)
         const myIndex = project.users.findIndex(user => user.id === localStorage.myId)
-        console.log("TODO: websocket", detail)
-        project.updateInProject(`users.${myIndex}.availability`, [
-            {
-                dayOfWeek: 0,
-                startOffset: 10,
-                endOffset: 11,
-            },
-        ] satisfies DbAvailability[])
-        project.appendInProject(`users.${myIndex}.availability`, {
-            dayOfWeek: 0,
-            startOffset: 10,
-            endOffset: 11,
-        } satisfies DbAvailability)
-        project.users[myIndex].firstName = "joe"
-        project.updateInProject("users.0.firstName", "joe")
+
+        // TODO: how to save to db?
+        project.users[myIndex].availability = availability
+        project.updateInProject(`users.${myIndex}.availability`, availability)
     }
 
-    let groupAvailabilities: UserAvailability[] = [
-        { availability: dummy1, username: "Mr. Rectangle" },
-        { availability: dummy2, username: ":)" },
-        { availability: dummy3, username: "unemployed" },
-    ]
+    let groupAvailabilities = $derived(
+        project.users.map(user => ({
+            availability: availabilityToDateMap(user.availability, "2017-02-27T00:00:00.000Z", 8),
+            username: user.firstName + " " + user.lastName,
+        })),
+    )
+    $effect(() => {
+        console.log("group avail", groupAvailabilities)
+    })
 </script>
 
 <Tabs.Content value="availability">
@@ -55,9 +49,9 @@
             {ranges}
             tzOffset={-tzOffset}
             shouldUseWeekdays={true}
-            availability={loadAvailabilityOne(dummy2)}
             on:save={save}
         />
+        <!-- availability={loadAvailabilityOne(dummy2)} -->
 
         <!-- TODO: make `availablePeople` boolean, writable store value unused OR some way to delegate tooltip -->
         <ManualInput
