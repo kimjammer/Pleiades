@@ -22,6 +22,20 @@
 
         project = connectToProject(projectId)
     })
+
+    type word = {
+        content: string
+        isLink: boolean
+    }
+    let words = $derived.by(async () => {
+        return (await project).description.split(" ").map((word) => {
+            const section: word = {
+                content: word + " ",
+                isLink: word.startsWith("http"),
+            }
+            return section
+        })
+    })
 </script>
 
 <PleiadesNav></PleiadesNav>
@@ -35,7 +49,17 @@
             {project.title}
         </h2>
         <p class="my-5 leading-7 [&:not(:first-child)]:mt-6">
-            {project.description}
+            {#await words then words}
+                {#each words as word}
+                    {#if word.isLink}
+                        <a href={word.content} target="_blank" class="text-blue-500">
+                            {word.content}
+                        </a>
+                    {:else}
+                        {word.content}
+                    {/if}
+                {/each}
+            {/await}
         </p>
 
         <Tabs.Root
