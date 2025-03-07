@@ -196,25 +196,10 @@ func login(c *gin.Context) {
 
 }
 
-func getUser(userId string, c context.Context) (crrUser *User) {
-	objId, _ := primitive.ObjectIDFromHex(userId)
-	filter := bson.D{{Key: "_id", Value: objId}}
-	err := db.Collection("users").FindOne(c, filter).Decode(&crrUser)
-	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil
-		} else {
-			panic(err)
-		}
-	}
-	return
-}
-
 func invite(c *gin.Context) {
 	//Get current user
-	userId := c.GetString("userId")
-	crrUser := getUser(userId, c)
-	if crrUser == nil {
+	crrUser, err := getUser(c)
+	if err != nil {
 		// TODO: convert to middleware
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
@@ -244,7 +229,7 @@ func invite(c *gin.Context) {
 		CreatedAt: time.Now(),
 		ProjectId: projectId,
 	}
-	_, err := invitations.InsertOne(c, invitation)
+	_, err = invitations.InsertOne(c, invitation)
 	if err != nil {
 		panic(err)
 	}
@@ -305,6 +290,30 @@ func joinInfo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"exists": true, "id": invitation.ProjectId, "title": project.Title, "description": project.Description})
+}
+
+func setAvailability(c *gin.Context) {
+	// Decode new availability
+	var newAvailability []Availability
+	if err := c.ShouldBindJSON(&newAvailability); err != nil {
+		log.Println("Invalid JSON data")
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+
+	// Write new availability to db
+	userId := c.GetString("userId")
+	objId, _ := primitive.ObjectIDFromHex(userId)
+	filter := bson.D{{Key: "_id", Value: objId}}
+	update := bson.M{"$set": bson.M{"availability": newAvailability}}
+	_, err := db.Collection("users").UpdateOne(c, filter, update)
+	if err != nil {
+		panic(err)
+	}
+
+	user, _ := getUser(c);  // error not possible b/c already validated
+
+	requeryUser(user)
 }
 
 func encryptPassword(password string) (string, error) {
