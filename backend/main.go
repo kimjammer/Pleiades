@@ -46,6 +46,8 @@ func defineRoutes(router *gin.Engine) {
 }
 
 func main() {
+	log.Println("Test extensions enabled?", TEST)
+
 	//Connect to database
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
