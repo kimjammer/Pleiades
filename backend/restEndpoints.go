@@ -219,7 +219,7 @@ func invite(c *gin.Context) {
 	// Create 1 week ttl TODO: is this ok to do every time or is there a better init location?
 	ttl := int32(604800) // 1 week, in seconds
 	if TEST {
-		ttl = 10 // seconds
+		ttl = 20 // seconds
 	}
 	indexModel := mongo.IndexModel{
 		Keys:    bson.D{{Key: "createdat", Value: 1}},
