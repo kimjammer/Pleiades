@@ -14,7 +14,8 @@ Week 3 (Summary) (Scrum Master: Ethan Dawes)
 3/5 3hr 5cecf42207b4d09cdd3195c9fa4878a21aec2704 generate invite tokens
 3/5 1hr 442229714527b5d1152ce86afce054c3f1405c00 UI for inviting members
 3/5 0.75hr 387ca5bfd974c352d64a1db0ff9ce66f5f19f64d 19f8e04691974ca9f9f5a350fdbd0c05f487ddf5 validate join codes
-3/6 1hr 2ca3089 Refactor project updating on the server side
+3/6 1hr   2ca3089 Refactor project updating on the server side
+3/6 0.5hr 7df99a3 Make invitations work with the UI and make my acceptance criteria work
 
 Week 1&2 (Plan) (Scrum Master: Ethan Dawes)
 [Meetings]

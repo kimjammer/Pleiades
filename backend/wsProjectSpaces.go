@@ -165,6 +165,8 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 	var connections []ConnectionForSpace
 
 	for {
+		appliedChange := false
+
 		select {
 		case newConnection := <-connectionsChannel:
 			// Guaranteed not to block since it's the first one and there's a buffer of one
@@ -176,10 +178,9 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 			}
 		case _ = <-requeryChannel:
 			users = queryUsers(project.Users)
+			appliedChange = true
 		default:
 		}
-
-		appliedCommand := false
 
 		i := len(connections) - 1
 		for i >= 0 {
@@ -216,14 +217,14 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 					}
 				}
 
-				appliedCommand = true
+				appliedChange = true
 			default:
 			}
 
 			i -= 1
 		}
 
-		if appliedCommand {
+		if appliedChange {
 			encoded := encodeProject(project, users)
 
 			for _, connection := range connections {
