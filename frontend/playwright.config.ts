@@ -7,13 +7,16 @@ export default defineConfig({
             port: 4173,
         },
         {
-            command: "cd backend && go run . --test",
+            command: "cd ../backend && go run -tags TEST .",
             port: 8080,
             reuseExistingServer: false, // Must start special testing varient
         },
     ],
 
     testDir: "e2e",
+    use: {
+        baseURL: "http://localhost:4173",
+    },
 
     projects: [
         {
