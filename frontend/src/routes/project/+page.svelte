@@ -82,7 +82,7 @@
 
             <CalendarTab {project} />
 
-            <!--<AvailabilityTab {project} /> -->
+            <AvailabilityTab {project} />
 
             <SettingsTab {project} />
 

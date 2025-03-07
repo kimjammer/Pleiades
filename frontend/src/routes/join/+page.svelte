@@ -16,14 +16,11 @@
 
     async function accept() {
         const projectId = (await inviteInfo).id
-        if (
-            (
-                await fetch("http://" + PUBLIC_API_HOST + "/join" + location.search, {
-                    mode: "cors",
-                    credentials: "include",
-                })
-            ).status === 200
-        ) {
+        const resp = await fetch("http://" + PUBLIC_API_HOST + "/join" + location.search, {
+            mode: "cors",
+            credentials: "include",
+        })
+        if (resp.status === 200) {
             goto(location.origin + "/project?id=" + projectId)
         }
     }

@@ -13,20 +13,26 @@
     import type { ProjectState } from "$lib/project_state.svelte"
     import { Availability as DbAvailability } from "$lib/project_state.svelte.js"
     import { availabilityToDateMap, dateMapToAvailability } from "./adapter"
+    import { PUBLIC_API_HOST } from "$env/static/public"
 
     let { project }: { project: ProjectState } = $props()
 
     let tzOffset = $state(0)
     const ranges = weekdayDateRanges()
+    const myAvailability = $derived(
+        project.users.find(user => user.id === localStorage.myId)?.availability ?? [],
+    )
 
-    function save(ev: CustomEvent<Availability>) {
+    async function save(ev: CustomEvent<Availability>) {
         const availability = dateMapToAvailability(ev.detail)
         console.log("db availability", availability)
-        const myIndex = project.users.findIndex(user => user.id === localStorage.myId)
 
-        // TODO: how to save to db?
-        project.users[myIndex].availability = availability
-        project.updateInProject(`users.${myIndex}.availability`, availability)
+        await fetch("http://" + PUBLIC_API_HOST + "/availability", {
+            method: "POST",
+            mode: "cors",
+            credentials: "include",
+            body: JSON.stringify(availability),
+        })
     }
 
     let groupAvailabilities = $derived(
@@ -36,7 +42,10 @@
         })),
     )
     $effect(() => {
-        console.log("group avail", groupAvailabilities)
+        console.log("group avail", $state.snapshot(groupAvailabilities))
+    })
+    $effect(() => {
+        console.log("my avail", $state.snapshot(myAvailability))
     })
 </script>
 
