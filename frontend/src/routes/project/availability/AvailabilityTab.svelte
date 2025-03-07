@@ -20,7 +20,11 @@
     let tzOffset = $state(0)
     const ranges = weekdayDateRanges()
     const myAvailability = $derived(
-        project.users.find(user => user.id === localStorage.myId)?.availability ?? [],
+        availabilityToDateMap(
+            project.users.find(user => user.id === localStorage.myId)?.availability ?? [],
+            "2017-02-27T00:00:00.000Z",
+            8,
+        ),
     )
 
     async function save(ev: CustomEvent<Availability>) {
@@ -59,8 +63,8 @@
             tzOffset={-tzOffset}
             shouldUseWeekdays={true}
             on:save={save}
+            availability={loadAvailabilityOne(myAvailability)}
         />
-        <!-- availability={loadAvailabilityOne(dummy2)} -->
 
         <!-- TODO: make `availablePeople` boolean, writable store value unused OR some way to delegate tooltip -->
         <ManualInput
