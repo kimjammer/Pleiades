@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/stretchr/testify/require"
-	"go.mongodb.org/mongo-driver/v2/bson"
 	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func TestNewProjectNoAuth(t *testing.T) {
@@ -147,4 +148,41 @@ func TestVerifySession(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	require.Equal(t, http.StatusOK, w.Code)
+}
+
+// User story 2.2 acceptancance criteria 1
+func TestInviteCreation(t *testing.T) {
+	router := setupTestRouter()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/invite?id=53ed4d28-9279-4b4e-9256-b1e693332625", nil)
+	router.ServeHTTP(w, req)
+	// w.Body = uuid
+	// Validation tested in e2e
+
+	require.Equal(t, http.StatusOK, w.Code)
+
+	//DB is modified
+	count, _ := db.Collection("invitations").CountDocuments(context.TODO(), bson.D{})
+	require.Equal(t, int64(1), count)
+}
+
+// User story 2.2 acceptancance criteria 2
+func TestInviteUnauthorized(t *testing.T) {
+	// TODO: very similar to `TestGetProjectsNoAuth` make sense to abstract?
+
+	router := setupRouter()
+	defineRoutes(router)
+	resetDB()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/invite?id=53ed4d28-9279-4b4e-9256-b1e693332625", nil)
+	router.ServeHTTP(w, req)
+
+	//Status Code is 401 Unauthorized
+	require.Equal(t, http.StatusUnauthorized, w.Code)
+
+	//DB is not modified
+	count, _ := db.Collection("invitations").CountDocuments(context.TODO(), bson.D{})
+	require.Equal(t, int64(0), count)
 }
