@@ -1,0 +1,34 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: John Kim
+
+Week 1 (Summary)
+2/18 1.5hr d960dfe Scaffold backend server
+2/18 0.1hr a0f23a8 Install shadcn-svelte
+2/18 1hr   2b26dbe Connect to DB
+2/19 0.5hr 99000cd Configure CORS
+2/21 2hr   91716c4 Working MongoDB CRUD
+2/21 1.5hr 0361994 Implement basic /projects endpoint
+2/21 0.1hr b4317eb Refactor API url to not be hardcoded
+2/22 2.5hr 746ea0d Implement user home page UI
+
+Week 2 (Summary)
+2/26 2.5hr 830ab0b Implement creating new projects (front & backend)
+2/26 1hr   02b7326 Write tests for /projects/new
+2/27 2hr   964ec10 More tests for /project and token cookie logic for tests
+2/27 1hr   b139b64 Stubbed token loading and saving
+2/27 0.1hr 3d1129c Bug fixes for /projects/new
+2/28 2hr   0f1e34c Implement frontend e2e testing for user home page
+
+Week 3 (Summary)
+3/4  0.5hr 66edfbf Revert userId source for REST APIs
+3/4  0.5hr 9cd03cc Update ws endpoints to use new userId type
+3/4  2hr   ede2e9c Implement project page
+3/4  0.5hr c4b9773 Wait for auth cookie in e2e test (Debugging e2e tests)
+3/5  1hr   a2c18cb Allow testing origin for ws upgrade
+3/5  1.5hr f0470db Convert links to anchors
+3/6  0.1hr 771efd6 Redirect logged out user to login, not landing
+
+Week 4 (Plan)
+3/11 3hr   Create UI for due date
+3/14 4hr   Create UI for time estimate and write frontend tests
+3/15 3hr   Backend e2e testing harness and writing tests for both features
