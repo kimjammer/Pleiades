@@ -4,7 +4,7 @@ Week 3 (Summary) (Scrum Master: Ethan Dawes)
 3/4 1.5hr  4f525ee UI and basic handling for leaving groups
 3/4 1.5hr  2adcc5b Leaving groups works
 3/4 1hr    4c79625 Deleting groups works
-3/4 5hr  60a00c1 tokens/cookies work
+3/4 5hr    60a00c1 tokens/cookies work
 3/4 0.5hr  b0dd597 8226a94 e507e8e eabc83f Undo my package organization of availability picker (b/c super buggy)
 3/4 0.5hr  e9c91f5 ad57188 b381e92 5767085 Break & fix the build (shadcn outdated)
 3/4 0.5hr  66edfbf Revert userId source for REST APIs
