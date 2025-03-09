@@ -1,18 +1,7 @@
 === Weekly Individual Report (Team 5: Pleiades) ===
 Name: Ethan Dawes
 
-Week 6 (Summary)
-2/18 0.5hr eed6781 Translate design document/sprint planning to markdown
-2/20 0.5hr 79dd904 Setup codespaces devcontainer
-2/20 0.5hr 153e86c Document development procedures
-
-Week 7 (Summary)
-2/25 4hr   6b63795 Implement availability input
-2/25 3hr   6b63795 Add timezone translation utility functions
-3/2  1hr   56127f1 55a184e 09446be Integrate npm package w/ main, squash errors
-3/2  1hr   (WIP)   Save over websockets
-
-Week 8 (Summary)
+Week 3 (Summary)
 3/4 0.5hr b0dd5978e1240cebf2c642ccbb8a7b573d12e7f6 8226a94ebe4ca135963ebf9d60de2e8ca24e31c7 e507e8ec6ed8a6795eaaabbac1b718fd27471665 eabc83f23bd72a4438bb2317b383016ea092181d Undo my package organization of availability picker (b/c super buggy)
 3/4 0.5hr e9c91f58ace430fab2620ac720120fc7634bd2c0 ad571880879573905f64537f1d5ee6eb0e86d7ed b381e92b411c325c453176b86780c194e93b392a 57670851bcb90cdfcb9c047c4ca00a9b9ca96e82 Break & fix the build (shadcn outdated)
 3/4 0.5hr 4d3a5077eabce59acc59c244ea743eb422061c9d cf4d8395477d4c71dfc66c34362ce8393f110634 d5d6a9df60b4046adfdbb13cfb459200aa01a0f8 e2d92ef7b79ae23a6c147d4ab1461013246d3267 Integrate time zone picker
