@@ -4,9 +4,22 @@
     import { Label } from "$lib/components/ui/label"
     import { Input } from "$lib/components/ui/input"
     import type { ProjectState } from "$lib/project_state.svelte"
+    import * as Form from "$lib/components/ui/form"
+    import { formSchema, type FormSchema } from "./schema"
+    import { type SuperValidated, type Infer, superForm } from "sveltekit-superforms"
+    import { zodClient } from "sveltekit-superforms/adapters"
 
-    let { project }: { project: ProjectState } = $props()
+    let {
+        project,
+        data,
+    }: { project: ProjectState; data: { form: SuperValidated<Infer<FormSchema>> } } = $props()
     let createDialogOpen = $state(false)
+
+    const form = superForm(data.form, {
+        validators: zodClient(formSchema),
+    })
+
+    const { form: formData, enhance } = form
 
     function createTask() {}
 </script>
@@ -21,37 +34,31 @@
             <Dialog.Description>
                 Choose a name and description for your project and click create!
             </Dialog.Description>
-            <div class="flex flex-col gap-5 py-5">
-                <div>
-                    <Label
-                        for="title"
-                        class="text-right">Title</Label
-                    >
-                    <Input
-                        id="title"
-                        placeholder="Project Name"
-                    />
-                </div>
-                <div>
-                    <Label
-                        for="description"
-                        class="text-right">Description</Label
-                    >
-                    <Input
-                        id="description"
-                        placeholder="Project Description"
-                    />
-                </div>
-            </div>
-            <Dialog.Footer>
-                <Button
-                    onclick={createTask}
-                    onkeypress={createTask}
-                    type="submit"
+            <form
+                method="POST"
+                use:enhance
+            >
+                <Form.Field
+                    {form}
+                    name="title"
                 >
-                    Create!
-                </Button>
-            </Dialog.Footer>
+                    <Form.Control>
+                        {#snippet children({ props })}
+                            <Form.Label>Title</Form.Label>
+                            <Input
+                                {...props}
+                                bind:value={$formData.title}
+                            />
+                        {/snippet}
+                    </Form.Control>
+                    <Form.Description>This is your public display name.</Form.Description>
+                    <Form.FieldErrors />
+                </Form.Field>
+
+                <Dialog.Footer>
+                    <Form.Button>Create!</Form.Button>
+                </Dialog.Footer>
+            </form>
         </Dialog.Header>
     </Dialog.Content>
 </Dialog.Root>

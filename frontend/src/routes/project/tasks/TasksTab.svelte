@@ -3,15 +3,19 @@
     import type { ProjectState } from "$lib/project_state.svelte"
     import DueDate from "$lib/components/DueDate.svelte"
     import CreationModal from "./CreationModal.svelte"
+    import type { PageData } from "./$types"
 
-    let { project }: { project: ProjectState } = $props()
+    let { project, data }: { project: ProjectState; data: PageData } = $props()
 
     //Testing
     const testDueDate = new Date()
 </script>
 
 <Tabs.Content value="tasks">
-    <CreationModal {project} />
+    <CreationModal
+        {project}
+        {data}
+    />
     <div>
         <DueDate dueDate={testDueDate} />
     </div>

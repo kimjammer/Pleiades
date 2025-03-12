@@ -9,6 +9,9 @@
     import CalendarTab from "./calendar/CalendarTab.svelte"
     import * as Dialog from "$lib/components/ui/dialog"
     import { Button } from "$lib/components/ui/button"
+    import type { PageData } from "./$types.js"
+
+    let { data }: { data: PageData } = $props()
 
     let projectId = $state("")
 
@@ -94,7 +97,10 @@
                 <Tabs.Trigger value="debug">Debugging</Tabs.Trigger>
             </Tabs.List>
 
-            <TasksTab {project} />
+            <TasksTab
+                {project}
+                {data}
+            />
 
             <CalendarTab {project} />
 

@@ -1,0 +1,12 @@
+import { z } from "zod"
+
+export const formSchema = z.object({
+    title: z.string().nonempty(),
+    description: z.string(),
+    due: z.date(),
+    estimate: z.number().min(0),
+    // this is an array of user ids NOT names. A custom component will make this easy for the user
+    asignees: z.array(z.string()),
+})
+
+export type FormSchema = typeof formSchema
