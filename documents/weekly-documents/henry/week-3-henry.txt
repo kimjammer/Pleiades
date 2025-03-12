@@ -1,0 +1,15 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: Henry
+
+Week 3 (Summary)
+3/4 1.5hr  4f525ee UI and basic handling for leaving groups
+3/4 1.5hr  2adcc5b Leaving groups works
+3/4 1hr    4c79625 Deleting groups works
+3/4 1hr    7ec7d2f Make the server transmit user data relevant to projects
+3/6 1hr    2ca3089 Refactor project updating on the server side
+3/6 0.5hr  7df99a3 Fix weird invite link stuff
+3/7 0.5hr  27563ab Debug availability
+
+Week 4 (Plan)
+3/11 5hr Implement the three column kanban board
+3/13 3hr Implement dragging and dropping

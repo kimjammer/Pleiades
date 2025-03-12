@@ -11,18 +11,20 @@ import (
 )
 
 type Command interface {
-	apply(project *Project)
+	apply(project *Project) error
 }
 
 type ConnectionForSpace struct {
 	// This channel must be "two way" because the project space goroutine needs to clear the state if the buffer is full
 	state_tx   chan []byte
 	command_rx <-chan Command
+	error_tx   chan<- error
 }
 
 type ConnectionForSocket struct {
 	state_rx   <-chan []byte
 	command_tx chan<- Command
+	error_rx   <-chan error
 }
 
 type ProjectSpaceContactPoint struct {
@@ -68,17 +70,17 @@ func applyCommandToProject(projectId string, command Command) {
 }
 
 type FunctionCommand struct {
-	function func(*Project)
+	function func(*Project) error
 }
 
-func (self FunctionCommand) apply(project *Project) {
-	self.function(project)
+func (self FunctionCommand) apply(project *Project) error {
+	return self.function(project)
 }
 
 // Update the project via a function
 //
 // This will automatically update all connected users of the change.
-func updateProject(projectId string, updater func(*Project)) {
+func updateProject(projectId string, updater func(*Project) error) {
 	applyCommandToProject(projectId, FunctionCommand{function: updater})
 }
 
@@ -97,12 +99,14 @@ func joinSpace(projectId string) ConnectionForSocket {
 
 	state_chan := make(chan []byte, 1)
 	command_chan := make(chan Command, 1)
+	error_chan := make(chan error, 1)
 
-	projectSpaces[projectId].sendNewConnection <- ConnectionForSpace{state_tx: state_chan, command_rx: command_chan}
+	projectSpaces[projectId].sendNewConnection <- ConnectionForSpace{state_tx: state_chan, command_rx: command_chan, error_tx: error_chan}
 
 	return ConnectionForSocket{
 		state_rx:   state_chan,
 		command_tx: command_chan,
+		error_rx:   error_chan,
 	}
 }
 
@@ -201,7 +205,12 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 					continue
 				}
 
-				command.apply(&project)
+				maybe_err := command.apply(&project)
+
+				if maybe_err != nil {
+					connection.error_tx <- maybe_err
+					continue
+				}
 
 				if _, is := command.(UserLeave); is {
 					users = queryUsers(project.Users)

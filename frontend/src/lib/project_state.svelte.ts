@@ -31,6 +31,8 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
                     reject(text)
                 } else {
                     console.error(text)
+                    state.error = text.slice(5)
+                    state.showError = true
                 }
 
                 return
@@ -276,6 +278,8 @@ export class ProjectState {
     users: UserInProject[] = $state([])
     tasks: Task[] = $state([])
     polls: Poll[] = $state([])
+    error: string = $state("")
+    showError: boolean = $state(false)
 
     socket: WebSocket
 

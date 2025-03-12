@@ -261,15 +261,17 @@ func join(c *gin.Context) {
 	}
 
 	// Add user to project
-	updateProject(invitation.ProjectId, func(project *Project) {
+	updateProject(invitation.ProjectId, func(project *Project) error {
 		for i, user := range project.Users {
 			if user.User == userId {
 				project.Users[i].LeftProject = false
-				return
+				return errors.New("Cannot delete a project with users in it")
 			}
 		}
 
 		project.Users = append(project.Users, UserAndLeft{User: userId, LeftProject: false})
+
+		return nil
 	})
 
 	requeryUsersForProject(invitation.ProjectId)
@@ -315,7 +317,7 @@ func setAvailability(c *gin.Context) {
 		panic(err)
 	}
 
-	user, _ := getUser(c);  // error not possible b/c already validated
+	user, _ := getUser(c) // error not possible b/c already validated
 
 	requeryUser(user)
 }

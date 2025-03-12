@@ -7,6 +7,8 @@
     import TasksTab from "./tasks/TasksTab.svelte"
     import AvailabilityTab from "./availability/AvailabilityTab.svelte"
     import CalendarTab from "./calendar/CalendarTab.svelte"
+    import * as Dialog from "$lib/components/ui/dialog"
+    import { Button } from "$lib/components/ui/button"
 
     let projectId = $state("")
 
@@ -65,6 +67,20 @@
                 {/each}
             {/await}
         </p>
+
+        <Dialog.Root bind:open={project.showError}>
+            <Dialog.Content>
+                <Dialog.Header><p class="text-xl">Error</p></Dialog.Header>
+                <div>
+                    <p class="pb-8">{project.error}</p>
+                    <Button
+                        onclick={() => {
+                            project.showError = false
+                        }}>Close</Button
+                    >
+                </div>
+            </Dialog.Content>
+        </Dialog.Root>
 
         <Tabs.Root
             value="tasks"

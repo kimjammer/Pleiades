@@ -116,6 +116,16 @@ func handleConnection(conn *websocket.Conn, userId string) {
 					panic(err)
 				}
 
+			case err := <-projectSpace.error_rx:
+				{
+					if err := conn.WriteMessage(websocket.TextMessage, []byte("FAIL: "+err.Error())); err != nil {
+						if _, ok := err.(*websocket.CloseError); ok {
+							return
+						}
+						panic(err)
+					}
+				}
+
 			case _ = <-disconnectSignal:
 				return
 			}
@@ -184,32 +194,38 @@ type DemoButtonCommand struct {
 	newState string
 }
 
-func (self DemoButtonCommand) apply(state *Project) {
+func (self DemoButtonCommand) apply(state *Project) error {
 	if self.newState == "" {
 		state.DemoButtonState = ""
 	} else if state.DemoButtonState == "" && slices.Contains([]string{"a", "b"}, self.newState) {
 		state.DemoButtonState = self.newState
 	}
+
+	return errors.New("Bruh")
 }
 
 type UserLeave struct {
 	userId string
 }
 
-func (self UserLeave) apply(state *Project) {
+func (self UserLeave) apply(state *Project) error {
 	for i, user := range state.Users {
 		if user.User == self.userId {
 			state.Users[i].LeftProject = true
+
+			return nil
 		}
 	}
+
+	return errors.New("Could not find the user in the project")
 }
 
 type Delete struct {
 	userId string
 }
 
-func (self Delete) apply(state *Project) {
-	UserLeave(self).apply(state)
+func (self Delete) apply(state *Project) error {
+	return UserLeave(self).apply(state)
 }
 
 func decodeCommand(command CommandMessage, userId string) Command {
