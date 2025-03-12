@@ -17,33 +17,25 @@
         label: tz,
     }))
 
-    let open = false
-    let selectedName = getLocalTzName()
-    export let selectedValue: number
-
-    $: selectedValue = timezones.find(f => f.label === selectedName)?.value ?? 0
+    let open = $state<boolean>(false)
+    let selectedName = $state<string>(getLocalTzName())
+    let { selectedValue = $bindable() }: { selectedValue: number } = $props()
 
     // We want to refocus the trigger button when the user selects
     // an item from the list so users can continue navigating the
     // rest of the form with the keyboard.
-    function closeAndFocusTrigger(triggerId: string) {
+    let triggerRef = $state<HTMLButtonElement | null>(null)
+    function closeAndFocusTrigger() {
         open = false
         tick().then(() => {
-            document.getElementById(triggerId)?.focus()
+            triggerRef?.focus()
         })
     }
 </script>
 
-<Popover.Root
-    bind:open
-    let:ids
->
-    <Popover.Trigger
-        asChild
-        let:builder
-    >
+<Popover.Root bind:open>
+    <Popover.Trigger bind:ref={triggerRef}>
         <Button
-            builders={[builder]}
             variant="outline"
             role="combobox"
             aria-expanded={open}
@@ -61,9 +53,11 @@
                 {#each timezones as timezone}
                     <Command.Item
                         value={timezone.label}
-                        onSelect={currentValue => {
-                            selectedName = currentValue
-                            closeAndFocusTrigger(ids.trigger)
+                        onSelect={() => {
+                            selectedName = timezone.label
+                            selectedValue =
+                                timezones.find(f => f.label === timezone.label)?.value ?? 0
+                            closeAndFocusTrigger()
                         }}
                     >
                         <Check
