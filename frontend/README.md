@@ -5,6 +5,7 @@
 Create the .env file based on the .env.example file. Rerun `npm run dev` so that svelte regenerates the environment variable files.
 
 Environment Variables:
+
 <table>
   <tr>
    <td>Variable</td>

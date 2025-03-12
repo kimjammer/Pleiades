@@ -1,6 +1,6 @@
 <script lang="ts">
-  export let everyone: string[];
-  export let available: string[];
+    export let everyone: string[]
+    export let available: string[]
 </script>
 
 <div>

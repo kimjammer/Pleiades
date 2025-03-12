@@ -8,7 +8,6 @@ export type minimalProject = {
     description: string
 }
 
-
 export type newProjectRequest = {
     title: string
     description: string
