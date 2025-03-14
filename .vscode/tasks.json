@@ -1,0 +1,34 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Dev stack",
+      "dependsOn": ["Test backend", "Dev frontend"],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "type": "go",
+      "label": "Test backend",
+      "command": "test",
+      "args": ["./..."],
+      "problemMatcher": ["$go"],
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "detail": "cd /workspaces/Pleiades/backend; go test ./..."
+    },
+    {
+      "type": "npm",
+      "script": "dev",
+      "path": "frontend",
+      "problemMatcher": [],
+      "label": "Dev frontend",
+      "detail": "vite dev"
+    }
+  ]
+}
