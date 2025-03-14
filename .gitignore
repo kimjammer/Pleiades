@@ -10,6 +10,7 @@ node_modules
 /frontend/build
 /backend/Pleiades
 /database
+tmp/
 
 # OS
 .DS_Store
