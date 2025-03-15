@@ -1,0 +1,21 @@
+=== Weekly Team Report (Team 5: Pleiades) ===
+
+Week 4 (Summary) (Scrum Master: John Kim)
+3/11 0.5hr 67e1a81 Update shadcn-svelte
+3/11 0.5hr 0c5c507 Update TzPicker to Svelte 5
+3/11 2hr   d216d1b Implement DueDate Component
+
+3/14 1hr   c1381d9 Implement states to DueDate chip
+3/14 1hr   70741f3 Implement time estimation chip
+3/14 1hr   06940b6 Backend testing harness for e2e
+3/15 1.5hr 31fdcf7 Dockerfile and compose (and research about GitHub Actions)
+
+Week 4 (Summary) (Scrum Master: John Kim)
+[Meetings]
+3/12 Discuss svelte 5 updates and sprint 2 tasks
+
+[Individual goals]
+Henry:
+John: Integrate chips into task cards and start working on time tracking
+Cate:
+Ethan:
