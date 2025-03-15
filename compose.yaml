@@ -1,0 +1,14 @@
+name: pleiades
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      - MONGODB_URI=mongodb://database:27017
+      - GIN_MODE=release
+  database:
+    image: mongo:latest
+    volumes:
+      - ./database:/data/db
