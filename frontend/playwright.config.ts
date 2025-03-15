@@ -9,7 +9,7 @@ export default defineConfig({
         {
             command: "cd ../backend && go run -tags TEST .",
             port: 8080,
-            reuseExistingServer: false, // Must start special testing varient
+            reuseExistingServer: false, // Must start special testing variant
         },
     ],
 

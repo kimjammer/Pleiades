@@ -337,24 +337,12 @@ func checkPassword(hashedPassword, plainPassword string) bool {
 
 // Reset token cookie
 func logout(c *gin.Context) {
-	//TODO: Also remove session from db
 	c.SetCookie("token", "", -1, "/", "", true, true)
 	c.Status(http.StatusOK)
 }
 
 // Used by frontend to check if user has a valid session, since this is an authRequired() endpoint
 func verifySession(c *gin.Context) {
-	c.Status(http.StatusOK)
-}
-
-// TODO: Frontend e2e testing uses this button/route. Figure out solution for this before removing
-func fakeLogin(c *gin.Context) {
-	var user User
-	_ = db.Collection("users").FindOne(c.Request.Context(), bson.D{}).Decode(&user)
-
-	token := makeToken(user.Id.Hex())
-	c.SetSameSite(http.SameSiteNoneMode)
-	c.SetCookie("token", token, 3600, "/", "", true, true)
 	c.Status(http.StatusOK)
 }
 

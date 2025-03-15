@@ -40,13 +40,18 @@ func defineRoutes(router *gin.Engine) {
 	router.GET("/join", authRequired(), join)
 	router.GET("/join/info", authRequired(), joinInfo)
 	router.POST("/availability", authRequired(), setAvailability)
+}
 
-	//TODO: Remove testing route that only sets cookie
-	router.GET("/fakelogin", fakeLogin)
+func defineTestRoutes(router *gin.Engine) {
+	router.GET("/resetDatabase", resetDatabase)
 }
 
 func main() {
 	log.Println("Test extensions enabled?", TEST)
+	dbName := "pleiades"
+	if TEST {
+		dbName = "pleiades_test"
+	}
 
 	//Connect to database
 	if err := godotenv.Load(); err != nil {
@@ -54,7 +59,7 @@ func main() {
 	}
 	uri := os.Getenv("MONGODB_URI")
 	if uri == "" {
-		log.Println("Set your 'MONGODB_URI' environment variable as in .env.example. Skipping database connection.")
+		panic("MONGODB_URI environment variable not set!")
 	} else {
 		mongoClient, err := mongo.Connect(options.Client().ApplyURI(uri))
 		if err != nil {
@@ -64,7 +69,7 @@ func main() {
 		if err := mongoClient.Database("admin").RunCommand(context.TODO(), bson.D{{"ping", 1}}).Decode(&result); err != nil {
 			panic(err)
 		}
-		db = mongoClient.Database("pleiades")
+		db = mongoClient.Database(dbName)
 		log.Println("Successfully connected to MongoDB")
 		defer func() {
 			if err := mongoClient.Disconnect(context.TODO()); err != nil {
@@ -75,5 +80,8 @@ func main() {
 
 	router := setupRouter()
 	defineRoutes(router)
+	if TEST {
+		defineTestRoutes(router)
+	}
 	router.Run(":8080")
 }
