@@ -8,7 +8,7 @@
     let { project, data }: { project: ProjectState; data: PageData } = $props()
 
     //Testing
-    const testDueDate = new Date()
+    const testDueDate = undefined
 </script>
 
 <Tabs.Content value="tasks">
