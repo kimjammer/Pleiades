@@ -4,10 +4,14 @@ Week 4 (Summary) (Scrum Master: John Kim)
 3/11 0.5hr 67e1a81 Update shadcn-svelte
 3/11 0.5hr 0c5c507 Update TzPicker to Svelte 5
 3/11 2hr   d216d1b Implement DueDate Component
-
+3/12 1hr 71f313f8541e3d22bdd5681818ec9fe2b8677061 task creation modal
+3/12 .5hr cb4e50d091f4141ef00b7ccb13ef1556050ace0d add shadcn forms
+3/12 1hr 6992d0b6fbd3a7a83eb7ad3b9d7730dd719cac81 use form component
 3/14 1hr   c1381d9 Implement states to DueDate chip
 3/14 1hr   70741f3 Implement time estimation chip
 3/14 1hr   06940b6 Backend testing harness for e2e
+3/14 1hr a815ceec5f6d0254784d3a25fd95ec65bbf29558  create vscode run tasks
+3/14 .5hr e1b9cdebe5a29e32800bf3777aaf068cd3a17a1f install go hot reloading
 3/15 1.5hr 31fdcf7 Dockerfile and compose (and research about GitHub Actions)
 
 Week 4 (Summary) (Scrum Master: John Kim)
@@ -18,4 +22,4 @@ Week 4 (Summary) (Scrum Master: John Kim)
 Henry:
 John: Integrate chips into task cards and start working on time tracking
 Cate:
-Ethan:
+Ethan: Task creation, calendar
