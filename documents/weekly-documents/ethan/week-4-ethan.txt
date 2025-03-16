@@ -1,0 +1,18 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: Ethan Dawes
+
+Week 4 (Summary)
+3/12 1hr 71f313f8541e3d22bdd5681818ec9fe2b8677061 task creation modal
+3/12 .5hr cb4e50d091f4141ef00b7ccb13ef1556050ace0d add shadcn forms
+3/12 1hr 6992d0b6fbd3a7a83eb7ad3b9d7730dd719cac81 use form component
+3/14 1hr a815ceec5f6d0254784d3a25fd95ec65bbf29558  create vscode run tasks
+3/14 .5hr e1b9cdebe5a29e32800bf3777aaf068cd3a17a1f install go hot reloading
+
+Week 5 (Plan)
+3/24 1.5hr Finish task creation
+3/24 2hr Invite flow
+3/24 2hr Pie time chart
+
+Week 6 (Plan)
+3/31 4hr task calendar
+3/31 2hr teammate profile
