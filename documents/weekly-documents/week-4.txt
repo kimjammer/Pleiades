@@ -7,6 +7,7 @@ Week 4 (Summary) (Scrum Master: John Kim)
 3/12 1hr 71f313f8541e3d22bdd5681818ec9fe2b8677061 task creation modal
 3/12 .5hr cb4e50d091f4141ef00b7ccb13ef1556050ace0d add shadcn forms
 3/12 1hr 6992d0b6fbd3a7a83eb7ad3b9d7730dd719cac81 use form component
+3/12 1hr c86b620 Support error reporting from the backend
 3/14 1hr   c1381d9 Implement states to DueDate chip
 3/14 1hr   70741f3 Implement time estimation chip
 3/14 1hr   06940b6 Backend testing harness for e2e
@@ -19,7 +20,7 @@ Week 4 (Summary) (Scrum Master: John Kim)
 3/12 Discuss svelte 5 updates and sprint 2 tasks
 
 [Individual goals]
-Henry:
+Henry: Implement websockets mutation endpoints
 John: Integrate chips into task cards and start working on time tracking
 Cate:
 Ethan: Task creation, calendar

@@ -340,16 +340,15 @@ export class ProjectState {
     }
 
     updateInProject(key: string, value: any) {
-        traverseObject(
-            this,
-            toPath(key),
-            (object, key) => {
-                object[key] = value
+        let message = JSON.stringify({
+            Name: "update",
+            Args: {
+                Selector: key,
+                NewValue: value, // TODO: This won't stringify go's weird capitals correctly
             },
-            (array, idx) => {
-                array[idx] = value
-            },
-        )
+        })
+        console.log(message)
+        this.socket.send(message)
     }
 
     deleteInProject(key: string) {

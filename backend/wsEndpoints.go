@@ -116,8 +116,10 @@ func handleConnection(conn *websocket.Conn, userId string) {
 					panic(err)
 				}
 
-			case err := <-projectSpace.error_rx:
+			case err := <-projectSpace.errors:
 				{
+					log.Println(err.Error())
+
 					if err := conn.WriteMessage(websocket.TextMessage, []byte("FAIL: "+err.Error())); err != nil {
 						if _, ok := err.(*websocket.CloseError); ok {
 							return
@@ -139,26 +141,29 @@ func handleConnection(conn *websocket.Conn, userId string) {
 			if _, ok := err.(*websocket.CloseError); ok {
 				return
 			}
-			panic(err)
+
+			projectSpace.errors <- err
 		}
 
 		if mt != websocket.TextMessage {
-			if err := conn.WriteMessage(websocket.TextMessage, []byte("FAIL: Expected the command to be a text message")); err != nil {
-				if _, ok := err.(*websocket.CloseError); ok {
-					return
-				}
-				panic(err)
-			}
+			projectSpace.errors <- errors.New("Expected the command to be a text message")
+			continue
 		}
 
 		command := CommandMessage{}
 
 		err = json.Unmarshal(message, &command)
 		if err != nil {
-			panic(err)
+			projectSpace.errors <- err
+			continue
 		}
 
-		decodedCommand := decodeCommand(command, userId)
+		decodedCommand, err := decodeCommand(command, userId)
+
+		if err != nil {
+			projectSpace.errors <- err
+			continue
+		}
 
 		projectSpace.command_tx <- decodedCommand
 
@@ -183,70 +188,4 @@ func leave(userId string, projectId string) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-type CommandMessage struct {
-	Name string
-	Args json.RawMessage
-}
-
-type DemoButtonCommand struct {
-	newState string
-}
-
-func (self DemoButtonCommand) apply(state *Project) error {
-	if self.newState == "" {
-		state.DemoButtonState = ""
-	} else if state.DemoButtonState == "" && slices.Contains([]string{"a", "b"}, self.newState) {
-		state.DemoButtonState = self.newState
-	}
-
-	return errors.New("Bruh")
-}
-
-type UserLeave struct {
-	userId string
-}
-
-func (self UserLeave) apply(state *Project) error {
-	for i, user := range state.Users {
-		if user.User == self.userId {
-			state.Users[i].LeftProject = true
-
-			return nil
-		}
-	}
-
-	return errors.New("Could not find the user in the project")
-}
-
-type Delete struct {
-	userId string
-}
-
-func (self Delete) apply(state *Project) error {
-	return UserLeave(self).apply(state)
-}
-
-func decodeCommand(command CommandMessage, userId string) Command {
-	if command.Name == "demoButtonState" {
-		var newState string
-		err := json.Unmarshal(command.Args, &newState)
-		if err != nil {
-			panic("Client sent invalid command")
-		}
-
-		return DemoButtonCommand{newState}
-	}
-
-	if command.Name == "leave" {
-		return UserLeave{userId: userId}
-	}
-
-	if command.Name == "delete" {
-		return Delete{userId: userId}
-	}
-
-	log.Println("Command:", command)
-	panic("Unknown command:" + command.Name)
 }

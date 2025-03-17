@@ -10,10 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-type Command interface {
-	apply(project *Project) error
-}
-
 type ConnectionForSpace struct {
 	// This channel must be "two way" because the project space goroutine needs to clear the state if the buffer is full
 	state_tx   chan []byte
@@ -24,7 +20,7 @@ type ConnectionForSpace struct {
 type ConnectionForSocket struct {
 	state_rx   <-chan []byte
 	command_tx chan<- Command
-	error_rx   <-chan error
+	errors     chan error // This channel is two-way because it's convenient for the socket to send itself errors
 }
 
 type ProjectSpaceContactPoint struct {
@@ -60,30 +56,6 @@ func requeryUsersForProject(projectId string) {
 	}
 }
 
-// Apply a one-off command to a project server side
-//
-// This will automatically update all connected users of the change.
-func applyCommandToProject(projectId string, command Command) {
-	connection := joinSpace(projectId)
-
-	connection.command_tx <- command
-}
-
-type FunctionCommand struct {
-	function func(*Project) error
-}
-
-func (self FunctionCommand) apply(project *Project) error {
-	return self.function(project)
-}
-
-// Update the project via a function
-//
-// This will automatically update all connected users of the change.
-func updateProject(projectId string, updater func(*Project) error) {
-	applyCommandToProject(projectId, FunctionCommand{function: updater})
-}
-
 func joinSpace(projectId string) ConnectionForSocket {
 	projectSpacesMutex.Lock()
 	defer projectSpacesMutex.Unlock()
@@ -106,7 +78,7 @@ func joinSpace(projectId string) ConnectionForSocket {
 	return ConnectionForSocket{
 		state_rx:   state_chan,
 		command_tx: command_chan,
-		error_rx:   error_chan,
+		errors:     error_chan,
 	}
 }
 

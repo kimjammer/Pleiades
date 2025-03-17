@@ -114,64 +114,8 @@
                 <p>Project ID: {project.id}</p>
                 <input
                     value="X"
-                    oninput={e =>
-                        project.updateInProject("reactive_testing.bruh", e.currentTarget.value)}
+                    oninput={e => project.updateInProject("Title", e.currentTarget.value)}
                 />
-
-                <p>{project.reactive_testing.bruh}</p>
-
-                <button
-                    onclick={() => {
-                        project.appendInProject(
-                            "reactive_testing.list",
-                            project.reactive_testing.bruh,
-                        )
-                    }}>Append</button
-                >
-
-                <br />
-
-                {#each project.reactive_testing.list as value}
-                    <p>{value}</p>
-                {/each}
-
-                <button
-                    onclick={() => {
-                        project.deleteInProject(
-                            `reactive_testing.list[${Math.floor(project.reactive_testing.list.length / 2)}]`,
-                        )
-                    }}>Delete Halfway</button
-                >
-                <br />
-                <br />
-
-                {#each Object.keys(project.reactive_testing.values) as value}
-                    <p>{value}: {project.reactive_testing.values[value]}</p>
-                {/each}
-
-                <input bind:value={key} />
-                <input bind:value /><br />
-
-                <button
-                    onclick={() => {
-                        if (project.reactive_testing.values[key] == undefined) {
-                            project.appendInProject(`reactive_testing.values.${key}`, value)
-                        } else {
-                            project.updateInProject(`reactive_testing.values.${key}`, value)
-                        }
-                    }}>Insert/Update</button
-                ><br />
-                <button
-                    onclick={() => {
-                        if (project.reactive_testing.values[key] != undefined) {
-                            project.deleteInProject(`reactive_testing.values.${key}`)
-                        }
-                    }}>Delete</button
-                >
-
-                <br />
-                <br />
-
                 <button onclick={() => project.select("")}>Enable selector</button>
                 <input
                     type="radio"
