@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"reflect"
 	"regexp"
 	"slices"
@@ -86,7 +85,7 @@ func (self DemoButtonCommand) apply(state *Project) error {
 		state.DemoButtonState = self.newState
 	}
 
-	return errors.New("Bruh")
+	return nil
 }
 
 type UserLeave struct {
@@ -248,8 +247,6 @@ func (self UpdateInProject) apply(state *Project) error {
 	if err != nil {
 		return err
 	}
-
-	log.Println(spot)
 
 	return nil
 }

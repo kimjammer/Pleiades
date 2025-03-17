@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"log"
+	// "net/http"
+	_ "net/http/pprof"
 	"os"
 
 	"github.com/gin-contrib/cors"

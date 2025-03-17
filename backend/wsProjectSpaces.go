@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"slices"
 	"sync"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
@@ -138,84 +140,79 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 
 	go timeout(noConnectionsTimeout)
 
-	var connections []ConnectionForSpace
+	projectStateFanOut := []StateFanOutTx{}
+	var commandChannel chan FanInMessage = make(chan FanInMessage)
+	connectionCount := 0
 
 	for {
 		appliedChange := false
 
 		select {
 		case newConnection := <-connectionsChannel:
+			connectionCount += 1
 			// Guaranteed not to block since it's the first one and there's a buffer of one
 			newConnection.state_tx <- encodeProject(project, users)
-			connections = append(connections, newConnection)
+			stateChannel := make(chan []byte, 1)
+			killedChannel := make(chan interface{})
+			go fanInCommandsFrom(newConnection, commandChannel, StateFanOutRecv{stateChannel, killedChannel})
+			projectStateFanOut = append(projectStateFanOut, StateFanOutTx{stateChannel, killedChannel})
 		case _ = <-noConnectionsTimeout:
-			if len(connections) == 0 {
+			if connectionCount == 0 {
 				return
 			}
 		case _ = <-requeryChannel:
 			users = queryUsers(project.Users)
 			appliedChange = true
-		default:
-		}
+		case message := <-commandChannel:
+			if message.wasKilled {
+				connectionCount -= 1
 
-		i := len(connections) - 1
-		for i >= 0 {
-			connection := connections[i]
-
-			select {
-			case command, ok := <-connection.command_rx:
-				if !ok {
-					// Channel closed, stop listening to it
-					connections[i] = connections[len(connections)-1]
-					connections = connections[:len(connections)-1]
-					i -= 1
-
-					if len(connections) == 0 {
-						go timeout(noConnectionsTimeout)
-					}
-
-					continue
+				if connectionCount == 0 {
+					go timeout(noConnectionsTimeout)
 				}
 
-				maybe_err := command.apply(&project)
-
-				if maybe_err != nil {
-					connection.error_tx <- maybe_err
-					continue
-				}
-
-				if _, is := command.(UserLeave); is {
-					users = queryUsers(project.Users)
-					if !existingInviteLinks(project) && maybeDeleteProject(project) {
-						return
-					}
-				}
-
-				if _, is := command.(Delete); is {
-					users = queryUsers(project.Users)
-					if maybeDeleteProject(project) {
-						return
-					}
-				}
-
-				appliedChange = true
-			default:
+				continue
 			}
 
-			i -= 1
+			maybe_err := message.command.apply(&project)
+
+			if maybe_err != nil {
+				message.connection.error_tx <- maybe_err
+				continue
+			}
+
+			if _, is := message.command.(UserLeave); is {
+				users = queryUsers(project.Users)
+				if !existingInviteLinks(project) && maybeDeleteProject(project) {
+					return
+				}
+			}
+
+			if _, is := message.command.(Delete); is {
+				users = queryUsers(project.Users)
+				if maybeDeleteProject(project) {
+					return
+				}
+			}
+
+			appliedChange = true
 		}
 
 		if appliedChange {
 			encoded := encodeProject(project, users)
 
-			for _, connection := range connections {
+			projectStateFanOut = slices.DeleteFunc(projectStateFanOut, func(v StateFanOutTx) bool {
 				select {
-				case connection.state_tx <- encoded:
+				case _ = <-v.killed:
+					return true
+
 				default:
-					// Clear the buffer and try again
-					<-connection.state_tx
-					connection.state_tx <- encoded
+					return false
 				}
+			})
+
+			for _, fanOut := range projectStateFanOut {
+				fanOut.recvStates <- encoded
 			}
 
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -224,6 +221,48 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 			_, err := db.Collection("projects").UpdateOne(ctx, filter, update)
 			if err != nil {
 				panic(err)
+			}
+		}
+	}
+}
+
+type FanInMessage struct {
+	command    Command
+	connection ConnectionForSpace
+	wasKilled  bool
+}
+
+type StateFanOutRecv struct {
+	recvStates <-chan []byte
+	killed     chan<- interface{}
+}
+
+type StateFanOutTx struct {
+	recvStates chan<- []byte
+	killed     <-chan interface{}
+}
+
+func fanInCommandsFrom(connection ConnectionForSpace, sendTo chan<- FanInMessage, recvStates StateFanOutRecv) {
+	defer func() {
+		close(recvStates.killed)
+	}()
+
+	for {
+		select {
+		case command, ok := <-connection.command_rx:
+			if !ok {
+				sendTo <- FanInMessage{command: nil, connection: connection, wasKilled: true}
+				return
+			}
+
+			sendTo <- FanInMessage{command: command, connection: connection, wasKilled: false}
+		case recvState := <-recvStates.recvStates:
+			select {
+			case connection.state_tx <- recvState:
+			default:
+				// Flush the channel to remove the un-received state
+				<-connection.state_tx
+				connection.state_tx <- recvState
 			}
 		}
 	}
