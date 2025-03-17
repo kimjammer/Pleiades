@@ -23,5 +23,5 @@ Week 4 (Summary) (Scrum Master: John Kim)
 [Individual goals]
 Henry: Implement websockets mutation endpoints
 John: Integrate chips into task cards and start working on time tracking
-Cate:
+Cate: Create poll creation UI, enable photo uploads for profile pics, and implement adding users to tasks
 Ethan: Task creation, calendar
