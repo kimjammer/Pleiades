@@ -1,0 +1,11 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: Henry
+
+Week 4 (Summary)
+3/12 1hr c86b620 Support error reporting from the backend
+3/16 4hr   6514e82 Basic reflection stuff and parsing for the project update endpoints
+3/16 2hr   18ff4c3 Refactor how project spaces work so they they don't spin and waste CPU
+
+Week 5 (Plan)
+3/25 5hr Implement the rest of the websockets mutation endpoints and write tests
+3/27 5hr Implement the three column kanban board

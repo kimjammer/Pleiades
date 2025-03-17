@@ -15,6 +15,7 @@ Week 4 (Summary) (Scrum Master: John Kim)
 3/14 .5hr e1b9cdebe5a29e32800bf3777aaf068cd3a17a1f install go hot reloading
 3/15 1.5hr 31fdcf7 Dockerfile and compose (and research about GitHub Actions)
 3/16 4hr   6514e82 Basic reflection stuff and parsing for the project update endpoints
+3/16 2hr   18ff4c3 Refactor how project spaces work so they they don't spin and waste CPU
 
 Week 4 (Summary) (Scrum Master: John Kim)
 [Meetings]
