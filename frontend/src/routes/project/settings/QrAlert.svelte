@@ -2,8 +2,10 @@
     import { PUBLIC_API_HOST } from "$env/static/public"
     import { buttonVariants } from "$lib/components/ui/button/index.js"
     import * as Dialog from "$lib/components/ui/dialog/index.js"
+    import { toast } from "svelte-sonner"
 
     let url = new Promise<string>(() => {})
+    let qrDialogOpen = $state(false)
 
     async function generateLink(): Promise<string> {
         let response = await fetch("http://" + PUBLIC_API_HOST + "/invite" + location.search, {
@@ -12,12 +14,16 @@
         })
 
         let token = await response.text()
+        if (response.status !== 200) {
+            toast(JSON.parse(token).error)
+            qrDialogOpen = false
+        }
 
         return location.origin + "/join?id=" + token
     }
 </script>
 
-<Dialog.Root>
+<Dialog.Root bind:open={qrDialogOpen}>
     <Dialog.Trigger
         class={buttonVariants({ variant: "outline" })}
         onclick={() => (url = generateLink())}>Invite</Dialog.Trigger
