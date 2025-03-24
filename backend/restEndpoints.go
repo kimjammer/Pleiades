@@ -346,6 +346,27 @@ func verifySession(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// used to get basic user info such as name
+func getUserInfo(c *gin.Context) {
+	//Get current user
+	userId := c.GetString("userId")
+	objId, _ := primitive.ObjectIDFromHex(userId)
+	filter := bson.D{{Key: "_id", Value: objId}}
+	var crrUser User
+	err := db.Collection("users").FindOne(c, filter).Decode(&crrUser)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			//TODO: Add error handling for user not found
+		} else {
+			panic(err)
+		}
+	}
+
+	log.Println("User name:", crrUser.FirstName)
+	c.JSON(http.StatusOK, gin.H{"firstname": crrUser.FirstName})
+
+}
+
 // TEMPORARY
 func listUsers() {
 	collection := db.Collection("users") // Reference the "users" collection

@@ -9,6 +9,7 @@
 
     //TODO: create image upload capabilities with file checking
 
+    let firstname = ""
 
     onMount(async () => {
         await getInfo()
@@ -16,6 +17,11 @@
 
     async function getInfo() {
         //TODO implement getting the name and other relevant details
+
+        const res = await fetch("http://" + PUBLIC_API_HOST + "/projects",
+                                { mode: "cors", credentials: "include" })
+        const data = await res.json()
+        firstname = data.firstname
     }
 
 </script>
@@ -25,7 +31,7 @@
     <h2
             class="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
     >
-        Hello [insert name here]
+        Hello {firstname}
     </h2>
 </div>
 
