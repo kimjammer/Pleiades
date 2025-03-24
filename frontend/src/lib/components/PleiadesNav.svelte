@@ -44,6 +44,10 @@
         goto("/account")
     }
 
+    function home() {
+        goto("/home")
+    }
+
     onMount(async () => {
         await verifySession()
     })
@@ -69,6 +73,7 @@
         </Button>
         {#if loggedIn}
             <Button onclick={account}>Account</Button>
+            <Button onclick={home}>Home</Button>
             <Button onclick={logout}>Logout</Button>
         {:else}
             <Button onclick={login}>Login</Button>
