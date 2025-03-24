@@ -71,6 +71,16 @@ func decodeCommand(command CommandMessage, userId string) (Command, error) {
 		return parsedCommand, nil
 	}
 
+	if command.Name == "append" {
+		var parsedCommand AppendInProject
+		err := json.Unmarshal(command.Args, &parsedCommand)
+		if err != nil {
+			return nil, err
+		}
+
+		return parsedCommand, nil
+	}
+
 	return nil, errors.New("Unknown command: " + command.Name)
 }
 
@@ -247,6 +257,44 @@ func (self UpdateInProject) apply(state *Project) error {
 	if err != nil {
 		return err
 	}
+
+	return nil
+}
+
+type AppendInProject struct {
+	Selector string
+	NewValue json.RawMessage
+}
+
+func (self AppendInProject) apply(state *Project) error {
+	selector, err := decodeSelector(self.Selector)
+	if err != nil {
+		return err
+	}
+
+	selected := reflect.ValueOf(state)
+	for _, selectorLevel := range selector {
+		selected, err = selectorLevel.doSelect(selected)
+		if err != nil {
+			return err
+		}
+	}
+
+	slice := reflect.ValueOf(selected).Elem()
+
+	if slice.Kind() != reflect.Slice {
+		return errors.New(slice.Kind().String() + " is not a slice. Did you mean to use updateInProject?")
+	}
+
+	value := reflect.New(slice.Type().Elem())
+
+	spot := value.Interface()
+	err = json.Unmarshal(self.NewValue, spot)
+	if err != nil {
+		return err
+	}
+
+	slice.Set(reflect.Append(slice, value))
 
 	return nil
 }

@@ -317,26 +317,15 @@ export class ProjectState {
     }
 
     appendInProject(key: string, value: any) {
-        traverseObject(
-            this,
-            toPath(key),
-            (object, key) => {
-                if (object[key] == undefined) {
-                    object[key] = value
-                } else if (Array.isArray(object[key])) {
-                    object[key].push(value)
-                } else {
-                    throw `Unsure how to append ${value} to ${key}. Did you mean 'updateInProject'?`
-                }
+        let message = JSON.stringify({
+            Name: "append",
+            Args: {
+                Selector: key,
+                NewValue: capitalizeFields(value),
             },
-            (array, idx) => {
-                if (Array.isArray(array[idx])) {
-                    array[idx].push(value)
-                } else {
-                    throw `Unsure how to append ${value} to ${key}. Did you mean 'updateInProject'?`
-                }
-            },
-        )
+        })
+        console.log(message)
+        this.socket.send(message)
     }
 
     updateInProject(key: string, value: any) {
