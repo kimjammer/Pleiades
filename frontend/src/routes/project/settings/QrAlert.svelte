@@ -4,7 +4,7 @@
     import * as Dialog from "$lib/components/ui/dialog/index.js"
     import { toast } from "svelte-sonner"
 
-    let url = new Promise<string>(() => {})
+    let url = $state<string>()
     let qrDialogOpen = $state(false)
 
     async function generateLink(): Promise<string> {
@@ -21,12 +21,17 @@
 
         return location.origin + "/join?id=" + token
     }
+
+    async function showLink() {
+        url = undefined
+        url = await generateLink()
+    }
 </script>
 
 <Dialog.Root bind:open={qrDialogOpen}>
     <Dialog.Trigger
         class={buttonVariants({ variant: "outline" })}
-        onclick={() => (url = generateLink())}>Invite</Dialog.Trigger
+        onclick={showLink}>Invite</Dialog.Trigger
     >
     <Dialog.Content class="sm:max-w-[425px]">
         <Dialog.Header>
@@ -35,9 +40,9 @@
                 Have everyone scan or visit this link, which expires in a week.
             </Dialog.Description>
         </Dialog.Header>
-        {#await url}
+        {#if url === undefined}
             loading...
-        {:then url}
+        {:else}
             <img
                 src={"https://quickchart.io/qr?text=" + url}
                 alt="loading..."
@@ -47,7 +52,7 @@
                 href={url}
                 target="_blank">{url}</a
             >
-        {/await}
+        {/if}
 
         <Dialog.Footer>
             <!-- TODO: s<Button type="submit">Done</Button> -->
