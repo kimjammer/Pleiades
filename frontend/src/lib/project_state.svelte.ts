@@ -344,7 +344,7 @@ export class ProjectState {
             Name: "update",
             Args: {
                 Selector: key,
-                NewValue: value, // TODO: This won't stringify go's weird capitals correctly
+                NewValue: capitalizeFields(value),
             },
         })
         console.log(message)
@@ -364,6 +364,32 @@ export class ProjectState {
             },
         )
     }
+}
+
+function capitalizeFields(data: any): any {
+    let cloned = JSON.parse(JSON.stringify(data))
+
+    if (Array.isArray(cloned)) {
+        let newData = []
+
+        for (let item of cloned) {
+            newData.push(capitalizeFields(item))
+        }
+
+        return newData
+    } else if (typeof data === "object") {
+        let newData: Record<string, object> = {}
+
+        for (let key of Object.keys(data)) {
+            let newKey = key
+            newKey.replace(newKey[0], newKey[0].toUpperCase())
+            data[newKey] = capitalizeFields(data[key])
+        }
+
+        return newData
+    }
+
+    return data
 }
 
 function toPath(data: string): string[] {
