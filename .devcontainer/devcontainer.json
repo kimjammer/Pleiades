@@ -33,6 +33,7 @@
   // Use 'postCreateCommand' to run commands after the container is created.
   // https://containers.dev/implementors/json_reference/
   "postCreateCommand": {
+    "pull rebase": "git config --global pull.rebase true",
     "npm install": "cd frontend && npm install",
     "air install": "go install github.com/air-verse/air@latest"
   }
