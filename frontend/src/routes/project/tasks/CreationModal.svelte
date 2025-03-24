@@ -19,9 +19,16 @@
         validators: zodClient(formSchema),
     })
 
-    const { form: formData, enhance } = form
+    const { form: formData } = form
 
-    function createTask() {}
+    async function createTask() {
+        const validationResult = await form.validateForm({ update: true })
+        if (!validationResult.valid) return
+        console.log(validationResult.data)
+        project.appendInProject("tasks", validationResult.data)
+        createDialogOpen = false
+        form.reset()
+    }
 </script>
 
 <Dialog.Root bind:open={createDialogOpen}>
@@ -34,10 +41,7 @@
             <Dialog.Description>
                 Only title required, but all strongly reccomended
             </Dialog.Description>
-            <form
-                method="POST"
-                use:enhance
-            >
+            <form onsubmit={createTask}>
                 <Form.Field
                     {form}
                     name="title"

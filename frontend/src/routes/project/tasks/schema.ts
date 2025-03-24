@@ -4,7 +4,7 @@ export const formSchema = z.object({
     title: z.string().nonempty(),
     description: z.string(),
     due: z.date().optional(),
-    estimate: z.number().min(0),
+    estimate: z.number().min(0).optional(),
     // this is an array of user ids NOT names. A custom component will make this easy for the user
     asignees: z.array(z.string()),
 })
