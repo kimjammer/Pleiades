@@ -25,7 +25,7 @@
         const validationResult = await form.validateForm({ update: true })
         if (!validationResult.valid) return
         console.log(validationResult.data)
-        project.appendInProject("tasks", validationResult.data)
+        project.appendInProject("Tasks", validationResult.data)
         createDialogOpen = false
         form.reset()
     }
