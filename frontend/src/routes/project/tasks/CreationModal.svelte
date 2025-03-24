@@ -30,9 +30,9 @@
     </Dialog.Trigger>
     <Dialog.Content>
         <Dialog.Header>
-            <Dialog.Title>Create new Project</Dialog.Title>
+            <Dialog.Title>Create new task</Dialog.Title>
             <Dialog.Description>
-                Choose a name and description for your project and click create!
+                Only title required, but all strongly reccomended
             </Dialog.Description>
             <form
                 method="POST"
@@ -51,9 +51,66 @@
                             />
                         {/snippet}
                     </Form.Control>
-                    <Form.Description>This is your public display name.</Form.Description>
+                    <Form.Description
+                        >Tip: use natural language here to set time estimate and due date (eg: 30
+                        min tuesday)</Form.Description
+                    >
                     <Form.FieldErrors />
                 </Form.Field>
+
+                <Form.Field
+                    {form}
+                    name="description"
+                >
+                    <Form.Control>
+                        {#snippet children({ props })}
+                            <Form.Label>Description</Form.Label>
+                            <Input
+                                {...props}
+                                bind:value={$formData.description}
+                            />
+                        {/snippet}
+                    </Form.Control>
+                    <Form.Description>Implementation details, progress, or notes</Form.Description>
+                    <Form.FieldErrors />
+                </Form.Field>
+
+                <Form.Field
+                    {form}
+                    name="due"
+                >
+                    <Form.Control>
+                        {#snippet children({ props })}
+                            <Form.Label>Due date</Form.Label>
+                            <Input
+                                {...props}
+                                type="date"
+                                bind:value={$formData.due}
+                            />
+                        {/snippet}
+                    </Form.Control>
+                    <Form.FieldErrors />
+                </Form.Field>
+
+                <Form.Field
+                    {form}
+                    name="estimate"
+                >
+                    <Form.Control>
+                        {#snippet children({ props })}
+                            <Form.Label>Time Estimate</Form.Label>
+                            <Input
+                                {...props}
+                                type="number"
+                                min="0"
+                                bind:value={$formData.estimate}
+                            />
+                        {/snippet}
+                    </Form.Control>
+                    <Form.FieldErrors />
+                </Form.Field>
+
+                <!-- TODO: assignees -->
 
                 <Dialog.Footer>
                     <Form.Button>Create!</Form.Button>
