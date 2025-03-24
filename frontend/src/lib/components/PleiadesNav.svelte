@@ -40,6 +40,10 @@
         goto("/login")
     }
 
+    function account() {
+        goto("/account")
+    }
+
     onMount(async () => {
         await verifySession()
     })
@@ -64,6 +68,7 @@
             <span class="sr-only">Toggle theme</span>
         </Button>
         {#if loggedIn}
+            <Button onclick={account}>Account</Button>
             <Button onclick={logout}>Logout</Button>
         {:else}
             <Button onclick={login}>Login</Button>

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { connectToProject, ProjectState } from "$lib/project_state.svelte"
+    import { connectToProject, ProjectState } from "$lib/project_state.svelte.ts"
     import { onMount } from "svelte"
     import * as Tabs from "$lib/components/ui/tabs/index.js"
     import PleiadesNav from "$lib/components/PleiadesNav.svelte"
@@ -7,7 +7,7 @@
     import TasksTab from "./tasks/TasksTab.svelte"
     import AvailabilityTab from "./availability/AvailabilityTab.svelte"
     import CalendarTab from "./calendar/CalendarTab.svelte"
-    import pollsTab from "./polls/pollsTab.svelte"
+    import PollsTab from "./polls/PollsTab.svelte"
     import * as Dialog from "$lib/components/ui/dialog"
     import { Button } from "$lib/components/ui/button"
     import type { PageData } from "./$types.js"
@@ -108,7 +108,7 @@
 
             <AvailabilityTab {project} />
 
-            <pollsTab {project} />
+            <PollsTab {project} />
 
             <SettingsTab {project} />
 

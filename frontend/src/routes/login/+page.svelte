@@ -11,7 +11,6 @@
     let error = ""
 
     async function login() {
-        //TODO: Implement email and password checking
         const res = await fetch(
             "http://" +
                 PUBLIC_API_HOST +

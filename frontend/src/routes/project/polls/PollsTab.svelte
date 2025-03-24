@@ -1,6 +1,6 @@
 <script lang="ts">
     import * as Tabs from "$lib/components/ui/tabs"
-    import type { ProjectState } from "$lib/project_state.svelte"
+    import type { ProjectState } from "$lib/project_state.svelte.ts"
 
     let { project }: { project: ProjectState } = $props()
 </script>
