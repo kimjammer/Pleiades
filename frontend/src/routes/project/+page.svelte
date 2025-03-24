@@ -7,6 +7,7 @@
     import TasksTab from "./tasks/TasksTab.svelte"
     import AvailabilityTab from "./availability/AvailabilityTab.svelte"
     import CalendarTab from "./calendar/CalendarTab.svelte"
+    import pollsTab from "./polls/pollsTab.svelte"
     import * as Dialog from "$lib/components/ui/dialog"
     import { Button } from "$lib/components/ui/button"
     import type { PageData } from "./$types.js"
@@ -93,6 +94,7 @@
                 <Tabs.Trigger value="tasks">Task Board</Tabs.Trigger>
                 <Tabs.Trigger value="calendar">Calendar</Tabs.Trigger>
                 <Tabs.Trigger value="availability">Availability</Tabs.Trigger>
+                <Tabs.Trigger value="polls">Polls</Tabs.Trigger>
                 <Tabs.Trigger value="settings">Settings</Tabs.Trigger>
                 <Tabs.Trigger value="debug">Debugging</Tabs.Trigger>
             </Tabs.List>
@@ -105,6 +107,8 @@
             <CalendarTab {project} />
 
             <AvailabilityTab {project} />
+
+            <pollsTab {project} />
 
             <SettingsTab {project} />
 
