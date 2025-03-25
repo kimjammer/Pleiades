@@ -265,7 +265,7 @@ func join(c *gin.Context) {
 		for i, user := range project.Users {
 			if user.User == userId {
 				project.Users[i].LeftProject = false
-				return errors.New("Cannot delete a project with users in it")
+				return errors.New("cannot delete a project with users in it")
 			}
 		}
 

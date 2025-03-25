@@ -3,6 +3,7 @@
     import { Button } from "$lib/components/ui/button/index"
     import { PUBLIC_API_HOST } from "$env/static/public"
     import { goto } from "$app/navigation"
+    import { tryJoinProject } from "$lib/restApi"
 
     //TODO: implement password recovery link & page?
 
@@ -27,7 +28,7 @@
         if (data.exists) {
             error = ""
             localStorage.myId = data.userId
-            await goto("/home")
+            if (!(await tryJoinProject())) await goto("/home")
         } else {
             error = "Invalid Login"
         }

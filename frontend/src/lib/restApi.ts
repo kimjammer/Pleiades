@@ -1,0 +1,22 @@
+import { goto } from "$app/navigation"
+import { PUBLIC_API_HOST } from "$env/static/public"
+
+export async function joinProject(projectId: string) {
+    const resp = await fetch("http://" + PUBLIC_API_HOST + "/join" + location.search, {
+        mode: "cors",
+        credentials: "include",
+    })
+    if (resp.status === 200) {
+        goto(location.origin + "/project?id=" + projectId)
+    }
+
+    return resp
+}
+
+export async function tryJoinProject() {
+    const params = new URLSearchParams(location.search)
+    const projectId = params.get("project")
+    if (projectId === null) return false
+    await joinProject(projectId)
+    return true
+}

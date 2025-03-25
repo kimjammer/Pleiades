@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+
 	// "net/http"
 	_ "net/http/pprof"
 	"os"
@@ -40,7 +41,7 @@ func defineRoutes(router *gin.Engine) {
 	router.GET("/verifySession", authRequired(), verifySession)
 	router.GET("/invite", authRequired(), invite)
 	router.GET("/join", authRequired(), join)
-	router.GET("/join/info", authRequired(), joinInfo)
+	router.GET("/join/info", joinInfo)
 	router.POST("/availability", authRequired(), setAvailability)
 	router.GET("/userInfo", authRequired(), getUserInfo)
 }

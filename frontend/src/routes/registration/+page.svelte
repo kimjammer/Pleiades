@@ -3,6 +3,7 @@
     import { Button } from "$lib/components/ui/button/index"
     import { PUBLIC_API_HOST } from "$env/static/public"
     import { goto } from "$app/navigation"
+    import { tryJoinProject } from "$lib/restApi"
 
     let email = ""
     let password = ""
@@ -32,7 +33,7 @@
         console.log(data) // Handle success or error messages
         if (data.success) {
             localStorage.myId = data.userId
-            await goto("/home")
+            if (!(await tryJoinProject())) await goto("/home")
         }
     }
 
@@ -133,6 +134,6 @@
     <Button onclick={isValid}>Register</Button>
     <Button
         variant="link"
-        onclick={() => goto("/login")}>Login</Button
+        onclick={() => goto("/login" + location.search)}>Login</Button
     >
 </form>

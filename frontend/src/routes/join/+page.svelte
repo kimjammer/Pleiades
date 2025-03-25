@@ -3,6 +3,7 @@
     import { PUBLIC_API_HOST } from "$env/static/public"
     import Button from "$lib/components/ui/button/button.svelte"
     import * as Card from "$lib/components/ui/card"
+    import { joinProject } from "$lib/restApi"
 
     const inviteInfo = fetch("http://" + PUBLIC_API_HOST + "/join/info" + location.search, {
         mode: "cors",
@@ -16,12 +17,9 @@
 
     async function accept() {
         const projectId = (await inviteInfo).id
-        const resp = await fetch("http://" + PUBLIC_API_HOST + "/join" + location.search, {
-            mode: "cors",
-            credentials: "include",
-        })
-        if (resp.status === 200) {
-            goto(location.origin + "/project?id=" + projectId)
+        const resp = await joinProject(projectId)
+        if (resp.status !== 200) {
+            goto(`${location.origin}/registration${location.search}&project=${projectId}`)
         }
     }
 </script>
