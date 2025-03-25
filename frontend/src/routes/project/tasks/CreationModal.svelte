@@ -1,13 +1,12 @@
 <script lang="ts">
-    import { Button, buttonVariants } from "$lib/components/ui/button"
+    import { buttonVariants } from "$lib/components/ui/button"
     import * as Dialog from "$lib/components/ui/dialog"
-    import { Label } from "$lib/components/ui/label"
+    import * as Form from "$lib/components/ui/form"
     import { Input } from "$lib/components/ui/input"
     import type { ProjectState } from "$lib/project_state.svelte"
-    import * as Form from "$lib/components/ui/form"
-    import { formSchema, type FormSchema } from "./schema"
-    import { type SuperValidated, type Infer, superForm } from "sveltekit-superforms"
+    import { type Infer, superForm, type SuperValidated } from "sveltekit-superforms"
     import { zodClient } from "sveltekit-superforms/adapters"
+    import { formSchema, type FormSchema } from "./schema"
 
     let {
         project,
