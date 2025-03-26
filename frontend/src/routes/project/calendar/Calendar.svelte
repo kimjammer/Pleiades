@@ -1,5 +1,7 @@
 <script lang="ts">
-    let { year, month }: { year: number; month: number } = $props()
+    import type { Task } from "$lib/schema"
+
+    let { year, month, tasks = [] }: { year: number; month: number; tasks?: Task[] } = $props()
     let calendar = $state<string[][]>([])
 
     const daysOfWeek = [
@@ -12,48 +14,25 @@
         "Saturday",
     ]
 
-    function generateCalendar(year: number, month: number) {
-        // Get the first day of the month and the number of days in the month
-        const firstDay = new Date(year, month - 1, 1).getDay()
-        const daysInMonth = new Date(year, month, 0).getDate()
+    const getDaysInMonth = (year: number, month: number) => new Date(year, month, 0).getDate()
 
-        // Initialize calendar grid
-        const calendarGrid: string[][] = []
-        let currentRow: string[] = []
-        let currentDay = 1
+    /**
+     * Adapted from https://stackoverflow.com/a/2485172
+     * @param month in range 1-12
+     */
+    function weekCount(year: number, month: number) {
+        var firstOfMonth = new Date(year, month - 1, 1)
+        var lastOfMonth = new Date(year, month, 0)
 
-        // Fill empty cells before the first day
-        for (let i = 0; i < firstDay; i++) {
-            currentRow.push("")
-        }
+        var used = firstOfMonth.getDay() + lastOfMonth.getDate()
 
-        // Generate days for the month
-        while (currentDay <= daysInMonth) {
-            // Complete current row
-            while (currentRow.length < 7 && currentDay <= daysInMonth) {
-                currentRow.push(currentDay.toString())
-                currentDay++
-            }
-
-            // Add row to calendar and start a new row if needed
-            calendarGrid.push(currentRow)
-            currentRow = []
-        }
-
-        // Fill last row with empty cells if needed
-        if (currentRow.length > 0) {
-            while (currentRow.length < 7) {
-                currentRow.push("")
-            }
-            calendarGrid.push(currentRow)
-        }
-
-        return calendarGrid
+        return Math.ceil(used / 7)
     }
 
-    $effect(() => {
-        calendar = generateCalendar(year, month)
-    })
+    function firstDayOfWeek(month: number, year: number, day: number) {
+        const date = new Date(year, month - 1, day)
+        return Math.max(1, day - date.getDay())
+    }
 </script>
 
 <table>
@@ -65,10 +44,12 @@
         </tr>
     </thead>
     <tbody>
-        {#each calendar as week}
+        {#each { length: weekCount(year, month) }, weekIndex}
+            {@const representativeDate = weekIndex * 7 + 1}
+            {@const sundayDate = firstDayOfWeek(month, year, representativeDate)}
             <tr>
-                {#each week as day}
-                    <td>{day}</td>
+                {#each { length: Math.min(getDaysInMonth(year, month) - sundayDate + 1, 7) }, dayIndex}
+                    <td>{sundayDate + dayIndex}</td>
                 {/each}
             </tr>
         {/each}
