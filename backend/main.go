@@ -17,7 +17,7 @@ import (
 )
 
 var db *mongo.Database
-var allowedOrigins = []string{"http://localhost:5173", "http://localhost:4173", "https://pleiades.pages.dev"}
+var allowedOrigins = []string{"http://localhost:5173", "http://localhost:4173", "https://pleiades.pages.dev", "https://ethandawes.github.io"}
 
 func setupRouter() *gin.Engine {
 	// Setup webserver
