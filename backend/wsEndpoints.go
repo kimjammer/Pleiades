@@ -20,7 +20,6 @@ var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 	CheckOrigin: func(r *http.Request) bool {
-		allowedOrigins := []string{"http://localhost:5173", "http://localhost:4173"}
 		return slices.Contains(allowedOrigins, r.Header.Get("Origin"))
 	},
 }

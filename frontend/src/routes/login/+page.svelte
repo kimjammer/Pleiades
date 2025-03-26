@@ -1,7 +1,7 @@
 <script>
     import { Input } from "$lib/components/ui/input/index"
     import { Button } from "$lib/components/ui/button/index"
-    import { PUBLIC_API_HOST } from "$env/static/public"
+    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
     import { goto } from "$app/navigation"
     import { tryJoinProject } from "$lib/restApi"
 
@@ -13,7 +13,7 @@
 
     async function login() {
         const res = await fetch(
-            "http://" +
+            PUBLIC_PROTOCOL +
                 PUBLIC_API_HOST +
                 `/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
             {

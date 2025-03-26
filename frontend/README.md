@@ -17,6 +17,11 @@ Environment Variables:
    <td>localhost:8080</td>
    <td>The location of the API server, without the protocol.</td>
   </tr>
+  <tr>
+   <td>PUBLIC_PROTOCOL</td>
+   <td>http://</td>
+   <td>The protocol to use (http vs https), depending on dev/prod</td>
+  </tr>
 </table>
 
 ## Developing

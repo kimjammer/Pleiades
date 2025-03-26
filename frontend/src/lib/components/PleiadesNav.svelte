@@ -1,5 +1,5 @@
 <script>
-    import { PUBLIC_API_HOST } from "$env/static/public"
+    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
     import { toast } from "svelte-sonner"
     import { toggleMode } from "mode-watcher"
     import { onMount } from "svelte"
@@ -9,7 +9,7 @@
 
     let loggedIn = $state(false)
     async function verifySession() {
-        const url = "http://" + PUBLIC_API_HOST + "/projects"
+        const url = PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/projects"
         const res = await fetch(url, { mode: "cors", credentials: "include" })
         if (res.ok) {
             loggedIn = true
@@ -19,7 +19,7 @@
     }
 
     async function logout() {
-        const url = "http://" + PUBLIC_API_HOST + "/logout"
+        const url = PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/logout"
         const res = await fetch(url, {
             method: "POST",
             mode: "cors",

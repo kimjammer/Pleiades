@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { PUBLIC_API_HOST } from "$env/static/public"
+    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
     import { buttonVariants } from "$lib/components/ui/button/index.js"
     import * as Dialog from "$lib/components/ui/dialog/index.js"
     import { toast } from "svelte-sonner"
@@ -8,10 +8,13 @@
     let qrDialogOpen = $state(false)
 
     async function generateLink(): Promise<string> {
-        let response = await fetch("http://" + PUBLIC_API_HOST + "/invite" + location.search, {
-            mode: "cors",
-            credentials: "include",
-        })
+        let response = await fetch(
+            PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/invite" + location.search,
+            {
+                mode: "cors",
+                credentials: "include",
+            },
+        )
 
         let token = await response.text()
         if (response.status !== 200) {

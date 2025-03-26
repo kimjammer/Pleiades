@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Input } from "$lib/components/ui/input/index"
     import { Button } from "$lib/components/ui/button/index"
-    import { PUBLIC_API_HOST } from "$env/static/public"
+    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
     import { goto } from "$app/navigation"
     import { tryJoinProject } from "$lib/restApi"
 
@@ -21,7 +21,7 @@
             lastname: lastname,
             password: password,
         }
-        const res = await fetch("http://" + PUBLIC_API_HOST + "/register/new", {
+        const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/register/new", {
             method: "POST",
             mode: "cors",
             credentials: "include",
@@ -54,7 +54,9 @@
         console.log("account Exists checking")
 
         const res = await fetch(
-            "http://" + PUBLIC_API_HOST + `/register/check?email=${encodeURIComponent(email)}`,
+            PUBLIC_PROTOCOL +
+                PUBLIC_API_HOST +
+                `/register/check?email=${encodeURIComponent(email)}`,
             {
                 method: "GET",
                 mode: "cors",

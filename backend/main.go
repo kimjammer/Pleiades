@@ -17,12 +17,13 @@ import (
 )
 
 var db *mongo.Database
+var allowedOrigins = []string{"http://localhost:5173", "http://localhost:4173", "https://pleiades.pages.dev"}
 
 func setupRouter() *gin.Engine {
 	// Setup webserver
 	router := gin.Default()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173", "http://localhost:4173"}
+	config.AllowOrigins = allowedOrigins
 	config.AllowCredentials = true
 	router.Use(cors.New(config))
 	router.Use(loadToken())

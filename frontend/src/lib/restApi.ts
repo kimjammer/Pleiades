@@ -1,8 +1,8 @@
 import { goto } from "$app/navigation"
-import { PUBLIC_API_HOST } from "$env/static/public"
+import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
 
 export async function joinProject(projectId: string) {
-    const resp = await fetch("http://" + PUBLIC_API_HOST + "/join" + location.search, {
+    const resp = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/join" + location.search, {
         mode: "cors",
         credentials: "include",
     })

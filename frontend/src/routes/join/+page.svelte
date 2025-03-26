@@ -1,11 +1,11 @@
 <script lang="ts">
     import { goto } from "$app/navigation"
-    import { PUBLIC_API_HOST } from "$env/static/public"
+    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
     import Button from "$lib/components/ui/button/button.svelte"
     import * as Card from "$lib/components/ui/card"
     import { joinProject } from "$lib/restApi"
 
-    const inviteInfo = fetch("http://" + PUBLIC_API_HOST + "/join/info" + location.search, {
+    const inviteInfo = fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/join/info" + location.search, {
         mode: "cors",
         credentials: "include",
     }).then(res => res.json())

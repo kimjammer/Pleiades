@@ -13,7 +13,7 @@
     import type { ProjectState } from "$lib/project_state.svelte"
     import { Availability as DbAvailability } from "$lib/project_state.svelte.js"
     import { availabilityToDateMap, dateMapToAvailability } from "./adapter"
-    import { PUBLIC_API_HOST } from "$env/static/public"
+    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
 
     let { project }: { project: ProjectState } = $props()
 
@@ -31,7 +31,7 @@
         const availability = dateMapToAvailability(ev.detail)
         console.log("db availability", availability)
 
-        await fetch("http://" + PUBLIC_API_HOST + "/availability", {
+        await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/availability", {
             method: "POST",
             mode: "cors",
             credentials: "include",

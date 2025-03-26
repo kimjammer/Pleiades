@@ -7,7 +7,7 @@
     import * as Dialog from "$lib/components/ui/dialog"
     import { toast } from "svelte-sonner"
     import type { ProjectsResponse, newProjectRequest } from "$lib/schema.js"
-    import { PUBLIC_API_HOST } from "$env/static/public"
+    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
     import { goto } from "$app/navigation"
 
     let title = $state("")
@@ -22,7 +22,7 @@
     })
 
     async function loadProjects() {
-        const url = "http://" + PUBLIC_API_HOST + "/projects"
+        const url = PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/projects"
         const res = await fetch(url, { mode: "cors", credentials: "include" })
         if (res.status === 401) {
             goto("/login")
@@ -42,7 +42,7 @@
 
         createDialogOpen = false
 
-        const url = "http://" + PUBLIC_API_HOST + "/projects/new"
+        const url = PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/projects/new"
         const body: newProjectRequest = { title, description }
         const res = await fetch(url, {
             method: "POST",
