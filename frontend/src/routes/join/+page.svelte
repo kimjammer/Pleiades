@@ -1,6 +1,7 @@
 <script lang="ts">
     import { goto } from "$app/navigation"
-    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
+    import { base } from "$app/paths"
+    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
     import Button from "$lib/components/ui/button/button.svelte"
     import * as Card from "$lib/components/ui/card"
     import { joinProject } from "$lib/restApi"
@@ -12,7 +13,7 @@
 
     function decline() {
         window.close.bind(window)
-        goto("/")
+        goto(base + "/")
     }
 
     async function accept() {

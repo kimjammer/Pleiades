@@ -34,7 +34,7 @@
             return
         }
         localStorage.removeItem("myId")
-        goto(base)
+        goto(base + "/")
     }
 
     function login() {

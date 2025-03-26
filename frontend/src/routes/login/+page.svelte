@@ -1,8 +1,9 @@
 <script>
-    import { Input } from "$lib/components/ui/input/index"
-    import { Button } from "$lib/components/ui/button/index"
-    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
     import { goto } from "$app/navigation"
+    import { base } from "$app/paths"
+    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
+    import { Button } from "$lib/components/ui/button/index"
+    import { Input } from "$lib/components/ui/input/index"
     import { tryJoinProject } from "$lib/restApi"
 
     //TODO: implement password recovery link & page?
@@ -28,7 +29,7 @@
         if (data.exists) {
             error = ""
             localStorage.myId = data.userId
-            if (!(await tryJoinProject())) await goto("/home")
+            if (!(await tryJoinProject())) await goto(base + "/home")
         } else {
             error = "Invalid Login"
         }
@@ -58,6 +59,6 @@
     <Button onclick={login}>Login</Button>
     <Button
         variant="link"
-        onclick={() => goto("/registration")}>Register New Account</Button
+        onclick={() => goto(base + "/registration")}>Register New Account</Button
     >
 </div>

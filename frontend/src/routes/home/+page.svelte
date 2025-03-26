@@ -1,14 +1,15 @@
 <script lang="ts">
-    import { onMount } from "svelte"
-    import { Button } from "$lib/components/ui/button"
-    import { Label } from "$lib/components/ui/label"
-    import { Input } from "$lib/components/ui/input"
-    import PleiadesNav from "$lib/components/PleiadesNav.svelte"
-    import * as Dialog from "$lib/components/ui/dialog"
-    import { toast } from "svelte-sonner"
-    import type { ProjectsResponse, newProjectRequest } from "$lib/schema.js"
-    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
     import { goto } from "$app/navigation"
+    import { base } from "$app/paths"
+    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
+    import PleiadesNav from "$lib/components/PleiadesNav.svelte"
+    import { Button } from "$lib/components/ui/button"
+    import * as Dialog from "$lib/components/ui/dialog"
+    import { Input } from "$lib/components/ui/input"
+    import { Label } from "$lib/components/ui/label"
+    import type { ProjectsResponse, newProjectRequest } from "$lib/schema.js"
+    import { onMount } from "svelte"
+    import { toast } from "svelte-sonner"
 
     let title = $state("")
     let description = $state("")
@@ -25,7 +26,7 @@
         const url = PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/projects"
         const res = await fetch(url, { mode: "cors", credentials: "include" })
         if (res.status === 401) {
-            goto("/login")
+            goto(base + "/login")
         } else if (!res.ok) {
             toast.error("Failed to load projects")
             return
@@ -74,9 +75,9 @@
     <div class="mb-5 mt-5 flex flex-wrap gap-10">
         {#each response.projects as project}
             <a
-                class="flex h-60 w-60 flex-col justify-end overflow-hidden
-            rounded-xl border-8
-            border-primary p-5
+                class="border-primary flex h-60 w-60 flex-col justify-end
+            overflow-hidden rounded-xl
+            border-8 p-5
             transition duration-300
             hover:bg-slate-300 hover:dark:bg-slate-800"
                 href="/project?id={project.id}"
@@ -92,8 +93,8 @@
         <Dialog.Root bind:open={createDialogOpen}>
             <Dialog.Trigger>
                 <div
-                    class="flex h-60 w-60 flex-col justify-center rounded-xl
-                    border-8 border-dashed border-primary
+                    class="border-primary flex h-60 w-60 flex-col justify-center
+                    rounded-xl border-8 border-dashed
                     p-5 transition
                     duration-300 hover:hover:bg-slate-300
                     hover:dark:bg-slate-800"

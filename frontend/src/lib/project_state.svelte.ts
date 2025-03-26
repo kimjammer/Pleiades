@@ -1,5 +1,6 @@
 import { goto } from "$app/navigation"
-import { PUBLIC_WS_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
+import { base } from "$app/paths"
+import { PUBLIC_API_HOST, PUBLIC_WS_PROTOCOL } from "$env/static/public"
 
 class ReactiveTesting {
     bruh = $state("X")
@@ -40,12 +41,12 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
 
             if (text == "UNAUTHORIZED") {
                 this.close()
-                goto("/login")
+                goto(base + "/login")
             }
 
             if (text == "PROJECT ID DNE") {
                 this.close()
-                goto("/home")
+                goto(base + "/home")
                 return
             }
 
@@ -303,7 +304,7 @@ export class ProjectState {
                 Args: {},
             }),
         )
-        goto("/home")
+        goto(base + "/home")
     }
 
     delete() {
@@ -313,7 +314,7 @@ export class ProjectState {
                 Args: {},
             }),
         )
-        goto("/home")
+        goto(base + "/home")
     }
 
     appendInProject(key: string, value: any) {

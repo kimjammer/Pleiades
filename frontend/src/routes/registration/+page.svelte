@@ -1,8 +1,9 @@
 <script lang="ts">
-    import { Input } from "$lib/components/ui/input/index"
-    import { Button } from "$lib/components/ui/button/index"
-    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
     import { goto } from "$app/navigation"
+    import { base } from "$app/paths"
+    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
+    import { Button } from "$lib/components/ui/button/index"
+    import { Input } from "$lib/components/ui/input/index"
     import { tryJoinProject } from "$lib/restApi"
 
     let email = ""
@@ -33,7 +34,7 @@
         console.log(data) // Handle success or error messages
         if (data.success) {
             localStorage.myId = data.userId
-            if (!(await tryJoinProject())) await goto("/home")
+            if (!(await tryJoinProject())) await goto(base + "/home")
         }
     }
 
@@ -136,6 +137,6 @@
     <Button onclick={isValid}>Register</Button>
     <Button
         variant="link"
-        onclick={() => goto("/login" + location.search)}>Login</Button
+        onclick={() => goto(base + "/login" + location.search)}>Login</Button
     >
 </form>
