@@ -50,7 +50,7 @@ type Task struct {
 	Id           string
 	Title        string
 	Description  string
-	DueDate      string //TODO: Change me to correct type
+	DueDate      int
 	KanbanColumn string
 	TimeEstimate int
 	Completed    bool
@@ -74,7 +74,7 @@ type Session struct {
 }
 
 type Invitation struct {
-	Id              string `bson:"_id"`
-	CreatedAt       time.Time
-	ProjectId       string
+	Id        string `bson:"_id"`
+	CreatedAt time.Time
+	ProjectId string
 }

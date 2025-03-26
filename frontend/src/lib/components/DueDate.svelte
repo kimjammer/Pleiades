@@ -5,8 +5,10 @@
     import { Calendar } from "$lib/components/ui/calendar"
     import * as Popover from "$lib/components/ui/popover"
     import { CalendarDays, X, Plus } from "lucide-svelte"
+    import type { ProjectState } from "$lib/project_state.svelte"
 
-    let { dueDate }: { dueDate: Date | undefined } = $props()
+    let { dueDate, project, taskID }: { dueDate: number; project: ProjectState; taskID: string } =
+        $props()
 
     let value = $state<DateValue | undefined>()
     let contentRef = $state<HTMLElement | null>(null)
@@ -14,15 +16,18 @@
     async function handleEdit() {
         //Send to server
         //Component is updated when server updates the project state and replies
+        const timestamp = value?.toDate(getLocalTimeZone()).getTime()
+        //project.updateInProject(`Tasks[Id=${taskID}].DueDate`, timestamp)
 
         //TODO:remove
-        dueDate = value?.toDate(getLocalTimeZone())
+        dueDate = timestamp || 0
     }
     async function handleDelete(e: Event) {
         e.stopPropagation()
+        //project.updateInProject(`Tasks[Id=${taskID}].DueDate`, 0)
 
         //TODO:remove
-        dueDate = undefined
+        dueDate = 0
         value = undefined
     }
 </script>
@@ -35,13 +40,13 @@
         >
             <div class="flex items-center gap-1">
                 <CalendarDays size="12" />
-                {#if dueDate === undefined}
+                {#if dueDate === 0}
                     Add Due Date
                     <Plus size="15" />
                 {:else}
-                    {dueDate.toLocaleString("default", { month: "long" })}
+                    {new Date(dueDate).toLocaleString("default", { month: "long" })}
 
-                    {dueDate.toLocaleString("default", { day: "numeric" })}
+                    {new Date(dueDate).toLocaleString("default", { day: "numeric" })}
                     <Button.Root
                         class="
         inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2

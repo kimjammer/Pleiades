@@ -9,8 +9,9 @@
     let { project, data }: { project: ProjectState; data: PageData } = $props()
 
     //Testing
-    const testDueDate = undefined
+    const testDueDate = 0
     const testTime = 0
+    const taskID = "12345678"
 </script>
 
 <Tabs.Content value="tasks">
@@ -19,7 +20,15 @@
         {data}
     />
     <div>
-        <DueDate dueDate={testDueDate} />
-        <TimeEstimate timeEstimate={testTime} />
+        <DueDate
+            dueDate={testDueDate}
+            {project}
+            {taskID}
+        />
+        <TimeEstimate
+            timeEstimate={testTime}
+            {project}
+            {taskID}
+        />
     </div>
 </Tabs.Content>
