@@ -97,14 +97,4 @@
     td {
         vertical-align: top;
     }
-
-    .inputs {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 10px;
-    }
-
-    input {
-        margin: 0 10px;
-    }
 </style>
