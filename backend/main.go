@@ -54,7 +54,7 @@ func main() {
 	log.Println("Test extensions enabled?", TEST)
 	dbName := "pleiades"
 	if TEST {
-		dbName = "pleiades_test"
+		dbName = "pleiades-test"
 	}
 
 	//Connect to database
