@@ -1,5 +1,7 @@
 <script lang="ts">
-    let { year, month }: { year: number; month: number } = $props()
+    import type { Task } from "$lib/schema"
+
+    let { year, month, tasks = [] }: { year: number; month: number; tasks?: Task[] } = $props()
     let calendar = $state<string[][]>([])
 
     const daysOfWeek = [
@@ -68,7 +70,13 @@
         {#each calendar as week}
             <tr>
                 {#each week as day}
-                    <td>{day}</td>
+                    {@const date = `${year}-${month}-${day}`}
+                    <td>
+                        <div>{day}</div>
+                        {#each tasks.filter(task => task.due === date) as task}
+                            <div>{task}</div>
+                        {/each}
+                    </td>
                 {/each}
             </tr>
         {/each}
