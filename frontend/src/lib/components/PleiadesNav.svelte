@@ -1,11 +1,12 @@
 <script>
-    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
-    import { toast } from "svelte-sonner"
+    import { goto } from "$app/navigation"
+    import { base } from "$app/paths"
+    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
+    import { Button } from "$lib/components/ui/button"
+    import { Moon, Sun } from "lucide-svelte"
     import { toggleMode } from "mode-watcher"
     import { onMount } from "svelte"
-    import { Button } from "$lib/components/ui/button"
-    import { Sun, Moon } from "lucide-svelte"
-    import { goto } from "$app/navigation"
+    import { toast } from "svelte-sonner"
 
     let loggedIn = $state(false)
     async function verifySession() {
@@ -33,19 +34,19 @@
             return
         }
         localStorage.removeItem("myId")
-        goto("/")
+        goto(base)
     }
 
     function login() {
-        goto("/login")
+        goto(base + "/login")
     }
 
     function account() {
-        goto("/account")
+        goto(base + "/account")
     }
 
     function home() {
-        goto("/home")
+        goto(base + "/home")
     }
 
     onMount(async () => {

@@ -1,6 +1,7 @@
 <script>
-    import { Button } from "$lib/components/ui/button/index"
     import { goto } from "$app/navigation"
+    import { base } from "$app/paths"
+    import { Button } from "$lib/components/ui/button/index"
 </script>
 
 <div>
@@ -11,6 +12,6 @@
     >
         Collaborate Easier...or else...
     </h2>
-    <Button onclick={() => goto("/login")}>Login</Button>
-    <Button onclick={() => goto("/registration")}>Create an account</Button>
+    <Button onclick={() => goto(base + "/login")}>Login</Button>
+    <Button onclick={() => goto(base + "/registration")}>Create an account</Button>
 </div>
