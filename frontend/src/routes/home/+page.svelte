@@ -80,7 +80,7 @@
             border-8 p-5
             transition duration-300
             hover:bg-slate-300 hover:dark:bg-slate-800"
-                href="/project?id={project.id}"
+                href="{base}/project?id={project.id}"
             >
                 <h3 class="scroll-m-20 text-2xl font-semibold tracking-tight">
                     {project.title}
