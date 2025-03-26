@@ -1,8 +1,10 @@
-name: Build and Deploy
+name: Build Frontend
 on:
   push:
     branches:
       - main
+    paths:
+      - frontend/**
 jobs:
   build-and-deploy:
     permissions:
@@ -14,13 +16,13 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
       - name: Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
         env:
-          BASE_PATH: '/${{ github.event.repository.name }}'
-          PUBLIC_API_HOST: 'pleiadesapi.kimjammer.com'
-          PUBLIC_PROTOCOL: 'https://'
-          PUBLIC_WS_PROTOCOL: 'wss://'
+          BASE_PATH: "/${{ github.event.repository.name }}"
+          PUBLIC_API_HOST: "pleiadesapi.kimjammer.com"
+          PUBLIC_PROTOCOL: "https://"
+          PUBLIC_WS_PROTOCOL: "wss://"
         run: |
           cd frontend
           npm ci
