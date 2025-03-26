@@ -1,5 +1,5 @@
 import { goto } from "$app/navigation"
-import { PUBLIC_API_HOST } from "$env/static/public"
+import { PUBLIC_WS_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
 
 class ReactiveTesting {
     bruh = $state("X")
@@ -13,7 +13,7 @@ class ReactiveTesting {
 
 export async function connectToProject(projectId: string): Promise<ProjectState> {
     return new Promise((resolve, reject) => {
-        let socket = new WebSocket("ws://" + PUBLIC_API_HOST + "/ws")
+        let socket = new WebSocket(PUBLIC_WS_PROTOCOL + PUBLIC_API_HOST + "/ws")
 
         let state = new ProjectState(socket)
         let gotFirstProjectState = false
@@ -78,7 +78,7 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
                 }
 
                 console.log("Trying to rejoin")
-                socket = new WebSocket("ws://" + PUBLIC_API_HOST + "/ws")
+                socket = new WebSocket(PUBLIC_WS_PROTOCOL + PUBLIC_API_HOST + "/ws")
                 state.socket = socket
                 joinSocket(socket)
             }, 500)

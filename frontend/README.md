@@ -22,6 +22,11 @@ Environment Variables:
    <td>http://</td>
    <td>The protocol to use (http vs https), depending on dev/prod</td>
   </tr>
+  <tr>
+   <td>PUBLIC_WS_PROTOCOL</td>
+   <td>ws://</td>
+   <td>The protocol to use (ws vs wss), depending on dev/prod</td>
+  </tr>
 </table>
 
 ## Developing
