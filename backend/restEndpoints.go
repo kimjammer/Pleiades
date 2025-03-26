@@ -261,11 +261,11 @@ func join(c *gin.Context) {
 	}
 
 	// Add user to project
-	updateProject(invitation.ProjectId, func(project *Project) error {
+	err = updateProject(invitation.ProjectId, func(project *Project) error {
 		for i, user := range project.Users {
 			if user.User == userId {
 				project.Users[i].LeftProject = false
-				return errors.New("cannot delete a project with users in it")
+				return nil
 			}
 		}
 
@@ -273,6 +273,9 @@ func join(c *gin.Context) {
 
 		return nil
 	})
+	if err == nil {
+		panic("The updater cannot return an error")
+	}
 
 	requeryUsersForProject(invitation.ProjectId)
 

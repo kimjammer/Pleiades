@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type ConnectionForSpace struct {
@@ -176,26 +177,39 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 
 			maybe_err := message.command.apply(&project)
 
-			if maybe_err != nil {
-				message.connection.error_tx <- maybe_err
-				continue
-			}
+			var deleted bool
+			appliedChange, deleted = (func() (bool, bool) {
+				defer (func() {
+					// Send the error even if it's nil, to allow `applyCommandToProject` to possibly return an error
+					// Also this needs to be done after project deletion so that tests see an updated database
+					message.connection.error_tx <- maybe_err
+				})()
 
-			if _, is := message.command.(UserLeave); is {
-				users = queryUsers(project.Users)
-				if !existingInviteLinks(project) && maybeDeleteProject(project) {
-					return
+				if maybe_err != nil {
+					return false, false
 				}
-			}
 
-			if _, is := message.command.(Delete); is {
-				users = queryUsers(project.Users)
-				if maybeDeleteProject(project) {
-					return
+				if _, is := message.command.(UserLeave); is {
+					users = queryUsers(project.Users)
+					hasInviteLinks := existingInviteLinks(project)
+					if !hasInviteLinks && maybeDeleteProject(project) {
+						return false, true
+					}
 				}
-			}
 
-			appliedChange = true
+				if _, is := message.command.(Delete); is {
+					users = queryUsers(project.Users)
+					if maybeDeleteProject(project) {
+						return false, true
+					}
+				}
+
+				return true, false
+			})()
+
+			if deleted {
+				return
+			}
 		}
 
 		if appliedChange {
@@ -297,6 +311,17 @@ func queryUsers(users []UserAndLeft) []UserInProject {
 }
 
 func existingInviteLinks(project Project) bool {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	thing := db.Collection("invitations").FindOne(ctx, bson.D{{Key: "ProjectId", Value: project.Id}})
+
+	if thing.Err() == mongo.ErrNoDocuments {
+		return false
+	}
+
+	if thing.Err() != nil {
+		panic(thing.Err())
+	}
 
 	return true
 }

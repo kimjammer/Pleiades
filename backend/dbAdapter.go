@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 
 	"github.com/gin-gonic/gin"
@@ -9,8 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-func getUser(c *gin.Context) (crrUser User, err error) {
-	userId := c.GetString("userId")
+func getUserById(c context.Context, userId string) (crrUser User, err error) {
 	objId, _ := primitive.ObjectIDFromHex(userId)
 	filter := bson.D{{Key: "_id", Value: objId}}
 	err = db.Collection("users").FindOne(c, filter).Decode(&crrUser)
@@ -24,10 +24,16 @@ func getUser(c *gin.Context) (crrUser User, err error) {
 	return
 }
 
+func getUser(c *gin.Context) (crrUser User, err error) {
+	userId := c.GetString("userId")
+	crrUser, err = getUserById(c, userId)
+	return
+}
+
 /**
  * Get a project invitation object from database
  */
- func getInvite(c *gin.Context) (invitation Invitation, err error) {
+func getInvite(c *gin.Context) (invitation Invitation, err error) {
 	joinId := c.Query("id")
 	filter := bson.D{{Key: "_id", Value: joinId}}
 	err = db.Collection("invitations").FindOne(c, filter).Decode(&invitation)

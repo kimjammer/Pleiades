@@ -17,10 +17,12 @@ type Command interface {
 // Apply a one-off command to a project server side
 //
 // This will automatically update all connected users of the change.
-func applyCommandToProject(projectId string, command Command) {
+func applyCommandToProject(projectId string, command Command) error {
 	connection := joinSpace(projectId)
 
 	connection.command_tx <- command
+
+	return <-connection.errors
 }
 
 type FunctionCommand struct {
@@ -34,8 +36,8 @@ func (self FunctionCommand) apply(project *Project) error {
 // Update the project via a function
 //
 // This will automatically update all connected users of the change.
-func updateProject(projectId string, updater func(*Project) error) {
-	applyCommandToProject(projectId, FunctionCommand{function: updater})
+func updateProject(projectId string, updater func(*Project) error) error {
+	return applyCommandToProject(projectId, FunctionCommand{function: updater})
 }
 
 type CommandMessage struct {
