@@ -4,9 +4,9 @@
     import * as Form from "$lib/components/ui/form"
     import { Input } from "$lib/components/ui/input"
     import type { ProjectState } from "$lib/project_state.svelte"
+    import { formSchema, type FormSchema } from "$lib/schema"
     import { type Infer, superForm, type SuperValidated } from "sveltekit-superforms"
     import { zodClient } from "sveltekit-superforms/adapters"
-    import { formSchema, type FormSchema } from "./schema"
 
     let {
         project,

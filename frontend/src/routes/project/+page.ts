@@ -1,7 +1,7 @@
-import type { PageLoad } from "./$types"
+import { formSchema } from "$lib/schema"
 import { superValidate } from "sveltekit-superforms"
-import { formSchema } from "./tasks/schema"
 import { zod } from "sveltekit-superforms/adapters"
+import type { PageLoad } from "./$types"
 
 export const load = (async () => {
     return {
