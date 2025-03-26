@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"reflect"
 	"regexp"
 	"slices"
@@ -81,6 +82,16 @@ func decodeCommand(command CommandMessage, userId string) (Command, error) {
 		return parsedCommand, nil
 	}
 
+	if command.Name == "delete" {
+		var parsedCommand DeleteInProject
+		err := json.Unmarshal(command.Args, &parsedCommand)
+		if err != nil {
+			return nil, err
+		}
+
+		return parsedCommand, nil
+	}
+
 	return nil, errors.New("Unknown command: " + command.Name)
 }
 
@@ -143,27 +154,38 @@ func (self ArrayElementSelector) doSelect(value reflect.Value) (reflect.Value, e
 	for i := range len {
 		value := slice.Index(i)
 
-		if value.Kind() != reflect.Struct {
-			return reflect.ValueOf(nil), errors.New("Cannot get field " + self.key + " of " + value.Kind().String() + " because it is not a structure")
-
+		ok, err := self.elementMatches(value)
+		if err != nil {
+			return reflect.ValueOf(nil), err
 		}
-
-		field := value.FieldByName(self.key)
-
-		if !field.IsValid() {
-			return reflect.ValueOf(nil), errors.New("The field " + self.key + " does not exist on the type " + value.Kind().String())
-		}
-
-		if v, ok := field.Interface().(string); ok {
-			if v == self.value {
-				return field.Addr(), nil
-			}
-		} else {
-			return reflect.ValueOf(nil), errors.New("The field " + self.key + "  is not a string type" + value.Kind().String())
+		if ok {
+			return value.Addr(), nil
 		}
 	}
 
-	return reflect.ValueOf(nil), errors.New("Unable to find an element with field " + self.key + " matching " + self.value)
+	return reflect.ValueOf(nil), nil
+}
+
+func (self ArrayElementSelector) elementMatches(value reflect.Value) (bool, error) {
+	if value.Kind() != reflect.Struct {
+		return false, errors.New("Cannot get field " + self.key + " of " + value.Kind().String() + " because it is not a structure")
+	}
+
+	field := value.FieldByName(self.key)
+
+	if !field.IsValid() {
+		return false, errors.New("The field " + self.key + " does not exist on the type " + value.Kind().String())
+	}
+
+	if v, ok := field.Interface().(string); ok {
+		if v == self.value {
+			return true, nil
+		}
+	} else {
+		return false, errors.New("The field " + self.key + "  is not a string type" + value.Kind().String())
+	}
+
+	return false, nil
 }
 
 type FieldSelector struct {
@@ -250,6 +272,10 @@ func (self UpdateInProject) apply(state *Project) error {
 		if err != nil {
 			return err
 		}
+		if !selected.IsValid() {
+			log.Println("Unable to find the value to update. Is it a member of an element that was deleted?")
+			return nil
+		}
 	}
 
 	spot := selected.Interface()
@@ -278,6 +304,10 @@ func (self AppendInProject) apply(state *Project) error {
 		if err != nil {
 			return err
 		}
+		if !selected.IsValid() {
+			log.Println("Unable to find the slice to append to. Is it a member of an element that was deleted?")
+			return nil
+		}
 	}
 
 	slice := reflect.ValueOf(selected).Elem()
@@ -295,6 +325,72 @@ func (self AppendInProject) apply(state *Project) error {
 	}
 
 	slice.Set(reflect.Append(slice, value))
+
+	return nil
+}
+
+type DeleteInProject struct {
+	Selector string
+}
+
+func (self DeleteInProject) apply(state *Project) error {
+	selector, err := decodeSelector(self.Selector)
+	if err != nil {
+		return err
+	}
+
+	var finalSelector SelectorLevel
+	selected := reflect.ValueOf(state)
+	for i, selectorLevel := range selector {
+		if i == len(selector)-1 {
+			finalSelector = selectorLevel
+			break
+		}
+
+		selected, err = selectorLevel.doSelect(selected)
+		if err != nil {
+			return err
+		}
+		if !selected.IsValid() {
+			log.Println("Unable to find the slice to delete from. Is it a member of an element that was deleted?")
+			return nil
+		}
+	}
+
+	slice := reflect.ValueOf(selected).Elem()
+
+	if slice.Kind() != reflect.Slice {
+		return errors.New(slice.Kind().String() + " is not a slice. Did you mean to use updateInProject?")
+	}
+
+	var element ArrayElementSelector
+	if maybeElement, ok := finalSelector.(ArrayElementSelector); ok {
+		element = maybeElement
+	} else {
+		return errors.New("The final selector is not an index selector.")
+	}
+
+	len := slice.Len()
+
+	for i := range len {
+		value := slice.Index(i)
+
+		ok, err := element.elementMatches(value)
+		if err != nil {
+			return err
+		}
+		if ok {
+			slice1 := slice.Slice(0, i)
+			slice2 := slice.Slice(i+1, len)
+			finalSlice := reflect.AppendSlice(slice1, slice2)
+
+			slice.Set(finalSlice)
+
+			return nil
+		}
+	}
+
+	log.Println("Unable to find the element to delete. Was it already deleted?")
 
 	return nil
 }

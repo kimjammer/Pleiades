@@ -341,17 +341,14 @@ export class ProjectState {
     }
 
     deleteInProject(key: string) {
-        console.log(key, toPath(key))
-        traverseObject(
-            this,
-            toPath(key),
-            (object, key) => {
-                delete object[key]
+        let message = JSON.stringify({
+            Name: "delete",
+            Args: {
+                Selector: key,
             },
-            (array, idx) => {
-                array.splice(idx, 1)
-            },
-        )
+        })
+        console.log(message)
+        this.socket.send(message)
     }
 }
 
