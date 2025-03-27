@@ -273,7 +273,7 @@ func join(c *gin.Context) {
 
 		return nil
 	})
-	if err == nil {
+	if err != nil {
 		panic("The updater cannot return an error")
 	}
 

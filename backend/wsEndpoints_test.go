@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 
@@ -32,9 +35,9 @@ func (self TestConn) send(data string) bool {
 }
 
 func (self TestConn) recv() (string, bool) {
-	data := <-self.rx
+	data, ok := <-self.rx
 
-	return data, self.isClosed()
+	return data, !ok
 }
 
 func (self TestConn) close() {
@@ -110,4 +113,53 @@ func TestLeavingDeletesProject(t *testing.T) {
 	// With no invite links around, leaving a project as the only user should delete it
 	count, _ := db.Collection("projects").CountDocuments(context.TODO(), bson.D{})
 	require.Equal(t, int64(0), count)
+}
+
+func TestLeavingInviteAround(t *testing.T) {
+	resetDB()
+
+	router := setupTestRouter()
+
+	// Create an invite link
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/invite?id=53ed4d28-9279-4b4e-9256-b1e693332625", nil)
+	router.ServeHTTP(w, req)
+	bodyBytes, _ := io.ReadAll(w.Body)
+	body := string(bodyBytes)
+	require.Equal(t, http.StatusOK, w.Code)
+
+	conn, _ := connect(t, "67c7b20021675682e4395270", "53ed4d28-9279-4b4e-9256-b1e693332625")
+
+	conn.send(`{
+		"Name": "leave",
+		"Args": {}
+	}`)
+
+	project, disconnect := conn.recvState()
+	require.False(t, disconnect)
+
+	require.Equal(t, len(project.Users), 1)
+	require.True(t, project.Users[0].LeftProject)
+
+	_, disconnect = conn.recvState()
+	require.True(t, disconnect)
+
+	user, err := getUserById(context.TODO(), "67c7b20021675682e4395270")
+	require.Nil(t, err)
+	require.Equal(t, len(user.Projects), 0)
+
+	// There is still an invite link, so don't delete it
+	count, _ := db.Collection("projects").CountDocuments(context.TODO(), bson.D{})
+	require.Equal(t, int64(1), count)
+
+	// Rejoin the project
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest(http.MethodGet, "/join?id="+body, nil)
+	router.ServeHTTP(w, req)
+	require.Equal(t, http.StatusOK, w.Code)
+
+	conn, project = connect(t, "67c7b20021675682e4395270", "53ed4d28-9279-4b4e-9256-b1e693332625")
+
+	require.Equal(t, len(project.Users), 1)
+	require.False(t, project.Users[0].LeftProject)
 }

@@ -5,6 +5,7 @@ Week 5 (Summary) (Scrum Master: John Kim)
 3/24 1hr ea4d49d Implement appendInProject
 3/26 1hr 58be81c Implement deleteInProject
 3/26 2hr 0a6f5ee Learn how to write WS endpoint tests in go
+3/26 4hr 6a9edc1 Refactor project state tests and debug a god awful deadlock condition
 
 Week 5 (Summary) (Scrum Master: John Kim)
 [Meetings]

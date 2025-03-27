@@ -265,10 +265,12 @@ type StateFanOutTx struct {
 
 func fanInCommandsFrom(connection ConnectionForSpace, sendTo chan<- FanInMessage, recvStates StateFanOutRecv) {
 	defer func() {
-		close(recvStates.killed)
 		close(connection.state_tx)
 		close(connection.error_tx)
+		close(recvStates.killed)
 	}()
+
+	defunct := false
 
 	for {
 		select {
@@ -276,6 +278,8 @@ func fanInCommandsFrom(connection ConnectionForSpace, sendTo chan<- FanInMessage
 			if !ok {
 				sendTo <- FanInMessage{command: nil, connection: connection, wasKilled: true}
 				connection.command_rx = nil
+				defunct = true
+				continue
 			}
 
 			sendTo <- FanInMessage{command: command, connection: connection, wasKilled: false}
@@ -290,6 +294,10 @@ func fanInCommandsFrom(connection ConnectionForSpace, sendTo chan<- FanInMessage
 				// Flush the channel to remove the un-received state
 				<-connection.state_tx
 				connection.state_tx <- recvState
+			}
+
+			if defunct {
+				return
 			}
 		}
 	}
@@ -326,7 +334,7 @@ func queryUsers(users []UserAndLeft) []UserInProject {
 func existingInviteLinks(project Project) bool {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	thing := db.Collection("invitations").FindOne(ctx, bson.D{{Key: "ProjectId", Value: project.Id}})
+	thing := db.Collection("invitations").FindOne(ctx, bson.D{{Key: "projectid", Value: project.Id}})
 
 	if thing.Err() == mongo.ErrNoDocuments {
 		return false

@@ -39,3 +39,25 @@ func resetDB() {
 	_, _ = db.Collection("projects").InsertOne(context.TODO(), project)
 	_, _ = db.Collection("users").InsertOne(context.TODO(), user)
 }
+
+func secondPerson() {
+	userId, _ := primitive.ObjectIDFromHex("67e5b7abef0709e1426eed50")
+
+	//Create a user
+	user := User{
+		Id:           userId,
+		FirstName:    "Joe",
+		LastName:     "Biden",
+		Email:        "example@us.gov",
+		Password:     "isthepasswordforsure",
+		PhoneNumber:  "9234567890",
+		Projects:     []string{},
+		Availability: []Availability{},
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err == nil {
+		user.Password = string(hashedPassword)
+	}
+
+	_, _ = db.Collection("users").InsertOne(context.TODO(), user)
+}
