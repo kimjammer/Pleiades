@@ -44,6 +44,9 @@ type Poll struct {
 	Title       string
 	Description string
 	Options     []Option
+	DueDate     int
+	Votes       [][]int //for users ids per option
+	VoteTally   []int   //number of votes per option
 }
 
 type Task struct {

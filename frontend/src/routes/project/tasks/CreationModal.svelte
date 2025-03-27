@@ -32,13 +32,13 @@
 
 <Dialog.Root bind:open={createDialogOpen}>
     <Dialog.Trigger class={buttonVariants({ variant: "outline" })}>
-        Create a new project
+        Create a new task
     </Dialog.Trigger>
     <Dialog.Content>
         <Dialog.Header>
             <Dialog.Title>Create new task</Dialog.Title>
             <Dialog.Description>
-                Only title required, but all strongly reccomended
+                Only title required, but all strongly recommended
             </Dialog.Description>
             <form onsubmit={createTask}>
                 <Form.Field
