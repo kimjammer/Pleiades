@@ -47,11 +47,64 @@ func wsEndpoint(c *gin.Context) {
 		return
 	}
 
-	go handleConnection(conn, userId.(string))
+	go handleConnection(WsConn{socket: conn}, userId.(string))
 }
 
-func handleConnection(conn *websocket.Conn, userId string) {
-	defer conn.Close()
+type Connection interface {
+	send(data string) bool
+	recv() (string, bool)
+	close()
+}
+
+type WsConn struct {
+	socket *websocket.Conn
+}
+
+func (self WsConn) send(data string) bool {
+	if err := self.socket.WriteMessage(websocket.TextMessage, []byte(data)); err != nil {
+		if _, ok := err.(*websocket.CloseError); ok {
+			return true
+		}
+		panic(err)
+	}
+
+	return false
+}
+
+func (self WsConn) recv() (string, bool) {
+	mt, bytes, err := self.socket.ReadMessage()
+	if err != nil {
+		if _, ok := err.(*websocket.CloseError); ok {
+			return "", true
+		}
+		panic(err)
+	}
+
+	str := string(bytes)
+
+	if mt != websocket.TextMessage {
+		if err := self.socket.WriteMessage(websocket.TextMessage, []byte("FAIL: All websockets messages must be text")); err != nil {
+			if _, ok := err.(*websocket.CloseError); ok {
+				return "", true
+			}
+			panic(err)
+		}
+	}
+
+	return str, false
+}
+
+func (self WsConn) close() {
+	self.socket.Close()
+}
+
+func handleConnection(conn Connection, userId string) {
+	disconnectSignal := make(chan struct{})
+	defer func() {
+		// Don't close until the wsProjectSpace has closed
+		<-disconnectSignal
+		conn.close()
+	}()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -61,97 +114,74 @@ func handleConnection(conn *websocket.Conn, userId string) {
 	err := db.Collection("users").FindOne(ctx, filter).Decode(&crrUser)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			if err := conn.WriteMessage(websocket.TextMessage, []byte("FAIL: User ID not found")); err != nil {
-				panic(err)
+			disconnect := conn.send("FAIL: User ID not found")
+			if disconnect {
+				return
 			}
 		} else {
 			panic(err)
 		}
 	}
 
-	mt, projectIdBytes, err := conn.ReadMessage()
-	if err != nil {
-		if _, ok := err.(*websocket.CloseError); ok {
-			return
-		}
-		panic(err)
-	}
-
-	projectId := string(projectIdBytes)
-
-	if mt != websocket.TextMessage {
-		if err := conn.WriteMessage(websocket.TextMessage, []byte("FAIL: Expected the project ID to be a text message")); err != nil {
-			if _, ok := err.(*websocket.CloseError); ok {
-				return
-			}
-			panic(err)
-		}
+	projectId, disconnect := conn.recv()
+	if disconnect {
+		return
 	}
 
 	if !slices.Contains(crrUser.Projects, projectId) {
-		if err := conn.WriteMessage(websocket.TextMessage, []byte("PROJECT ID DNE")); err != nil {
-			if _, ok := err.(*websocket.CloseError); ok {
-				return
-			}
-			panic(err)
-		}
+		conn.send("PROJECT ID DNE")
 	}
 
 	projectSpace := joinSpace(projectId)
-	disconnectSignal := make(chan struct{})
 	defer func() {
-		disconnectSignal <- struct{}{}
 		close(projectSpace.command_tx)
 	}()
 
 	go func() {
+		defer func() { disconnectSignal <- struct{}{} }()
+
 		for {
 			select {
-			case newState := <-projectSpace.state_rx:
-				if err := conn.WriteMessage(websocket.TextMessage, newState); err != nil {
-					if _, ok := err.(*websocket.CloseError); ok {
+			case newState, ok := <-projectSpace.state_rx:
+				if !ok {
+					projectSpace.state_rx = nil
+					continue
+				}
+				disconnect := conn.send(string(newState))
+				if disconnect {
+					return
+				}
+
+			case err, ok := <-projectSpace.errors:
+				{
+					if !ok {
 						return
 					}
-					panic(err)
-				}
+					if err == nil {
+						continue
+					}
 
-			case err := <-projectSpace.errors:
-				{
 					log.Println(err.Error())
 
-					if err := conn.WriteMessage(websocket.TextMessage, []byte("FAIL: "+err.Error())); err != nil {
-						if _, ok := err.(*websocket.CloseError); ok {
-							return
-						}
-						panic(err)
+					disconnect := conn.send("FAIL: " + err.Error())
+					if disconnect {
+						return
 					}
 				}
-
-			case _ = <-disconnectSignal:
-				return
 			}
 		}
 	}()
 
 	//Listen loop
 	for {
-		mt, message, err := conn.ReadMessage()
-		if err != nil {
-			if _, ok := err.(*websocket.CloseError); ok {
-				return
-			}
-
-			projectSpace.errors <- err
-		}
-
-		if mt != websocket.TextMessage {
-			projectSpace.errors <- errors.New("Expected the command to be a text message")
-			continue
+		message, disconnect := conn.recv()
+		if disconnect {
+			return
 		}
 
 		command := CommandMessage{}
 
-		err = json.Unmarshal(message, &command)
+		err = json.Unmarshal(([]byte)(message), &command)
 		if err != nil {
 			projectSpace.errors <- err
 			continue
@@ -164,15 +194,15 @@ func handleConnection(conn *websocket.Conn, userId string) {
 			continue
 		}
 
-		projectSpace.command_tx <- decodedCommand
-
 		if command.Name == "leave" || command.Name == "delete" {
-			// TODO: Delete if there are no other members and no active invite links
-
 			leave(userId, projectId)
+
+			projectSpace.command_tx <- decodedCommand
 
 			return
 		}
+
+		projectSpace.command_tx <- decodedCommand
 	}
 }
 

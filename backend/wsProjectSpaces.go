@@ -142,8 +142,14 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 	go timeout(noConnectionsTimeout)
 
 	projectStateFanOut := []StateFanOutTx{}
-	var commandChannel chan FanInMessage = make(chan FanInMessage)
+	var commandChannel chan FanInMessage = make(chan FanInMessage, 16)
 	connectionCount := 0
+
+	defer func() {
+		for _, conn := range projectStateFanOut {
+			close(conn.recvStates)
+		}
+	}()
 
 	for {
 		appliedChange := false
@@ -218,6 +224,7 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 			projectStateFanOut = slices.DeleteFunc(projectStateFanOut, func(v StateFanOutTx) bool {
 				select {
 				case _ = <-v.killed:
+					close(v.recvStates)
 					return true
 
 				default:
@@ -259,6 +266,8 @@ type StateFanOutTx struct {
 func fanInCommandsFrom(connection ConnectionForSpace, sendTo chan<- FanInMessage, recvStates StateFanOutRecv) {
 	defer func() {
 		close(recvStates.killed)
+		close(connection.state_tx)
+		close(connection.error_tx)
 	}()
 
 	for {
@@ -266,11 +275,15 @@ func fanInCommandsFrom(connection ConnectionForSpace, sendTo chan<- FanInMessage
 		case command, ok := <-connection.command_rx:
 			if !ok {
 				sendTo <- FanInMessage{command: nil, connection: connection, wasKilled: true}
-				return
+				connection.command_rx = nil
 			}
 
 			sendTo <- FanInMessage{command: command, connection: connection, wasKilled: false}
-		case recvState := <-recvStates.recvStates:
+		case recvState, ok := <-recvStates.recvStates:
+			if !ok {
+				return
+			}
+
 			select {
 			case connection.state_tx <- recvState:
 			default:

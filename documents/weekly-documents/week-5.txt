@@ -4,6 +4,7 @@ Week 5 (Summary) (Scrum Master: John Kim)
 3/24 1hr cdd4cb3d8a65a8f077b4ad276122b83ff7434e58 95fab39ce0ebc7b50df4d9cef6fe4d56d3daf942 task creation
 3/24 1hr ea4d49d Implement appendInProject
 3/26 1hr 58be81c Implement deleteInProject
+3/26 2hr 0a6f5ee Learn how to write WS endpoint tests in go
 
 Week 5 (Summary) (Scrum Master: John Kim)
 [Meetings]
