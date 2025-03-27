@@ -11,21 +11,19 @@
 
     let { project, data }: { project: ProjectState; data: PageData } = $props()
 
+    let showForm = false;
 
     async function createPoll() {
         //TODO: send info to create poll
     }
 
+    function toggleForm() {
+        showForm = !showForm;
+    }
+
 </script>
 
 <Tabs.Content value="polls">
-    <div>above</div>
-    <CreationModal
-            {project}
-            {data}
-    />
-
-    <div>below</div>
-
+    <CreationModal {project} ></CreationModal>
 </Tabs.Content>
 

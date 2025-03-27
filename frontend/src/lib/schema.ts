@@ -15,7 +15,7 @@ export type newProjectRequest = {
     description: string
 }
 
-export const formSchema = z.object({
+export const taskformSchema = z.object({
     title: z.string().nonempty(),
     description: z.string(),
     due: z.string().date().optional(),
@@ -24,5 +24,14 @@ export const formSchema = z.object({
     asignees: z.array(z.string()),
 })
 
-export type FormSchema = typeof formSchema
-export type Task = z.infer<typeof formSchema>
+export type FormSchema = typeof taskformSchema
+export type Task = z.infer<typeof taskformSchema>
+
+export const pollformSchema = z.object({
+    title: z.string().nonempty(),
+    description: z.string(),
+    deadline: z.string().date(),
+    options: z.string().nonempty()
+})
+
+export type PollFormSchema = z.infer<typeof pollformSchema>;
