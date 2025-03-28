@@ -132,6 +132,12 @@ type Delete struct {
 }
 
 func (self Delete) apply(state *Project) error {
+	for _, user := range state.Users {
+		if user.User != self.userId && !user.LeftProject {
+			return errors.New("Cannot delete the project when there are other users still in the project")
+		}
+	}
+
 	return UserLeave(self).apply(state)
 }
 

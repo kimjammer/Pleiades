@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"slices"
 	"sync"
 	"time"
@@ -207,6 +208,8 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 					users = queryUsers(project.Users)
 					if maybeDeleteProject(project) {
 						return true, true
+					} else {
+						maybe_err = errors.New("Cannot delete when there are other users in the project")
 					}
 				}
 
