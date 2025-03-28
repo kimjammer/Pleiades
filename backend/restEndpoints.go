@@ -370,6 +370,42 @@ func getUserInfo(c *gin.Context) {
 
 }
 
+func createPoll(c *gin.Context) {
+	//TODO:
+	//	Create Poll object
+	//  Get Project & add Poll
+
+	//get user
+	crrUser, err := getUser(c)
+	if err != nil {
+		// TODO: convert to middleware
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+
+	// Validate permissions (is project member)
+	projectId := c.Query("id")
+	isMember := slices.Contains(crrUser.Projects, projectId)
+	if !isMember {
+		// TODO: convert to middleware
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Not a project member"})
+		return
+	}
+	var project Project
+	err = db.Collection("projects").FindOne(c.Request.Context(), bson.M{"id": projectId}).Decode(&project)
+
+	if err == mongo.ErrNoDocuments {
+		c.JSON(http.StatusOK, gin.H{"success": false})
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+	}
+
+	//TODO: create poll onj
+
+	//TODO: add to project & return success
+
+}
+
 // TEMPORARY
 func listUsers() {
 	collection := db.Collection("users") // Reference the "users" collection

@@ -40,7 +40,7 @@ type Availability struct {
 }
 
 type Poll struct {
-	Id          string
+	Id          string `bson:"_id"`
 	Title       string
 	Description string
 	Options     []Option
