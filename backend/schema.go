@@ -18,3 +18,10 @@ type NewProjectRequest struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
+
+type NewPollRequest struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Options     string `json:"options"`
+	DueDate     string `json:"dueDate"`
+}

@@ -17,23 +17,30 @@
     let { project }: { project: ProjectState } = $props()
     let createDialogOpen = $state(false)
 
-    let question = ""
+    let title = ""
+    let description = ""
     let options = ""
     let dueDate = ""
 
+    let error = ""
+
     async function createPoll() {
         console.log("out")
-        console.log(question)
+        console.log(title)
         console.log(options)
         console.log(dueDate)
 
+        //TODO: checking for title and at least two options
+
         const pollInfo = {
-            question: question,
+            title: title,
+            description: description,
             options: options,
             dueDate: dueDate,
         }
-
-        const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/newPoll", {
+        const url = PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/newPoll?id=" + project.id
+        console.log(url)
+        const res = await fetch(url, {
             method: "POST",
             mode: "cors",
             credentials: "include",
@@ -41,10 +48,8 @@
         })
 
         const data = await res.json()
-        console.log(data) // Handle success or error messages
         if (data.success) {
-            localStorage.myId = data.userId
-            if (!(await tryJoinProject())) await goto(base + "/home")
+            console.log("SUCCESSFULLY ADDED POLL")
         }
     }
 
@@ -64,8 +69,10 @@
                 Enter poll question and options
             </Dialog.Description>
             <div>
-                <Label>Subject</Label>
-                <Input bind:value={question}></Input>
+                <Label>Title</Label>
+                <Input bind:value={title}></Input>
+                <Label>Description</Label>
+                <Input bind:value={description}></Input>
                 <Label>Options (comma separated)</Label>
                 <Input bind:value={options}></Input>
                 <Label>End Date</Label>

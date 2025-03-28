@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"slices"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -374,6 +376,7 @@ func createPoll(c *gin.Context) {
 	//TODO:
 	//	Create Poll object
 	//  Get Project & add Poll
+	log.Println("Creating new Poll")
 
 	//get user
 	crrUser, err := getUser(c)
@@ -382,15 +385,18 @@ func createPoll(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
 	}
+	log.Println("crrUser: ", crrUser)
 
 	// Validate permissions (is project member)
 	projectId := c.Query("id")
+	log.Println("ProjectID: " + projectId)
 	isMember := slices.Contains(crrUser.Projects, projectId)
 	if !isMember {
 		// TODO: convert to middleware
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Not a project member"})
 		return
 	}
+	//get project
 	var project Project
 	err = db.Collection("projects").FindOne(c.Request.Context(), bson.M{"id": projectId}).Decode(&project)
 
@@ -400,9 +406,43 @@ func createPoll(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 	}
 
-	//TODO: create poll onj
+	//TODO: create poll obj
+	//create poll struct
+	var newPollJson NewPollRequest
+	if err := c.ShouldBindJSON(&newPollJson); err != nil {
+		log.Println("Invalid JSON data")
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
 
-	//TODO: add to project & return success
+	var newPoll Poll
+	newPoll.Title = newPollJson.Title
+	newPoll.Description = newPollJson.Description
+	//TODO: change to unix timestamp
+	log.Println(newPollJson.DueDate)
+	var timeInfo = strings.Split(newPollJson.DueDate, "-")
+	log.Println(timeInfo)
+	year, _ := strconv.Atoi(timeInfo[0])
+	monthInt, _ := strconv.Atoi(timeInfo[1])
+	day, _ := strconv.Atoi(timeInfo[2])
+	newPoll.DueDate = time.Date(year, time.Month(monthInt), day, 0, 0, 0, 0, time.UTC).Unix() * 1000
+	//split up options into array
+	var optionsList = strings.Split(newPollJson.Options, ",")
+	for index, value := range optionsList {
+		if value == "" { //skip if empty string
+			continue
+		}
+		var newOption Option
+		newOption.Title = value
+		newOption.Id = string(index) //ASSIGNING INDEX AS THE ID: MIGHT CHANGE LATER
+		//add to options
+		newPoll.Options = append(newPoll.Options, newOption)
+	}
+
+	//add to project & return success
+	project.Polls = append(project.Polls, newPoll)
+	log.Println("successfuly created poll")
+	c.JSON(http.StatusOK, gin.H{"success": true})
 
 }
 

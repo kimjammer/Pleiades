@@ -45,7 +45,7 @@ func defineRoutes(router *gin.Engine) {
 	router.GET("/join/info", joinInfo)
 	router.POST("/availability", authRequired(), setAvailability)
 	router.GET("/userInfo", authRequired(), getUserInfo)
-	router.POST("/newPoll", authRequired())
+	router.POST("/newPoll", authRequired(), createPoll)
 }
 
 func defineTestRoutes(router *gin.Engine) {
