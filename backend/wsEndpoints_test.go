@@ -397,4 +397,155 @@ func TestProjectMutation(t *testing.T) {
 	require.Equal(t, proj.Project.Polls[0].DueDate, int64(123))
 	require.Equal(t, len(proj.Project.Polls[0].Options), 1)
 	require.Equal(t, proj.Project.Polls[0].Options[0].Id, "option 1")
+
+	// Verify selector parsing
+	conn.send(`{
+		"Name": "update",
+		"Args": {
+			"Selector": "Polls[Id=poll].Options[Id=option 1].Title",
+			"NewValue": "Is Not"
+		}
+	}`)
+
+	proj, _ = conn.recvState()
+
+	require.Equal(t, "Is Not", proj.Project.Polls[0].Options[0].Title)
+
+	// ID doesn't exist, should fail silently
+	conn.send(`{
+		"Name": "update",
+		"Args": {
+			"Selector": "Polls[Id=polly].Options[Id=option 1].Title",
+			"NewValue": "Is Not"
+		}
+	}`)
+
+	_, _ = conn.recvState()
+
+	// Struct field doesn't exist, should fail loudly
+	conn.send(`{
+		"Name": "update",
+		"Args": {
+			"Selector": "Polls[Id=poll].Optiony[Id=option 1].Title",
+			"NewValue": "Is Not"
+		}
+	}`)
+
+	_, _ = conn.recvErr()
+
+	conn.send(`{
+		"Name": "append",
+		"Args": {
+			"Selector": "Polls",
+			"NewValue": {
+				"Id": "poll2",
+				"Title": "Heyo",
+				"Description": "Dank",
+				"Options": [],
+				"DueDate": 123
+			}
+		}
+	}`)
+
+	_, _ = conn.recvState()
+
+	conn.send(`{
+		"Name": "append",
+		"Args": {
+			"Selector": "Polls",
+			"NewValue": {
+				"Id": "poll3",
+				"Title": "Heyo",
+				"Description": "Dank",
+				"Options": [],
+				"DueDate": 123
+			}
+		}
+	}`)
+
+	_, _ = conn.recvState()
+
+	// Test with multiple options
+	conn.send(`{
+		"Name": "update",
+		"Args": {
+			"Selector": "Polls[Id=poll2].Title",
+			"NewValue": "Heyoooo???"
+		}
+	}`)
+
+	proj, _ = conn.recvState()
+
+	require.Equal(t, "Heyoooo???", proj.Project.Polls[1].Title)
+
+	conn.send(`{
+		"Name": "update",
+		"Args": {
+			"Selector": "Polls[Id=poll3].Title",
+			"NewValue": "Skibidi"
+		}
+	}`)
+
+	proj, _ = conn.recvState()
+
+	require.Equal(t, "Skibidi", proj.Project.Polls[2].Title)
+
+	conn.send(`{
+		"Name": "remove",
+		"Args": {
+			"Selector": "Polls[Id=poll2]",
+			"NewValue": "Heyoooo???"
+		}
+	}`)
+
+	proj, _ = conn.recvState()
+
+	require.Equal(t, 2, len(proj.Project.Polls))
+	require.Equal(t, "Heyo", proj.Project.Polls[0].Title)
+	require.Equal(t, "Skibidi", proj.Project.Polls[1].Title)
+
+	// More deletion
+	conn.send(`{
+		"Name": "append",
+		"Args": {
+			"Selector": "Polls[Id=poll].Options[Id=option 1].LikedUsers",
+			"NewValue": "Henry"
+		}
+	}`)
+
+	_, _ = conn.recvState()
+
+	conn.send(`{
+		"Name": "append",
+		"Args": {
+			"Selector": "Polls[Id=poll].Options[Id=option 1].LikedUsers",
+			"NewValue": "Ethan"
+		}
+	}`)
+
+	_, _ = conn.recvState()
+
+	conn.send(`{
+		"Name": "append",
+		"Args": {
+			"Selector": "Polls[Id=poll].Options[Id=option 1].LikedUsers",
+			"NewValue": "Cate"
+		}
+	}`)
+
+	proj, _ = conn.recvState()
+
+	require.Equal(t, proj.Project.Polls[0].Options[0].LikedUsers, []string{"Henry", "Ethan", "Cate"})
+
+	conn.send(`{
+		"Name": "remove",
+		"Args": {
+			"Selector": "Polls[Id=poll].Options[Id=option 1].LikedUsers[$IT=Ethan]",
+			"NewValue": "Cate"
+		}
+	}`)
+
+	proj, _ = conn.recvState()
+
+	require.Equal(t, proj.Project.Polls[0].Options[0].LikedUsers, []string{"Henry", "Cate"})
 }

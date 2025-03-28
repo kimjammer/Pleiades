@@ -343,7 +343,7 @@ export class ProjectState {
 
     deleteInProject(key: string) {
         let message = JSON.stringify({
-            Name: "delete",
+            Name: "remove",
             Args: {
                 Selector: key,
             },

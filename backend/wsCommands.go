@@ -84,7 +84,7 @@ func decodeCommand(command CommandMessage, userId string) (Command, error) {
 		return parsedCommand, nil
 	}
 
-	if command.Name == "delete" {
+	if command.Name == "remove" {
 		var parsedCommand DeleteInProject
 		err := json.Unmarshal(command.Args, &parsedCommand)
 		if err != nil {
@@ -151,7 +151,7 @@ type ArrayElementSelector struct {
 }
 
 func (self ArrayElementSelector) doSelect(value reflect.Value) (reflect.Value, error) {
-	slice := reflect.ValueOf(value).Elem()
+	slice := value.Elem()
 
 	if slice.Kind() != reflect.Slice && slice.Kind() != reflect.Array {
 		return reflect.ValueOf(nil), errors.New("Cannot index into " + slice.Kind().String() + " because it is neither an array nor a slice")
@@ -175,17 +175,25 @@ func (self ArrayElementSelector) doSelect(value reflect.Value) (reflect.Value, e
 }
 
 func (self ArrayElementSelector) elementMatches(value reflect.Value) (bool, error) {
-	if value.Kind() != reflect.Struct {
-		return false, errors.New("Cannot get field " + self.key + " of " + value.Kind().String() + " because it is not a structure")
+	var keyValue reflect.Value
+
+	if self.key == "$IT" {
+		keyValue = value
+	} else {
+		if value.Kind() != reflect.Struct {
+			return false, errors.New("Cannot get field " + self.key + " of " + value.Kind().String() + " because it is not a structure")
+		}
+
+		field := value.FieldByName(self.key)
+
+		if !field.IsValid() {
+			return false, errors.New("The field " + self.key + " does not exist on the type " + value.Kind().String())
+		}
+
+		keyValue = field
 	}
 
-	field := value.FieldByName(self.key)
-
-	if !field.IsValid() {
-		return false, errors.New("The field " + self.key + " does not exist on the type " + value.Kind().String())
-	}
-
-	if v, ok := field.Interface().(string); ok {
+	if v, ok := keyValue.Interface().(string); ok {
 		if v == self.value {
 			return true, nil
 		}
@@ -238,7 +246,8 @@ func decodeSelector(selector string, first bool) ([]SelectorLevel, error) {
 	if maybeArraySelector != "" {
 		removed = arraySelectorRegex.ReplaceAllString(selector, "")
 
-		values := strings.Split(strings.Trim(maybeArraySelector, "[]"), "=")
+		trimmed := strings.Trim(maybeArraySelector, "[].")
+		values := strings.Split(trimmed, "=")
 
 		parsedSelector = ArrayElementSelector{key: values[0], value: values[1]}
 	} else {
@@ -255,7 +264,7 @@ func decodeSelector(selector string, first bool) ([]SelectorLevel, error) {
 
 			parsedSelector = FieldSelector{key: key}
 		} else if wrongArraySelectorRegex.MatchString(selector) {
-			return nil, errors.New("Indexing by numerical index is unsupported because it is very likely to lead to data races if a value is inserted into the array after picking the index. Instead select by the contents of one of the fields, like `[Id=whatever]`. If you really do need this feature, contact Henry")
+			return nil, errors.New("Indexing by numerical index is unsupported because it is very likely to lead to data races if a value is inserted/deleted into/from the array after picking the index. Instead select by the contents of one of the fields, like `[Id=whatever]`. If you really do need this feature, contact Henry")
 		} else {
 			return nil, errors.New("Could not parse the selector string: " + selector)
 		}
@@ -371,7 +380,7 @@ func (self DeleteInProject) apply(state *Project) error {
 		}
 	}
 
-	slice := reflect.ValueOf(selected).Elem()
+	slice := selected.Elem()
 
 	if slice.Kind() != reflect.Slice {
 		return errors.New(slice.Kind().String() + " is not a slice. Did you mean to use updateInProject?")
