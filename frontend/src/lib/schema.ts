@@ -15,6 +15,11 @@ export type newProjectRequest = {
     description: string
 }
 
+export type PollsResponse = {
+    polls: string[]
+}
+
+
 export const taskformSchema = z.object({
     title: z.string().nonempty(),
     description: z.string(),

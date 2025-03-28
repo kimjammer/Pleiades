@@ -13,6 +13,7 @@
     import {tryJoinProject} from "$lib/restApi";
     import {goto} from "$app/navigation";
     import {base} from "$app/paths";
+    import { toast } from "svelte-sonner"
 
     let { project }: { project: ProjectState } = $props()
     let createDialogOpen = $state(false)
@@ -22,7 +23,27 @@
     let options = ""
     let dueDate = ""
 
-    let error = ""
+    let error = false
+
+    function validateInput() { //does error checking
+        error = false
+        if (title == "") {
+            error = true
+            toast.error("Title must be at least one character")
+        }
+        if (options.split(",").length < 2) {
+            error = true
+            toast.error("The poll must have at least two options")
+        }
+        if (dueDate == "") {
+            error = true
+            toast.error("The poll must have an end date")
+        }
+        if (!error) {
+            createPoll()
+        }
+
+    }
 
     async function createPoll() {
         console.log("out")
@@ -46,11 +67,14 @@
             credentials: "include",
             body: JSON.stringify(pollInfo),
         })
-
+        console.log("awaiting")
         const data = await res.json()
         if (data.success) {
             console.log("SUCCESSFULLY ADDED POLL")
         }
+
+        //project.polls = //todo finsih this wtf
+
     }
 
     //TODO: display all poll titles as buttons to expand the poll
@@ -83,7 +107,7 @@
             </div>
         </Dialog.Header>
         <Dialog.Footer>
-            <Button onclick={createPoll}>Create</Button>
+            <Button onclick={validateInput}>Create</Button>
         </Dialog.Footer>
     </Dialog.Content>
 </Dialog.Root>
