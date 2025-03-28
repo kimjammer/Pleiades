@@ -236,8 +236,8 @@ export class UserInProject {
 
 export class Session {
     id: string = $state("")
-    startTime: string = $state("") // TODO: Change to correct type
-    endTime: string = $state("") // TODO: Change to correct type
+    startTime: number = $state(0)
+    endTime: number = $state(0)
     user: string = $state("")
 }
 
@@ -245,7 +245,7 @@ export class Task {
     id: string = $state("")
     title: string = $state("")
     description: string = $state("")
-    dueDate: string = $state("") // TODO: Change to correct type
+    dueDate: number = $state(0)
     kanbanColumn: string = $state("")
     timeEstimate: number = $state(0)
     completed: boolean = $state(false)

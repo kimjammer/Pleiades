@@ -71,8 +71,8 @@ type Option struct {
 
 type Session struct {
 	Id        string
-	StartTime string //TODO: Change me to correct type
-	EndTime   string //TODO: Change me to correct type
+	StartTime int
+	EndTime   int
 	User      string
 }
 

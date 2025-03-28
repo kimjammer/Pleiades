@@ -5,13 +5,13 @@
     import { Clock, X, Plus } from "lucide-svelte"
     import { Input } from "$lib/components/ui/input"
     import { Label } from "$lib/components/ui/label"
-    import type { ProjectState } from "$lib/project_state.svelte"
+    import type { ProjectState, Task } from "$lib/project_state.svelte"
 
     let {
         timeEstimate,
         project,
-        taskID,
-    }: { timeEstimate: number; project: ProjectState; taskID: string } = $props()
+        task,
+    }: { timeEstimate: number; project: ProjectState; task: Task } = $props()
 
     let value = $state<string | undefined>()
     let contentRef = $state<HTMLElement | null>(null)
@@ -31,7 +31,7 @@
         value = valueNum.toString()
         //Send to server
         //Component is updated when server updates the project state and replies
-        //project.updateInProject(`Tasks[Id=${taskID}].TimeEstimate`, value)
+        //project.updateInProject(`Tasks[Id=${task.id}].TimeEstimate`, value)
 
         //TODO:remove
         timeEstimate = valueNum
@@ -41,7 +41,7 @@
         e.stopPropagation()
         isOpen = false
 
-        //project.updateInProject(`Tasks[Id=${taskID}].TimeEstimate`, 0)
+        //project.updateInProject(`Tasks[Id=${task.id}].TimeEstimate`, 0)
 
         //TODO:remove
         timeEstimate = 0

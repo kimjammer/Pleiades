@@ -5,9 +5,9 @@
     import { Calendar } from "$lib/components/ui/calendar"
     import * as Popover from "$lib/components/ui/popover"
     import { CalendarDays, X, Plus } from "lucide-svelte"
-    import type { ProjectState } from "$lib/project_state.svelte"
+    import type { ProjectState, Task } from "$lib/project_state.svelte"
 
-    let { dueDate, project, taskID }: { dueDate: number; project: ProjectState; taskID: string } =
+    let { dueDate, project, task }: { dueDate: number; project: ProjectState; task: Task } =
         $props()
 
     let value = $state<DateValue | undefined>()
@@ -17,14 +17,14 @@
         //Send to server
         //Component is updated when server updates the project state and replies
         const timestamp = value?.toDate(getLocalTimeZone()).getTime()
-        //project.updateInProject(`Tasks[Id=${taskID}].DueDate`, timestamp)
+        //project.updateInProject(`Tasks[Id=${task.id}].DueDate`, timestamp)
 
         //TODO:remove
         dueDate = timestamp || 0
     }
     async function handleDelete(e: Event) {
         e.stopPropagation()
-        //project.updateInProject(`Tasks[Id=${taskID}].DueDate`, 0)
+        //project.updateInProject(`Tasks[Id=${task.id}].DueDate`, 0)
 
         //TODO:remove
         dueDate = 0
