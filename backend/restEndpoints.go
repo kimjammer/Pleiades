@@ -434,7 +434,7 @@ func createPoll(c *gin.Context) {
 		}
 		var newOption Option
 		newOption.Title = value
-		newOption.Id = string(index) //ASSIGNING INDEX AS THE ID: MIGHT CHANGE LATER
+		newOption.Id = strconv.Itoa(index) //ASSIGNING INDEX AS THE ID: MIGHT CHANGE LATER
 		//add to options
 		newPoll.Options = append(newPoll.Options, newOption)
 	}

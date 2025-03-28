@@ -8,6 +8,7 @@ Week 5 (Summary) (Scrum Master: John Kim)
 3/26 4hr 6a9edc1 Refactor project state tests and debug a god awful deadlock condition
 3/26 1hr 033fb9f Fix more deadlocks and test leaving interaction with invitation
 3/28 1.5hr 79b5621 More tests for leaving
+3/28 0.5hr edb4e39 Tests for project deletion
 
 Week 5 (Summary) (Scrum Master: John Kim)
 [Meetings]

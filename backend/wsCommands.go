@@ -225,7 +225,7 @@ var wrongArraySelectorRegex, _ = regexp.Compile(`^\[[0-9]*\]`)
 // Matches the format `whatever` or `whatever.`
 var fieldSelectorRegex, _ = regexp.Compile(`^[a-zA-Z]+\.?`)
 
-func decodeSelector(selector string) ([]SelectorLevel, error) {
+func decodeSelector(selector string, first bool) ([]SelectorLevel, error) {
 	if selector == "" {
 		return []SelectorLevel{}, nil
 	}
@@ -247,7 +247,13 @@ func decodeSelector(selector string) ([]SelectorLevel, error) {
 		if maybeFieldSelector != "" {
 			removed = fieldSelectorRegex.ReplaceAllString(selector, "")
 
-			parsedSelector = FieldSelector{key: strings.Trim(maybeFieldSelector, ".")}
+			key := strings.Trim(maybeFieldSelector, ".")
+
+			if key == "Users" && first {
+				return nil, errors.New("Cannot index into the `Users` field, this data should be maintained by the server or by specialized websockets endpoints (like `leave` or `delete`)")
+			}
+
+			parsedSelector = FieldSelector{key: key}
 		} else if wrongArraySelectorRegex.MatchString(selector) {
 			return nil, errors.New("Indexing by numerical index is unsupported because it is very likely to lead to data races if a value is inserted into the array after picking the index. Instead select by the contents of one of the fields, like `[Id=whatever]`. If you really do need this feature, contact Henry")
 		} else {
@@ -255,7 +261,7 @@ func decodeSelector(selector string) ([]SelectorLevel, error) {
 		}
 	}
 
-	var selectors, err = decodeSelector(removed)
+	var selectors, err = decodeSelector(removed, false)
 	if err != nil {
 		return nil, err
 	}
@@ -269,7 +275,7 @@ type UpdateInProject struct {
 }
 
 func (self UpdateInProject) apply(state *Project) error {
-	selector, err := decodeSelector(self.Selector)
+	selector, err := decodeSelector(self.Selector, true)
 	if err != nil {
 		return err
 	}
@@ -301,7 +307,7 @@ type AppendInProject struct {
 }
 
 func (self AppendInProject) apply(state *Project) error {
-	selector, err := decodeSelector(self.Selector)
+	selector, err := decodeSelector(self.Selector, true)
 	if err != nil {
 		return err
 	}
@@ -318,7 +324,7 @@ func (self AppendInProject) apply(state *Project) error {
 		}
 	}
 
-	slice := reflect.ValueOf(selected).Elem()
+	slice := reflect.ValueOf(selected.Interface()).Elem()
 
 	if slice.Kind() != reflect.Slice {
 		return errors.New(slice.Kind().String() + " is not a slice. Did you mean to use updateInProject?")
@@ -332,7 +338,7 @@ func (self AppendInProject) apply(state *Project) error {
 		return err
 	}
 
-	slice.Set(reflect.Append(slice, value))
+	slice.Set(reflect.Append(slice, value.Elem()))
 
 	return nil
 }
@@ -342,7 +348,7 @@ type DeleteInProject struct {
 }
 
 func (self DeleteInProject) apply(state *Project) error {
-	selector, err := decodeSelector(self.Selector)
+	selector, err := decodeSelector(self.Selector, true)
 	if err != nil {
 		return err
 	}

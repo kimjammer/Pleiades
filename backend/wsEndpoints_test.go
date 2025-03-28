@@ -340,3 +340,61 @@ func TestDeletingUserAround(t *testing.T) {
 	count, _ := db.Collection("projects").CountDocuments(context.TODO(), bson.D{})
 	require.Equal(t, int64(1), count)
 }
+
+// PROJECT MUTATION ENDPOINTS
+
+func TestProjectMutation(t *testing.T) {
+	resetDB()
+
+	conn, _ := connect(t, "67c7b20021675682e4395270", "53ed4d28-9279-4b4e-9256-b1e693332625")
+
+	conn.send(`{
+		"Name": "update",
+		"Args": {
+			"Selector": "Title",
+			"NewValue": "BRUH"
+		}
+	}`)
+
+	proj, _ := conn.recvState()
+	require.Equal(t, proj.Project.Title, "BRUH")
+
+	// These endpoints shouldn't be able to touch `Users`
+	conn.send(`{
+		"Name": "append",
+		"Args": {
+			"Selector": "Users",
+			"NewValue": {}
+		}
+	}`)
+
+	_, _ = conn.recvErr()
+
+	conn.send(`{
+		"Name": "append",
+		"Args": {
+			"Selector": "Polls",
+			"NewValue": {
+				"Id": "poll",
+				"Title": "Heyo",
+				"Description": "Dank",
+				"Options": [{
+					"Id": "option 1",
+					"Title": "Is Too",
+					"LikedUsers": [],
+					"NeutralUsers": [],
+					"DislikedUsers": []
+				}],
+				"DueDate": 123
+			}
+		}
+	}`)
+
+	proj, _ = conn.recvState()
+
+	require.Equal(t, len(proj.Project.Polls), 1)
+	require.Equal(t, proj.Project.Polls[0].Id, "poll")
+	require.Equal(t, proj.Project.Polls[0].DueDate, int64(123))
+	require.Equal(t, len(proj.Project.Polls[0].Options), 1)
+	require.Equal(t, proj.Project.Polls[0].Options[0].Id, "option 1")
+}
