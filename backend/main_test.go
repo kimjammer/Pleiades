@@ -38,23 +38,27 @@ func TestMain(m *testing.M) {
 }
 
 // Manually set the token for testing
-func tokenOverride() gin.HandlerFunc {
+func tokenOverride(token string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set("userId", "67c7b20021675682e4395270")
+		c.Set("userId", token)
 		c.Next()
 	}
 }
 
-// Setup router for testing with the token manually set
-func setupTestRouter() *gin.Engine {
+func setupTestRouterCustomToken(token string) *gin.Engine {
 	// Setup webserver
 	router := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:5173", "http://localhost:4173"}
 	config.AllowCredentials = true
 	router.Use(cors.New(config))
-	router.Use(tokenOverride())
+	router.Use(tokenOverride(token))
 	defineRoutes(router)
 
 	return router
+}
+
+// Setup router for testing with the token manually set
+func setupTestRouter() *gin.Engine {
+	return setupTestRouterCustomToken("67c7b20021675682e4395270")
 }

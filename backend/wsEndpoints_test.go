@@ -115,7 +115,7 @@ func TestLeavingDeletesProject(t *testing.T) {
 	require.Equal(t, int64(0), count)
 }
 
-func TestLeavingInviteAround(t *testing.T) {
+func TestLeavingInviteAroundAndUserAround(t *testing.T) {
 	resetDB()
 
 	router := setupTestRouter()
@@ -162,4 +162,77 @@ func TestLeavingInviteAround(t *testing.T) {
 
 	require.Equal(t, len(project.Users), 1)
 	require.False(t, project.Users[0].LeftProject)
+
+	// Make another person join
+
+	secondPerson()
+
+	routerTwo := setupTestRouterCustomToken("67e5b7abef0709e1426eed50")
+
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest(http.MethodGet, "/join?id="+body, nil)
+	routerTwo.ServeHTTP(w, req)
+	require.Equal(t, http.StatusOK, w.Code)
+
+	// First update from joining (updateProject):
+	_, _ = conn.recvState()
+
+	// Second update from joining (requeryUsers):
+	project, disconnect = conn.recvState()
+	require.False(t, disconnect)
+	require.Equal(t, len(project.Users), 2)
+	require.False(t, project.Users[0].LeftProject)
+	require.False(t, project.Users[1].LeftProject)
+
+	// Get rid of the invite to test that having another user around doesn't delete
+	_, err = db.Collection("invitations").DeleteOne(context.TODO(), bson.D{{Key: "projectid", Value: "53ed4d28-9279-4b4e-9256-b1e693332625"}})
+	require.Nil(t, err)
+
+	count, _ = db.Collection("invitations").CountDocuments(context.TODO(), bson.D{})
+	require.Equal(t, int64(0), count)
+
+	// Make them leave the project
+	conn2, project2 := connect(t, "67e5b7abef0709e1426eed50", "53ed4d28-9279-4b4e-9256-b1e693332625")
+
+	require.Equal(t, len(project2.Users), 2)
+
+	conn2.send(`{
+		"Name": "leave",
+		"Args": {}
+	}`)
+
+	project2, disconnect = conn2.recvState()
+	require.False(t, disconnect)
+	require.Equal(t, len(project2.Users), 2)
+	require.False(t, project2.Users[0].LeftProject)
+	require.True(t, project2.Users[1].LeftProject)
+
+	_, disconnect = conn2.recvState()
+	require.True(t, disconnect)
+
+	// Update from the person leaving:
+	project, disconnect = conn.recvState()
+	require.False(t, disconnect)
+	require.Equal(t, len(project.Users), 2)
+	require.False(t, project.Users[0].LeftProject)
+	require.True(t, project.Users[1].LeftProject)
+
+	// There is another user in the project, so don't delete it
+	count, _ = db.Collection("projects").CountDocuments(context.TODO(), bson.D{})
+	require.Equal(t, int64(1), count)
+
+	// Make the first user leave
+	conn.send(`{
+		"Name": "leave",
+		"Args": {}
+	}`)
+
+	project, disconnect = conn.recvState()
+
+	_, disconnect = conn.recvState()
+	require.True(t, disconnect)
+
+	// Now there are no users, so delete the project
+	count, _ = db.Collection("projects").CountDocuments(context.TODO(), bson.D{})
+	require.Equal(t, int64(0), count)
 }

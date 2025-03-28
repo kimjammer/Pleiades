@@ -199,14 +199,14 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 					users = queryUsers(project.Users)
 					hasInviteLinks := existingInviteLinks(project)
 					if !hasInviteLinks && maybeDeleteProject(project) {
-						return false, true
+						return true, true
 					}
 				}
 
 				if _, is := message.command.(Delete); is {
 					users = queryUsers(project.Users)
 					if maybeDeleteProject(project) {
-						return false, true
+						return true, true
 					}
 				}
 
