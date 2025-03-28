@@ -10,6 +10,7 @@ Week 5 (Summary) (Scrum Master: John Kim)
 3/28 1.5hr 79b5621 More tests for leaving
 3/28 0.5hr edb4e39 Tests for project deletion
 3/28 1hr 2bb7a08 Progress on mutation endpoints
+3/28 0.5hr b4a654e Test all of the mutation endpoints
 
 Week 5 (Summary) (Scrum Master: John Kim)
 [Meetings]

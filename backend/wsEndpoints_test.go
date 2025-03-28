@@ -493,8 +493,7 @@ func TestProjectMutation(t *testing.T) {
 	conn.send(`{
 		"Name": "remove",
 		"Args": {
-			"Selector": "Polls[Id=poll2]",
-			"NewValue": "Heyoooo???"
+			"Selector": "Polls[Id=poll2]"
 		}
 	}`)
 
@@ -540,8 +539,7 @@ func TestProjectMutation(t *testing.T) {
 	conn.send(`{
 		"Name": "remove",
 		"Args": {
-			"Selector": "Polls[Id=poll].Options[Id=option 1].LikedUsers[$IT=Ethan]",
-			"NewValue": "Cate"
+			"Selector": "Polls[Id=poll].Options[Id=option 1].LikedUsers[$IT=Ethan]"
 		}
 	}`)
 
