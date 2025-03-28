@@ -10,12 +10,17 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  MONGODB_URI: mongodb://localhost:27017
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: "8.0"
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Setup Go 1.24.x
