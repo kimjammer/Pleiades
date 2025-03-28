@@ -6,6 +6,7 @@
     import { Button } from "$lib/components/ui/button"
     import * as Dialog from "$lib/components/ui/dialog"
     import { Input } from "$lib/components/ui/input"
+    import { Skeleton } from "$lib/components/ui/skeleton"
     import { Label } from "$lib/components/ui/label"
     import type { ProjectsResponse, newProjectRequest } from "$lib/schema.js"
     import { onMount } from "svelte"
@@ -13,25 +14,25 @@
 
     let title = $state("")
     let description = $state("")
-    let response: ProjectsResponse = $state({
-        projects: [],
-    })
+    let response: Promise<ProjectsResponse> = $state(new Promise(() => {}))
     let createDialogOpen = $state(false)
 
-    onMount(async () => {
-        await loadProjects()
+    onMount(() => {
+        response = loadProjects()
     })
 
     async function loadProjects() {
-        const url = PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/projects"
-        const res = await fetch(url, { mode: "cors", credentials: "include" })
-        if (res.status === 401) {
-            goto(base + "/login")
-        } else if (!res.ok) {
-            toast.error("Failed to load projects")
-            return
-        }
-        response = (await res.json()) as ProjectsResponse
+        return new Promise<ProjectsResponse>(async (resolve, reject) => {
+            const url = PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/projects"
+            const res = await fetch(url, { mode: "cors", credentials: "include" })
+            if (res.status === 401) {
+                goto(base + "/login")
+            } else if (!res.ok) {
+                toast.error("Failed to load projects")
+                reject()
+            }
+            resolve((await res.json()) as ProjectsResponse)
+        })
     }
 
     async function createProject() {
@@ -72,79 +73,85 @@
             Your Projects
         </h2>
     </div>
-    <div class="mb-5 mt-5 flex flex-wrap gap-10">
-        {#each response.projects as project}
-            <a
-                class="border-primary flex h-60 w-60 flex-col justify-end
-            overflow-hidden rounded-xl
-            border-8 p-5
+    {#await response}
+        <div class="mb-5 mt-5 flex flex-wrap gap-10">
+            <Skeleton class="h-60 w-60" />
+        </div>
+    {:then response}
+        <div class="mb-5 mt-5 flex flex-wrap gap-10">
+            {#each response.projects as project}
+                <a
+                    class="flex h-60 w-60 flex-col justify-end overflow-hidden
+            rounded-xl border-8
+            border-primary p-5
             transition duration-300
             hover:bg-slate-300 hover:dark:bg-slate-800"
-                href="{base}/project?id={project.id}"
-            >
-                <h3 class="scroll-m-20 text-2xl font-semibold tracking-tight">
-                    {project.title}
-                </h3>
-                <p class="leading-7 [&:not(:first-child)]:mt-6">
-                    {project.description}
-                </p>
-            </a>
-        {/each}
-        <Dialog.Root bind:open={createDialogOpen}>
-            <Dialog.Trigger>
-                <div
-                    class="border-primary flex h-60 w-60 flex-col justify-center
-                    rounded-xl border-8 border-dashed
+                    href="{base}/project?id={project.id}"
+                >
+                    <h3 class="scroll-m-20 text-2xl font-semibold tracking-tight">
+                        {project.title}
+                    </h3>
+                    <p class="leading-7 [&:not(:first-child)]:mt-6">
+                        {project.description}
+                    </p>
+                </a>
+            {/each}
+            <Dialog.Root bind:open={createDialogOpen}>
+                <Dialog.Trigger>
+                    <div
+                        class="flex h-60 w-60 flex-col justify-center rounded-xl
+                    border-8 border-dashed border-primary
                     p-5 transition
                     duration-300 hover:hover:bg-slate-300
                     hover:dark:bg-slate-800"
-                >
-                    <h4 class="scroll-m-20 text-xl font-semibold tracking-tight">
-                        Create a new project
-                    </h4>
-                </div>
-            </Dialog.Trigger>
-            <Dialog.Content>
-                <Dialog.Header>
-                    <Dialog.Title>Create new Project</Dialog.Title>
-                    <Dialog.Description>
-                        Choose a name and description for your project and click create!
-                    </Dialog.Description>
-                    <div class="flex flex-col gap-5 py-5">
-                        <div>
-                            <Label
-                                for="title"
-                                class="text-right">Title</Label
-                            >
-                            <Input
-                                id="title"
-                                placeholder="Project Name"
-                                bind:value={title}
-                            />
-                        </div>
-                        <div>
-                            <Label
-                                for="description"
-                                class="text-right">Description</Label
-                            >
-                            <Input
-                                id="description"
-                                placeholder="Project Description"
-                                bind:value={description}
-                            />
-                        </div>
+                    >
+                        <h4 class="scroll-m-20 text-xl font-semibold tracking-tight">
+                            Create a new project
+                        </h4>
                     </div>
-                    <Dialog.Footer>
-                        <Button
-                            onclick={createProject}
-                            onkeypress={createProject}
-                            type="submit"
-                        >
-                            Create!
-                        </Button>
-                    </Dialog.Footer>
-                </Dialog.Header>
-            </Dialog.Content>
-        </Dialog.Root>
-    </div>
+                </Dialog.Trigger>
+                <Dialog.Content>
+                    <Dialog.Header>
+                        <Dialog.Title>Create new Project</Dialog.Title>
+                        <Dialog.Description>
+                            Choose a name and description for your project and click create!
+                        </Dialog.Description>
+                        <div class="flex flex-col gap-5 py-5">
+                            <div>
+                                <Label
+                                    for="title"
+                                    class="text-right">Title</Label
+                                >
+                                <Input
+                                    id="title"
+                                    placeholder="Project Name"
+                                    bind:value={title}
+                                />
+                            </div>
+                            <div>
+                                <Label
+                                    for="description"
+                                    class="text-right">Description</Label
+                                >
+                                <Input
+                                    id="description"
+                                    placeholder="Project Description"
+                                    bind:value={description}
+                                />
+                            </div>
+                        </div>
+                        <Dialog.Footer>
+                            <Button
+                                onclick={createProject}
+                                onkeypress={createProject}
+                                type="submit"
+                            >
+                                Create!
+                            </Button>
+                        </Dialog.Footer>
+                    </Dialog.Header>
+                </Dialog.Content>
+            </Dialog.Root>
+        </div>
+    {/await}
 </div>
