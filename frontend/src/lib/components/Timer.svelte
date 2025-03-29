@@ -1,10 +1,10 @@
 <script lang="ts">
     import { Button } from "$lib/components/ui/button"
     import { Skeleton } from "$lib/components/ui/skeleton"
+    import type { ProjectState, Session, Task } from "$lib/project_state.svelte"
     import { Play, Square } from "lucide-svelte"
-    import type { ProjectState, Task, Session } from "$lib/project_state.svelte"
-    import { toast } from "svelte-sonner"
     import { onMount } from "svelte"
+    import { toast } from "svelte-sonner"
 
     let { project, task }: { project: ProjectState; task: Task } = $props()
 
@@ -24,14 +24,7 @@
         }
     })
 
-    let duration = $derived.by(() => {
-        if (crrSession) {
-            let secs = Math.floor((Date.now() - crrSession.startTime) / 1000)
-            return `${Math.floor(secs / 60)}:${secs % 60}`
-        } else {
-            return "00:00"
-        }
-    })
+    let duration = $state("00:00")
 
     const handleStart = () => {
         //Start session
@@ -57,7 +50,7 @@
     }
 
     onMount(() => {
-        setInterval(() => {
+        const interval = setInterval(() => {
             if (crrSession) {
                 let secs = Math.floor((Date.now() - crrSession.startTime) / 1000)
                 duration = `${Math.floor(secs / 60)}:${secs % 60}`
@@ -65,11 +58,13 @@
                 duration = "00:00"
             }
         }, 1000)
+
+        return () => clearInterval(interval)
     })
 </script>
 
 <div
-    class="inline-flex items-center justify-center gap-1 rounded-md border border-input bg-background p-2"
+    class="border-input bg-background inline-flex items-center justify-center gap-1 rounded-md border p-2"
 >
     {#if status === "NotStarted"}
         <small class="text-sm font-medium leading-none"> Start Session </small>
