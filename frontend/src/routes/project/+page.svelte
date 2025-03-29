@@ -86,10 +86,7 @@
             </Dialog.Content>
         </Dialog.Root>
 
-        <Tabs.Root
-            value="tasks"
-            class="w-[400px]"
-        >
+        <Tabs.Root value="tasks">
             <Tabs.List>
                 <Tabs.Trigger value="tasks">Task Board</Tabs.Trigger>
                 <Tabs.Trigger value="calendar">Calendar</Tabs.Trigger>

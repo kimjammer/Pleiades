@@ -3,7 +3,7 @@
     import { base } from "$app/paths"
     import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
     import { Button } from "$lib/components/ui/button"
-    import { Moon, Sun } from "lucide-svelte"
+    import { LogOut, Moon, Sun } from "lucide-svelte"
     import { toggleMode } from "mode-watcher"
     import { onMount } from "svelte"
     import { toast } from "svelte-sonner"
@@ -34,7 +34,7 @@
             return
         }
         localStorage.removeItem("myId")
-        goto(base + "/")
+        await goto(base + "/")
     }
 
     function login() {
@@ -75,7 +75,12 @@
         {#if loggedIn}
             <Button onclick={account}>Account</Button>
             <Button onclick={home}>Home</Button>
-            <Button onclick={logout}>Logout</Button>
+            <Button
+                onclick={logout}
+                size="icon"
+            >
+                <LogOut />
+            </Button>
         {:else}
             <Button onclick={login}>Login</Button>
         {/if}
