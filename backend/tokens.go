@@ -14,7 +14,7 @@ var jwtSecret = []byte("secretKey")
 
 // Create a token for the given user ID
 func makeToken(userId string) string {
-	expirationTime := time.Now().Add(time.Hour)
+	expirationTime := time.Now().Add(time.Hour * 24)
 
 	claims := jwt.MapClaims{
 		"userId": userId,
