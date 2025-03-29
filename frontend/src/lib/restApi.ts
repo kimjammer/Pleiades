@@ -1,5 +1,6 @@
 import { goto } from "$app/navigation"
 import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
+import { base } from "$app/paths"
 
 export async function joinProject(projectId: string) {
     const resp = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/join" + location.search, {
@@ -7,7 +8,7 @@ export async function joinProject(projectId: string) {
         credentials: "include",
     })
     if (resp.status === 200) {
-        goto(location.origin + "/project?id=" + projectId)
+        goto(base + "/project?id=" + projectId)
     }
 
     return resp

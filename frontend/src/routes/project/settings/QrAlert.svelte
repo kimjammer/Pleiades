@@ -3,6 +3,8 @@
     import { buttonVariants } from "$lib/components/ui/button/index.js"
     import * as Dialog from "$lib/components/ui/dialog/index.js"
     import { toast } from "svelte-sonner"
+    import { base } from "$app/paths"
+    import { Skeleton } from "$lib/components/ui/skeleton"
 
     let url = $state<string>()
     let qrDialogOpen = $state(false)
@@ -22,7 +24,7 @@
             qrDialogOpen = false
         }
 
-        return location.origin + "/join?id=" + token
+        return location.origin + base + "/join?id=" + token
     }
 
     async function showLink() {
@@ -44,13 +46,19 @@
             </Dialog.Description>
         </Dialog.Header>
         {#if url === undefined}
+            <Skeleton class="mx-auto h-[150px] w-[150px] columns-1" />
             loading...
         {:else}
-            <img
-                src={"https://quickchart.io/qr?text=" + url}
-                alt="loading..."
-                class="mx-auto"
-            />
+            <div class="grid-columns-1 grid grid-rows-1">
+                <Skeleton
+                    class="col-start-1 col-end-1 row-start-1 row-end-1 mx-auto h-[150px] w-[150px] columns-1"
+                />
+                <img
+                    src={"https://quickchart.io/qr?text=" + url}
+                    alt="loading..."
+                    class="z-50 col-start-1 col-end-1 row-start-1 row-end-1 mx-auto h-[150px] w-[150px] columns-1"
+                />
+            </div>
             <a
                 href={url}
                 target="_blank">{url}</a
