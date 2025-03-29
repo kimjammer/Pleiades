@@ -13,7 +13,6 @@
         data,
     }: { project: ProjectState; data: { form: SuperValidated<Infer<FormSchema>> } } = $props()
     let createDialogOpen = $state(false)
-
     const form = superForm(data.form, {
         validators: zodClient(taskformSchema),
     })
@@ -88,7 +87,7 @@
                             <Input
                                 {...props}
                                 type="date"
-                                bind:value={$formData.due}
+                                bind:value={$formData.dueDate}
                             />
                         {/snippet}
                     </Form.Control>

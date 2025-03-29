@@ -6,8 +6,6 @@ import (
 	"log"
 	"net/http"
 	"slices"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -169,7 +167,7 @@ func registerUser(c *gin.Context) {
 }
 
 func login(c *gin.Context) {
-	//listUsers()
+	listUsers()
 	email := c.Query("email")
 	password := c.Query("password")
 	var user User
@@ -372,12 +370,7 @@ func getUserInfo(c *gin.Context) {
 
 }
 
-func createPoll(c *gin.Context) {
-	//TODO:
-	//	Create Poll object
-	//  Get Project & add Poll
-	log.Println("Creating new Poll")
-
+func uploadProfilePic(c *gin.Context) {
 	//get user
 	crrUser, err := getUser(c)
 	if err != nil {
@@ -387,63 +380,14 @@ func createPoll(c *gin.Context) {
 	}
 	log.Println("crrUser: ", crrUser)
 
-	// Validate permissions (is project member)
-	projectId := c.Query("id")
-	log.Println("ProjectID: " + projectId)
-	isMember := slices.Contains(crrUser.Projects, projectId)
-	if !isMember {
-		// TODO: convert to middleware
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Not a project member"})
+	//store profile pic
+	var reqBody struct {
+		Image string `json:"image"`
+	}
+	if err := c.BindJSON(&reqBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
 		return
 	}
-	//get project
-	var project Project
-	err = db.Collection("projects").FindOne(c.Request.Context(), bson.M{"id": projectId}).Decode(&project)
-
-	if err == mongo.ErrNoDocuments {
-		c.JSON(http.StatusOK, gin.H{"success": false})
-	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-	}
-
-	//TODO: create poll obj
-	//create poll struct
-	var newPollJson NewPollRequest
-	if err := c.ShouldBindJSON(&newPollJson); err != nil {
-		log.Println("Invalid JSON data")
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
-		return
-	}
-
-	var newPoll Poll
-	newPoll.Title = newPollJson.Title
-	newPoll.Description = newPollJson.Description
-	//TODO: change to unix timestamp
-	log.Println(newPollJson.DueDate)
-	var timeInfo = strings.Split(newPollJson.DueDate, "-")
-	log.Println(timeInfo)
-	year, _ := strconv.Atoi(timeInfo[0])
-	monthInt, _ := strconv.Atoi(timeInfo[1])
-	day, _ := strconv.Atoi(timeInfo[2])
-	newPoll.DueDate = time.Date(year, time.Month(monthInt), day, 0, 0, 0, 0, time.UTC).Unix() * 1000
-	//split up options into array
-	var optionsList = strings.Split(newPollJson.Options, ",")
-	for index, value := range optionsList {
-		if value == "" { //skip if empty string
-			continue
-		}
-		var newOption Option
-		newOption.Title = value
-		newOption.Id = strconv.Itoa(index) //ASSIGNING INDEX AS THE ID: MIGHT CHANGE LATER
-		//add to options
-		newPoll.Options = append(newPoll.Options, newOption)
-	}
-
-	//add to project & return success
-	project.Polls = append(project.Polls, newPoll)
-	log.Println("successfully created poll")
-	c.JSON(http.StatusOK, gin.H{"success": true})
-
 }
 
 func getPolls(c *gin.Context) {

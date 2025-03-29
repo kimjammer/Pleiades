@@ -1,11 +1,6 @@
 <script lang="ts">
     import * as Tabs from "$lib/components/ui/tabs"
     import type { ProjectState } from "$lib/project_state.svelte.ts"
-    import { Button } from "$lib/components/ui/button";
-    import { Input } from "$lib/components/ui/input";
-    import { Textarea } from "$lib/components/ui/textarea";
-    import { Label } from "$lib/components/ui/label";
-    import { Card, CardContent, CardHeader, CardTitle } from "$lib/components/ui/card";
     import type { PageData } from "./$types"
     import CreationModal from "./CreationModal.svelte"
     import { onMount } from "svelte"
@@ -14,6 +9,8 @@
     import {base} from "$app/paths";
     import {toast} from "svelte-sonner";
     import type { PollsResponse } from "$lib/schema.js"
+
+
     let { project, data }: { project: ProjectState; data: PageData } = $props()
 
     let showForm = false;
@@ -42,7 +39,7 @@
         })
     }
 
-    function handlePollClick(pollTitle) {
+    function handlePollClick(pollTitle: string) {
         console.log("Poll clicked:", pollTitle);
     }
 
@@ -53,7 +50,10 @@
 </script>
 
 <Tabs.Content value="polls">
-    <CreationModal {project} ></CreationModal>
+    <CreationModal
+            {project}
+            {data}
+    />
 </Tabs.Content>
 
 {#if polls.length > 0}

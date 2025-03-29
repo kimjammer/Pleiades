@@ -267,6 +267,7 @@ export class Poll {
     title: string = $state("")
     description: string = $state("")
     options: Option[] = $state([])
+    dueDate: string = $state("")
 }
 
 export class ProjectState {

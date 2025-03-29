@@ -11,7 +11,7 @@
     let firstname = ""
 
     onMount(async () => {
-        await getInfo()
+        //await getInfo()
     })
 
     async function getInfo() {
@@ -24,6 +24,10 @@
         const data = await res.json()
         firstname = data.firstname
     }
+
+    async function uploadProfilePic() {
+
+    }
 </script>
 
 <PleiadesNav></PleiadesNav>
@@ -32,3 +36,4 @@
         Hello {firstname}
     </h2>
 </div>
+
