@@ -232,6 +232,7 @@ export class UserInProject {
     firstName: string = $state("")
     lastName: string = $state("")
     availability: Availability[] = $state([])
+    userPhoto: string = $state("") //TODO: Update me to correct type
 }
 
 export class Session {
