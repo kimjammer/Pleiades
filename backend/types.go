@@ -28,7 +28,7 @@ type User struct {
 	Email        string
 	Password     string //stored as bcrypt hash (string)
 	PhoneNumber  string
-	UserPhoto    string //TODO: Change me to correct type
+	UserPhoto    []byte //TODO: Change me to correct type
 	Availability []Availability
 	Projects     []string
 }

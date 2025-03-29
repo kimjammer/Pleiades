@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"log"
@@ -371,6 +372,7 @@ func getUserInfo(c *gin.Context) {
 }
 
 func uploadProfilePic(c *gin.Context) {
+	log.Println("uploading profile pic")
 	//get user
 	crrUser, err := getUser(c)
 	if err != nil {
@@ -388,6 +390,16 @@ func uploadProfilePic(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
 		return
 	}
+
+	// Decode the base64 string to binary data
+	imgData, err := base64.StdEncoding.DecodeString(reqBody.Image)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to decode base64"})
+		return
+	}
+	crrUser.UserPhoto = imgData
+	log.Println("profile pic uploaded successfully")
+	c.JSON(http.StatusOK, gin.H{"success": true})
 }
 
 func getPolls(c *gin.Context) {

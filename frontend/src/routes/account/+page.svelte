@@ -1,39 +1,85 @@
 <script>
-    import { Input } from "$lib/components/ui/input/index"
-    import { Button } from "$lib/components/ui/button/index"
-    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
-    import { goto } from "$app/navigation"
-    import { onMount } from "svelte"
-    import PleiadesNav from "$lib/components/PleiadesNav.svelte"
+    import { Button } from '$lib/components/ui/button'; // shadcn-svelte Button
+    import { Input } from '$lib/components/ui/input'; // shadcn-svelte Input
+    import { toast } from 'svelte-sonner';
+    import PleiadesNav from "$lib/components/PleiadesNav.svelte";
+    import {Label} from "$lib/components/ui/label";
+    import {PUBLIC_API_HOST, PUBLIC_PROTOCOL} from "$env/static/public"; // Optional: for notifications
 
-    //TODO: create image upload capabilities with file checking
+    let selectedFile;
+    let imageUrl = ''; // Store the image URL once it is fetched from the backend
 
-    let firstname = ""
+    // Handle file selection and upload
+    async function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-    onMount(async () => {
-        //await getInfo()
-    })
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            var base64Image = reader.result
+            if (typeof base64Image === "string") { //can only use .split on string
+                base64Image = base64Image.split(',')[1]; // Extract base64 part for backend
+            }
+            selectedFile = base64Image;
 
-    async function getInfo() {
-        //TODO implement getting the name and other relevant details
-
-        const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/projects", {
-            mode: "cors",
-            credentials: "include",
-        })
-        const data = await res.json()
-        firstname = data.firstname
+            // Send image to the backend
+            try {
+                const res = await fetch(PUBLIC_PROTOCOL +
+                    PUBLIC_API_HOST + "/profilepic", {
+                    method: 'POST',
+                    mode: 'cors',
+                    credentials: "include",
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ image: selectedFile }),
+                });
+                const data = await res.json()
+                if (data.success) {
+                    toast.success('Profile picture uploaded successfully!');
+                } else {
+                    toast.error(data.error);
+                }
+            } catch (error) {
+                toast.error('Upload failed. Please try again.');
+                console.error(error);
+            }
+        };
+        reader.readAsDataURL(file);
     }
 
-    async function uploadProfilePic() {
-
+    // Fetch image from the backend
+    async function fetchImage() {
+        try {
+            const response = await fetch(`http://localhost:8080/getImage/${imageUrl}`);
+            if (response.ok) {
+                const blob = await response.blob();
+                const imageURL = URL.createObjectURL(blob);
+                return imageURL;
+            }
+        } catch (error) {
+            console.error('Error fetching image:', error);
+        }
     }
 </script>
-
 <PleiadesNav></PleiadesNav>
 <div>
     <h2 class="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
-        Hello {firstname}
+        Hello
     </h2>
 </div>
+
+<div class="grid w-full max-w-sm items-center gap-1.5">
+    <Label>Upload Profile Picture</Label>
+    <!-- Trigger file input -->
+    <Input
+            id="fileInput"
+            type="file"
+            accept="image/png, image/jpeg"
+            onchange={handleFileSelect}
+    />
+</div>
+
+<!-- Optionally display the uploaded image -->
+{#if imageUrl}
+    <img src={fetchImage()} alt="Uploaded Profile Picture" class="mt-4" />
+{/if}
 
