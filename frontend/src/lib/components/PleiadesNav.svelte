@@ -7,7 +7,7 @@
     import { toggleMode } from "mode-watcher"
     import { onMount } from "svelte"
     import { toast } from "svelte-sonner"
-    import { Avatar, AvatarImage, AvatarFallback } from "$lib/components/ui/avatar";
+    import { UserAvatar } from "$lib/components/UserAvatar.svelte";
 
     let loggedIn = $state(false)
     async function verifySession() {
@@ -89,6 +89,7 @@
             >
                 <LogOut />
             </Button>
+            <UserAvatar/>
         {:else}
             <Button href={base + "/login"}>Login</Button>
         {/if}

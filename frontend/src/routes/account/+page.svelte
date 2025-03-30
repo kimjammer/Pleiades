@@ -23,35 +23,31 @@
             }
             selectedFile = base64Image;
 
+            const userid = document.cookie.split('=')[1];
             // Send image to the backend
-            try {
-                const res = await fetch(PUBLIC_PROTOCOL +
-                    PUBLIC_API_HOST + "/profilepic", {
-                    method: 'POST',
-                    mode: 'cors',
-                    credentials: "include",
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ image: selectedFile }),
-                });
-                const data = await res.json()
-                if (data.success) {
-                    toast.success('Profile picture uploaded successfully!');
-                } else {
-                    toast.error(data.error);
-                }
-            } catch (error) {
-                toast.error('Upload failed. Please try again.');
-                console.error(error);
-            }
+            // try {
+            //     const res = await fetch(PUBLIC_PROTOCOL +
+            //         PUBLIC_API_HOST + "/profilepic", {
+            //         method: 'POST',
+            //         mode: 'cors',
+            //         credentials: "include",
+            //         headers: {'Content-Type': 'application/json'},
+            //         body: JSON.stringify({ image: selectedFile }),
+            //     });
+            //     const data = await res.json()
+            //     if (data.success) {
+            //         toast.success('Profile picture uploaded successfully!');
+            //     } else {
+            //         toast.error(data.error);
+            //     }
+            // } catch (error) {
+            //     toast.error('Upload failed. Please try again.');
+            //     console.error(error);
+            // }
         };
         reader.readAsDataURL(file);
     }
 
-
-
-    onMount(() => {
-        fetchImage();
-    });
 
 </script>
 <PleiadesNav></PleiadesNav>
@@ -71,9 +67,4 @@
             onchange={handleFileSelect}
     />
 </div>
-
-<!-- Optionally display the uploaded image -->
-{#if imageUrl}
-    <img src={fetchImage()} alt="Uploaded Profile Picture" class="mt-4" />
-{/if}
 
