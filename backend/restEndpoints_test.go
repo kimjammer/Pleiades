@@ -186,3 +186,176 @@ func TestInviteUnauthorized(t *testing.T) {
 	count, _ := db.Collection("invitations").CountDocuments(context.TODO(), bson.D{})
 	require.Equal(t, int64(0), count)
 }
+
+func TestCheckEmailUsed(t *testing.T) {
+	router := setupRouter()
+	defineRoutes(router)
+	resetDB()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/register/check?email=example%40example.com", nil)
+	router.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusOK, w.Code)
+
+	body, err := io.ReadAll(w.Body)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	var data EmailCheckResponse
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	require.Equal(t, true, data.Exists)
+}
+
+func TestCheckEmailNotUsed(t *testing.T) {
+	router := setupRouter()
+	defineRoutes(router)
+	resetDB()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/register/check?email=notused%40example.com", nil)
+	router.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusOK, w.Code)
+
+	body, err := io.ReadAll(w.Body)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	var data EmailCheckResponse
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	require.Equal(t, false, data.Exists)
+}
+
+func TestRegisterUser(t *testing.T) {
+	router := setupRouter()
+	defineRoutes(router)
+	resetDB()
+
+	request := User{
+		FirstName: "Steve",
+		LastName:  "Minecraft",
+		Email:     "notch@minecraft.net",
+		Password:  "blockgames4ever",
+	}
+	jsonData, _ := json.Marshal(request)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/register/new", bytes.NewBuffer(jsonData))
+	router.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusCreated, w.Code)
+
+	count, _ := db.Collection("users").CountDocuments(context.TODO(), bson.D{})
+	require.Equal(t, int64(2), count)
+}
+
+func TestRegisterUserInvalid(t *testing.T) {
+	router := setupRouter()
+	defineRoutes(router)
+	resetDB()
+
+	jsonData, _ := json.Marshal("invalid garbage")
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/register/new", bytes.NewBuffer(jsonData))
+	router.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusBadRequest, w.Code)
+}
+
+func TestLoginUser(t *testing.T) {
+	router := setupRouter()
+	defineRoutes(router)
+	resetDB()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/login?email=example%40example.com&password=notthepassword", nil)
+	router.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusOK, w.Code)
+
+	body, err := io.ReadAll(w.Body)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	var data LoginResponse
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	require.Equal(t, true, data.Exists)
+}
+
+func TestLoginUserInvalidPassword(t *testing.T) {
+	router := setupRouter()
+	defineRoutes(router)
+	resetDB()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/login?email=example%40example.com&password=invalidpassword", nil)
+	router.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusOK, w.Code)
+
+	body, err := io.ReadAll(w.Body)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	var data LoginResponse
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	require.Equal(t, false, data.Exists)
+}
+
+func TestLoginInvalidUser(t *testing.T) {
+	router := setupRouter()
+	defineRoutes(router)
+	resetDB()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/login?email=invalid%40example.com&password=doesntmatter", nil)
+	router.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusOK, w.Code)
+
+	body, err := io.ReadAll(w.Body)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	var data LoginResponse
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	require.Equal(t, false, data.Exists)
+}
+
+func TestLogout(t *testing.T) {
+	router := setupTestRouter()
+	resetDB()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/logout", nil)
+	router.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusOK, w.Code)
+}

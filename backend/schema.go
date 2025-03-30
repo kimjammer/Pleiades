@@ -25,3 +25,11 @@ type NewPollRequest struct {
 	Options     string `json:"options"`
 	DueDate     string `json:"dueDate"`
 }
+
+type EmailCheckResponse struct {
+	Exists bool `json:"exists"`
+}
+
+type LoginResponse struct {
+	Exists bool `json:"exists"`
+}
