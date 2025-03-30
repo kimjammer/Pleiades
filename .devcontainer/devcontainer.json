@@ -22,8 +22,7 @@
         "svelte.svelte-vscode",
         "bradlc.vscode-tailwindcss",
         "esbenp.prettier-vscode",
-        "ms-playwright.playwright",
-        "iceworks-team.iceworks-time-master"
+        "ms-playwright.playwright"
       ]
     }
   },

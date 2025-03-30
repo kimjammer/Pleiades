@@ -3,10 +3,19 @@
   "tasks": [
     {
       "label": "Dev stack",
-      "dependsOn": ["Test backend", "Dev frontend"],
+      "dependsOn": ["Dev backend", "Dev frontend"],
       "problemMatcher": [],
       "group": {
         "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Test stack",
+      "dependsOn": ["Test backend"],
+      "problemMatcher": [],
+      "group": {
+        "kind": "test",
         "isDefault": true
       }
     },
@@ -29,6 +38,12 @@
       "problemMatcher": [],
       "label": "Dev frontend",
       "detail": "vite dev"
+    },
+    {
+      "label": "Dev backend",
+      "type": "shell",
+      "command": "cd backend && air",
+      "problemMatcher": []
     }
   ]
 }
