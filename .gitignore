@@ -11,6 +11,7 @@ node_modules
 /backend/Pleiades
 /database
 tmp/
+__debug_bin*
 
 # OS
 .DS_Store
