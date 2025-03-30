@@ -169,6 +169,7 @@ func registerUser(c *gin.Context) {
 
 func login(c *gin.Context) {
 	listUsers()
+
 	email := c.Query("email")
 	password := c.Query("password")
 	var user User
@@ -400,43 +401,6 @@ func uploadProfilePic(c *gin.Context) {
 	crrUser.UserPhoto = imgData
 	log.Println("profile pic uploaded successfully")
 	c.JSON(http.StatusOK, gin.H{"success": true})
-}
-
-func getPolls(c *gin.Context) {
-	//TODO: write this function lol
-	//		get all poll names and send back in string[]
-	//get user
-	crrUser, err := getUser(c)
-	if err != nil {
-		// TODO: convert to middleware
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
-		return
-	}
-	log.Println("crrUser: ", crrUser)
-
-	// Validate permissions (is project member)
-	projectId := c.Query("id")
-	log.Println("ProjectID: " + projectId)
-	isMember := slices.Contains(crrUser.Projects, projectId)
-	if !isMember {
-		// TODO: convert to middleware
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Not a project member"})
-		return
-	}
-	//get project
-	var project Project
-	err = db.Collection("projects").FindOne(c.Request.Context(), bson.M{"id": projectId}).Decode(&project)
-
-	if err == mongo.ErrNoDocuments {
-		c.JSON(http.StatusOK, gin.H{"success": false})
-	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-	}
-	var titles []string
-	for _, value := range project.Polls {
-		titles = append(titles, value.Title)
-	}
-	c.JSON(http.StatusInternalServerError, gin.H{"polls": titles})
 }
 
 // TEMPORARY

@@ -44,8 +44,7 @@ func defineRoutes(router *gin.Engine) {
 	router.GET("/join", authRequired(), join)
 	router.GET("/join/info", joinInfo)
 	router.POST("/availability", authRequired(), setAvailability)
-	router.GET("/userInfo", authRequired(), getUserInfo)
-	router.GET("/polls", authRequired(), getPolls)
+	router.GET("/userInfo", authRequired(), getUserInfo) //TODO: remove this
 	router.POST("/profilepic", authRequired(), uploadProfilePic)
 }
 

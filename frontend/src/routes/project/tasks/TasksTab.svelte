@@ -8,6 +8,7 @@
     import Timer from "$lib/components/Timer.svelte"
 
     let { project, data }: { project: ProjectState; data: PageData } = $props()
+    console.log("data in TasksTab: " + data)
 
     //Testing
     const task: Task = new Task()

@@ -1,27 +1,27 @@
 <script lang="ts">
-    import { buttonVariants } from "$lib/components/ui/button"
+    import {buttonVariants} from "$lib/components/ui/button"
+    import {Input} from "$lib/components/ui/input"
+    import {Option, Poll, type ProjectState} from "$lib/project_state.svelte"
+    import {toast} from "svelte-sonner"
+    import {pollformSchema, type PollFormSchema} from "$lib/schema"
+    import {type Infer, superForm, type SuperValidated} from "sveltekit-superforms";
+    import {zodClient} from "sveltekit-superforms/adapters";
     import * as Dialog from "$lib/components/ui/dialog"
     import * as Form from "$lib/components/ui/form"
-    import { Input } from "$lib/components/ui/input"
-    import { type ProjectState, Poll } from "$lib/project_state.svelte"
-    import { toast } from "svelte-sonner"
-    import { pollformSchema, type PollFormSchema } from "$lib/schema"
-    import { type Infer, superForm, type SuperValidated} from "sveltekit-superforms";
-    import {zodClient} from "sveltekit-superforms/adapters";
 
     let {
         project,
         data,
-    }: { project: ProjectState; data: { form: SuperValidated<Infer<PollFormSchema>> } } = $props()
+    }: { project: ProjectState; data: { pollform: SuperValidated<Infer<PollFormSchema>> } } = $props()
     let createDialogOpen = $state(false)
+    let newPoll: Poll
 
-    const form = superForm(pollformSchema, {
+    const form = superForm(data.pollform, {
         validators: zodClient(pollformSchema),
-        dataType: "json",
     })
 
     let error = false
-
+    let options = $state("")
     const { form: formData } = form
 
 
@@ -30,10 +30,6 @@
         if ($formData.title.trim() === "") {
             error = true
             toast.error("Title must be at least one character")
-        }
-        if ($formData.options.split(",").length < 2) {
-            error = true
-            toast.error("The poll must have at least two options")
         }
         if ($formData.due === "") {
             error = true
@@ -46,27 +42,31 @@
     }
 
     async function createPoll() {
+        // console.log("creating poll")
+        // console.log($formData)
+        // newPoll = new Poll()
+        // newPoll.id = crypto.randomUUID();
+        // newPoll.title = $formData.title
+        // newPoll.description = $formData.description
+        // newPoll.dueDate = $formData.dueDate
+        // newPoll.options = []
+        //
+        // console.log(newPoll)
+        // project.appendInProject("Polls", newPoll)
+        //
+        // for (const title of options.split(",")) {
+        //     let option = new Option();
+        //     option.title = title;
+        //     project.appendInProject("Polls[Id=" + newPoll.id + "].Options", option)
+        // }
+        //
+        // createDialogOpen = false
+        // form.reset()
+
         const validationResult = await form.validateForm({ update: true })
         if (!validationResult.valid) return
         console.log(validationResult.data)
-
-        let optionsArray: Option[] = $formData.options.split(",").map((option, index) => ({
-            id: String(index), // Assign unique ID (you may generate UUID if needed)
-            title: option.trim(), // Remove any extra spaces
-            likedUsers: [],
-            neutralUsers: [],
-            dislikedUsers: []
-        }))
-
-        let newPoll: Poll = {
-            id: crypto.randomUUID(), // Generate a unique ID
-            title: $formData.title,
-            description: $formData.description,
-            options: optionsArray,
-            dueDate: due
-        }
-
-        project.appendInProject("Polls", newPoll)
+        project.appendInProject("Polls", validationResult.data)
         createDialogOpen = false
         form.reset()
     }
@@ -98,10 +98,6 @@
                         />
                         {/snippet}
                     </Form.Control>
-                    <Form.Description
-                    >Tip: use natural language here to set time estimate and due date (eg: 30
-                        min tuesday)</Form.Description
-                    >
                     <Form.FieldErrors />
                 </Form.Field>
 
@@ -124,14 +120,15 @@
 
                 <Form.Field
                         {form}
-                        name="options"
+                        name="dueDate"
                 >
                     <Form.Control>
                         {#snippet children({ props })}
-                        <Form.Label>Options (comma-separated)</Form.Label>
+                        <Form.Label>Due date</Form.Label>
                         <Input
                                 {...props}
-                                bind:value={$formData.options}
+                                type="date"
+                                bind:value={$formData.dueDate}
                         />
                         {/snippet}
                     </Form.Control>
@@ -140,25 +137,23 @@
 
                 <Form.Field
                         {form}
-                        name="due"
+                        name="options"
                 >
                     <Form.Control>
                         {#snippet children({ props })}
-                        <Form.Label>Due date</Form.Label>
+                        <Form.Label>Options (comma-separated)</Form.Label>
                         <Input
                                 {...props}
-                                type="date"
-                                bind:value={$formData.due}
+                                bind:value={options}
                         />
                         {/snippet}
                     </Form.Control>
                     <Form.FieldErrors />
                 </Form.Field>
 
-                <!-- TODO: assignees -->
 
                 <Dialog.Footer>
-                    <Form.Button>Create!</Form.Button>
+                    <Form.Button>Create</Form.Button>
                 </Dialog.Footer>
             </form>
         </Dialog.Header>

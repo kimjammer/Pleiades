@@ -7,6 +7,7 @@
     import { toggleMode } from "mode-watcher"
     import { onMount } from "svelte"
     import { toast } from "svelte-sonner"
+    import { Avatar, AvatarImage, AvatarFallback } from "$lib/components/ui/avatar";
 
     let loggedIn = $state(false)
     async function verifySession() {

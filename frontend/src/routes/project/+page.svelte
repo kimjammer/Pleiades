@@ -105,7 +105,7 @@
 
             <AvailabilityTab {project} />
 
-            <PollsTab {project} />
+            <PollsTab {project} {data}/>
 
             <SettingsTab {project} />
 

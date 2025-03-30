@@ -9,43 +9,20 @@
     import { base } from "$app/paths"
     import { toast } from "svelte-sonner"
     import type { PollsResponse } from "$lib/schema.js"
+    import { Button } from "$lib/components/ui/button"
 
     let { project, data }: { project: ProjectState; data: PageData } = $props()
+    console.log("data in PollsTab: " + data)
 
-    let showForm = false
-    let polls = [] //string of poll titles
-    let response: Promise<PollsResponse> = $state(new Promise(() => {}))
 
-    //TODO: finish this so polls automatically populate
-    onMount(() => {
-        response = loadPolls()
-    })
+    let showForm = false;
+    let polls = project.polls //string of poll titles
 
-    //TODO: create endpoint in backend
-    async function loadPolls() {
-        //TODO: NOT DONE
-        return new Promise<PollsResponse>(async (resolve, reject) => {
-            const url = PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/polls?id=" + project.id
-            const res = await fetch(url, { mode: "cors", credentials: "include" })
-            if (res.status === 401) {
-                goto(base + "/login")
-            } else if (!res.ok) {
-                toast.error("Failed to load polls")
-                reject()
-            }
-            resolve((await res.json()) as PollsResponse)
-            const data = await res.json()
-            polls = data.polls
-        })
-    }
 
     function handlePollClick(pollTitle: string) {
         console.log("Poll clicked:", pollTitle)
     }
 
-    function toggleForm() {
-        showForm = !showForm
-    }
 </script>
 
 <Tabs.Content value="polls">
@@ -59,7 +36,7 @@
     {#each polls as poll}
         <button onclick={() => handlePollClick(poll.id)}>
             {poll.title}
-        </button>
+        </Button>
     {/each}
 {:else}
     <p>No polls available.</p>

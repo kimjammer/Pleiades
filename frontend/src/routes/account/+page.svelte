@@ -5,6 +5,7 @@
     import PleiadesNav from "$lib/components/PleiadesNav.svelte";
     import {Label} from "$lib/components/ui/label";
     import {PUBLIC_API_HOST, PUBLIC_PROTOCOL} from "$env/static/public"; // Optional: for notifications
+    import { onMount } from "svelte"
 
     let selectedFile;
     let imageUrl = ''; // Store the image URL once it is fetched from the backend
@@ -46,19 +47,12 @@
         reader.readAsDataURL(file);
     }
 
-    // Fetch image from the backend
-    async function fetchImage() {
-        try {
-            const response = await fetch(`http://localhost:8080/getImage/${imageUrl}`);
-            if (response.ok) {
-                const blob = await response.blob();
-                const imageURL = URL.createObjectURL(blob);
-                return imageURL;
-            }
-        } catch (error) {
-            console.error('Error fetching image:', error);
-        }
-    }
+
+
+    onMount(() => {
+        fetchImage();
+    });
+
 </script>
 <PleiadesNav></PleiadesNav>
 <div>

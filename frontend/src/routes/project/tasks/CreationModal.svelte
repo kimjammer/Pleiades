@@ -11,9 +11,9 @@
     let {
         project,
         data,
-    }: { project: ProjectState; data: { form: SuperValidated<Infer<FormSchema>> } } = $props()
+    }: { project: ProjectState; data: { taskform: SuperValidated<Infer<FormSchema>> } } = $props()
     let createDialogOpen = $state(false)
-    const form = superForm(data.form, {
+    const form = superForm(data.taskform, {
         validators: zodClient(taskformSchema),
     })
 

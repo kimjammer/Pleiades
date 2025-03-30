@@ -6,6 +6,7 @@ import type { PageLoad } from "./$types"
 
 export const load = (async () => {
     return {
-        form: await superValidate(zod(taskformSchema)),
+        taskform: await superValidate(zod(taskformSchema)),
+        pollform: await superValidate(zod(pollformSchema))
     }
 }) satisfies PageLoad
