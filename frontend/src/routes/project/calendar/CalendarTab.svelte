@@ -43,5 +43,6 @@
     <Calendar
         {month}
         {year}
+        tasks={project.tasks}
     />
 </Tabs.Content>

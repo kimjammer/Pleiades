@@ -1,7 +1,7 @@
 <script lang="ts">
-    import type { TaskForm } from "$lib/schema"
+    import type { Task } from "$lib/project_state.svelte"
 
-    let { year, month, tasks = [] }: { year: number; month: number; tasks?: TaskForm[] } = $props()
+    let { year, month, tasks = [] }: { year: number; month: number; tasks?: Task[] } = $props()
     let calendar = $state<string[][]>([])
 
     const daysOfWeek = [
@@ -70,11 +70,13 @@
         {#each calendar as week}
             <tr>
                 {#each week as day}
-                    {@const date = `${year}-${month}-${day}`}
+                    {@const date = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`}
                     <td>
                         <div>{day}</div>
-                        {#each tasks.filter(task => task.due === date) as task}
-                            <div>{task}</div>
+                        {#each tasks.filter(task => new Date(task.dueDate)
+                                    .toISOString()
+                                    .slice(0, 10) === date) as task}
+                            <div>{task.title}</div>
                         {/each}
                     </td>
                 {/each}
@@ -85,7 +87,7 @@
 
 <style>
     table {
-        width: 100vw;
+        width: 100%;
         height: 100vh;
         border-collapse: collapse;
     }
@@ -94,7 +96,8 @@
     td {
         border: 1px solid black;
         padding: 5px;
-        width: calc(100vw / 7);
+        width: calc(100% / 7);
+        height: calc(100vw / 7);
     }
 
     th {
