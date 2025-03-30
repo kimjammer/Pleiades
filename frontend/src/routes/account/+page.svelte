@@ -6,6 +6,7 @@
     import {Label} from "$lib/components/ui/label";
     import {PUBLIC_API_HOST, PUBLIC_PROTOCOL} from "$env/static/public"; // Optional: for notifications
     import { onMount } from "svelte"
+    import { Avatar, AvatarImage, AvatarFallback } from "$lib/components/ui/avatar";
 
     let selectedFile;
     let imageUrl = ''; // Store the image URL once it is fetched from the backend
@@ -21,33 +22,64 @@
             if (typeof base64Image === "string") { //can only use .split on string
                 base64Image = base64Image.split(',')[1]; // Extract base64 part for backend
             }
-            selectedFile = base64Image;
+            selectedFile = base64Image; //change to int64
 
-            const userid = document.cookie.split('=')[1];
-            // Send image to the backend
-            // try {
-            //     const res = await fetch(PUBLIC_PROTOCOL +
-            //         PUBLIC_API_HOST + "/profilepic", {
-            //         method: 'POST',
-            //         mode: 'cors',
-            //         credentials: "include",
-            //         headers: {'Content-Type': 'application/json'},
-            //         body: JSON.stringify({ image: selectedFile }),
-            //     });
-            //     const data = await res.json()
-            //     if (data.success) {
-            //         toast.success('Profile picture uploaded successfully!');
-            //     } else {
-            //         toast.error(data.error);
-            //     }
-            // } catch (error) {
-            //     toast.error('Upload failed. Please try again.');
-            //     console.error(error);
-            // }
+            //Send image to the backend
+            try {
+                const res = await fetch(PUBLIC_PROTOCOL +
+                    PUBLIC_API_HOST + "/profilepic", {
+                    method: 'POST',
+                    mode: 'cors',
+                    credentials: "include",
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ image: selectedFile }),
+                });
+                const data = await res.json()
+                if (data.success) {
+                    toast.success('Profile picture uploaded successfully!');
+                } else {
+                    toast.error(data.error);
+                }
+            } catch (error) {
+                toast.error('Upload failed. Please try again.');
+                console.error(error);
+            }
         };
         reader.readAsDataURL(file);
     }
 
+    async function getAvatar() {
+        let url = PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/getprofilepic"
+        console.log(url)
+        const res = await fetch(PUBLIC_PROTOCOL +
+            PUBLIC_API_HOST + "/getprofilepic", {
+            method: 'GET',
+            mode: 'cors',
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        const contentType = res.headers.get("Content-Type");
+        if (contentType == null) {
+            return;
+        }
+        if (contentType.includes("application/json")) {
+            const data = await res.json();
+            if (!data.found) {
+                console.log("User has no profile picture");
+                imageUrl = ""; // Set to empty or default avatar
+                return;
+            }
+        } else {
+            // Response is an image, process it
+            const blob = await res.blob();
+            imageUrl = URL.createObjectURL(blob);
+        }
+    }
+
+    onMount(async () => {
+        getAvatar()
+    })
 
 </script>
 <PleiadesNav></PleiadesNav>
@@ -66,5 +98,9 @@
             accept="image/png, image/jpeg"
             onchange={handleFileSelect}
     />
+    <Avatar>
+        <AvatarImage src={imageUrl} alt="Profile Picture" />
+        <AvatarFallback>PP</AvatarFallback>
+    </Avatar>
 </div>
 

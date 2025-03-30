@@ -169,7 +169,6 @@ func registerUser(c *gin.Context) {
 
 func login(c *gin.Context) {
 	listUsers()
-
 	email := c.Query("email")
 	password := c.Query("password")
 	var user User
@@ -381,7 +380,7 @@ func uploadProfilePic(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
 	}
-	log.Println("crrUser: ", crrUser)
+	//log.Println("crrUser: ", crrUser)
 
 	//store profile pic
 	var reqBody struct {
@@ -399,8 +398,35 @@ func uploadProfilePic(c *gin.Context) {
 		return
 	}
 	crrUser.UserPhoto = imgData
+	filter := bson.M{"_id": crrUser.Id}
+	update := bson.M{"$set": bson.M{"userPhoto": imgData}}
+	_, err = db.Collection("users").UpdateOne(c, filter, update)
 	log.Println("profile pic uploaded successfully")
 	c.JSON(http.StatusOK, gin.H{"success": true})
+}
+
+func getProfilePic(c *gin.Context) {
+	log.Println("getting profile pic")
+	//get user
+	crrUser, err := getUser(c)
+	if err != nil {
+		// TODO: convert to middleware
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+	//log.Println("crrUser: ", crrUser)
+
+	if err != nil { //if no pic
+		log.Println("error encountered")
+		c.JSON(http.StatusNotFound, gin.H{"error": "Profile picture not found"})
+		return
+	} else if crrUser.UserPhoto == nil {
+		log.Println("no profile pic in database")
+		c.JSON(http.StatusOK, gin.H{"found": false})
+	}
+	log.Println("returning profile pic")
+	c.Header("Content-Type", "image/png") // Or "image/png" depending on your image format
+	c.Writer.Write(crrUser.UserPhoto)
 }
 
 // TEMPORARY

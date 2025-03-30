@@ -33,6 +33,7 @@ func authRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, exists := c.Get("userId")
 		if !exists {
+			log.Println("not authorized")
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 

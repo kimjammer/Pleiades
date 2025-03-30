@@ -1,6 +1,7 @@
 <script lang="ts">
     import * as Avatar from "$lib/components/ui/avatar"
     import type { ProjectState } from "$lib/project_state.svelte"
+    import {PUBLIC_API_HOST, PUBLIC_PROTOCOL} from "$env/static/public";
 
     let { project, userID }: { project: ProjectState; userID: string } = $props()
 
@@ -18,6 +19,7 @@
             return ""
         }
     })
+
 </script>
 
 <Avatar.Root>

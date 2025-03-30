@@ -64,12 +64,6 @@
         createDialogOpen = false
         form.reset()
 
-        // const validationResult = await form.validateForm({ update: true })
-        // if (!validationResult.valid) return
-        // console.log(validationResult.data)
-        // project.appendInProject("Polls", validationResult.data)
-        // createDialogOpen = false
-        // form.reset()
     }
 </script>
 
