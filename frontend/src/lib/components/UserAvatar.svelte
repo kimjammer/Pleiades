@@ -5,8 +5,8 @@
     let { project, userID }: { project: ProjectState; userID: string } = $props()
 
     let image = $derived.by(() => {
-        //TODO: Convert userPhoto to correct url/format if applicable
-        return project.users.find(user => user.id === userID)?.userPhoto ?? ""
+        //TODO: Fetch image from backend
+        return null ?? ""
     })
 
     let initial = $derived.by(() => {
