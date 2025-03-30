@@ -10,8 +10,6 @@
     let { project, data }: { project: ProjectState; data: PageData } = $props()
 
     //Testing
-    const testDueDate = 0
-    const testTime = 0
     const task: Task = new Task()
     task.id = crypto.randomUUID()
     task.title = "My epic task"
@@ -31,12 +29,10 @@
     />
     <div>
         <DueDate
-            dueDate={testDueDate}
             {project}
             {task}
         />
         <TimeEstimate
-            timeEstimate={testTime}
             {project}
             {task}
         />

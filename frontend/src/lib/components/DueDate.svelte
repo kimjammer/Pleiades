@@ -7,8 +7,7 @@
     import { CalendarDays, X, Plus } from "lucide-svelte"
     import type { ProjectState, Task } from "$lib/project_state.svelte"
 
-    let { dueDate, project, task }: { dueDate: number; project: ProjectState; task: Task } =
-        $props()
+    let { project, task }: { project: ProjectState; task: Task } = $props()
 
     let value = $state<DateValue | undefined>()
     let contentRef = $state<HTMLElement | null>(null)
@@ -20,14 +19,14 @@
         //project.updateInProject(`Tasks[Id=${task.id}].DueDate`, timestamp)
 
         //TODO:remove
-        dueDate = timestamp || 0
+        task.dueDate = timestamp || 0
     }
     async function handleDelete(e: Event) {
         e.stopPropagation()
         //project.updateInProject(`Tasks[Id=${task.id}].DueDate`, 0)
 
         //TODO:remove
-        dueDate = 0
+        task.dueDate = 0
         value = undefined
     }
 </script>
@@ -40,13 +39,13 @@
         >
             <div class="flex items-center gap-1">
                 <CalendarDays size="12" />
-                {#if dueDate === 0}
+                {#if task.dueDate === 0}
                     Add Due Date
                     <Plus size="15" />
                 {:else}
-                    {new Date(dueDate).toLocaleString("default", { month: "long" })}
+                    {new Date(task.dueDate).toLocaleString("default", { month: "long" })}
 
-                    {new Date(dueDate).toLocaleString("default", { day: "numeric" })}
+                    {new Date(task.dueDate).toLocaleString("default", { day: "numeric" })}
                     <Button.Root
                         class="
         inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2

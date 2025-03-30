@@ -60,7 +60,7 @@
             return
         }
 
-        await loadProjects()
+        response = await loadProjects()
     }
 </script>
 

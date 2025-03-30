@@ -1,6 +1,5 @@
 <script lang="ts">
     import { Button } from "$lib/components/ui/button"
-    import { Skeleton } from "$lib/components/ui/skeleton"
     import * as HoverCard from "$lib/components/ui/hover-card"
     import { Play, Square } from "lucide-svelte"
     import type { ProjectState, Task, Session } from "$lib/project_state.svelte"
@@ -10,10 +9,10 @@
 
     let { project, task }: { project: ProjectState; task: Task } = $props()
 
+    //Infer correct session
     let crrSession: Session | undefined = $derived.by(() => {
-        //Infer correct session
-        let proxy = task.sessions
-        let crrUserSessions = proxy.filter(session => session.user === localStorage.myId)
+        //Find session by this user without an endTime
+        let crrUserSessions = task.sessions.filter(session => session.user === localStorage.myId)
         return crrUserSessions.find(session => session.startTime != 0 && session.endTime === 0)
     })
 
@@ -26,13 +25,36 @@
         }
     })
 
-    let duration = $state("")
+    //Display string of current session duration
+    let crrDuration = $state("")
+
+    //Calculate total duration of all sessions by all users
+    let totalDuration = $derived.by(() => {
+        //No progress if there is no time estimate
+        if (task.timeEstimate === 0) return 0
+
+        let sum = 0
+        for (const session of task.sessions) {
+            if (session.endTime != 0) {
+                sum += session.endTime - session.startTime
+            }
+        }
+        return sum
+    })
+
+    //Time estimate, used as the max value in progress bar
+    let totalEstimate = $derived.by(() => {
+        //Don't divide by 0
+        if (task.timeEstimate === 0) return 1
+        return task.timeEstimate
+    })
 
     type timeTotal = {
         id: string
         time: string
     }
 
+    //Calculate total time for each user
     let timeTotals: timeTotal[] = $derived.by(() => {
         let completedSessions = task.sessions.filter(session => session.endTime != 0)
         let userSessions = Object.groupBy(completedSessions, ({ user }) => user)
@@ -54,10 +76,11 @@
         return result
     })
 
+    //Do not show list if there are no completed sessions
     let listDisabled = $derived(task.sessions.filter(session => session.endTime != 0).length <= 0)
 
+    //Start session
     const handleStart = () => {
-        //Start session
         const newSession: Session = {
             id: crypto.randomUUID(),
             startTime: Date.now(),
@@ -68,11 +91,11 @@
         //project.appendInProject(`Tasks`, newSession)
     }
 
+    //Stop session
     const handleStop = () => {
-        //Stop session
         if (crrSession) {
             crrSession.endTime = Date.now()
-            //project.updateInProject(`Sessions[Id=${crrSession.id}].endTime`, Date.now())
+            //project.updateInProject(`Tasks[Id=${task.id}].Sessions[Id=${crrSession.id}].endTime`, Date.now())
         } else {
             toast.error("Failed to stop session")
         }
@@ -82,11 +105,11 @@
         const interval = setInterval(() => {
             if (crrSession) {
                 let secs = Math.floor((Date.now() - crrSession.startTime) / 1000)
-                duration = `${Math.floor(secs / 60)
+                crrDuration = `${Math.floor(secs / 60)
                     .toString()
                     .padStart(2, "0")}:${(secs % 60).toString().padStart(2, "0")}`
             } else {
-                duration = "00:00"
+                crrDuration = "00:00"
             }
         }, 1000)
 
@@ -94,71 +117,52 @@
     })
 </script>
 
-{#if listDisabled}
+{#snippet core()}
     <!--TODO: When inside task card, probably don't want all this padding-->
-    <div
-        class="inline-flex items-center justify-center gap-1 rounded-md border border-input bg-background p-2"
-    >
-        {#if status === "NotStarted"}
-            <small class="text-sm font-medium leading-none">Sessions</small>
-            <Button
-                class="rounded-full"
-                variant="outline"
-                size="icon"
-                onclick={handleStart}
-            >
-                <Play />
-            </Button>
-        {:else if status === "Running"}
-            <small class="w-10 text-sm font-medium leading-none">
-                {duration}
-            </small>
-            <Button
-                class="rounded-full"
-                variant="outline"
-                size="icon"
-                onclick={handleStop}
-            >
-                <Square />
-            </Button>
-        {:else}
-            <Skeleton class="h-4 w-[100px]" />
-        {/if}
+    <div class="relative inline-block overflow-hidden rounded-md border border-input">
+        <div
+            class="absolute z-[-1] h-full w-full bg-secondary transition-all"
+            style={`transform: translateX(-${100 - (100 * (totalDuration ?? 0)) / (totalEstimate ?? 1)}%)`}
+        ></div>
+        <div class="flex items-center justify-center gap-1 p-2">
+            {#if status === "NotStarted"}
+                <small class="text-sm font-medium leading-none">Sessions</small>
+                <Button
+                    class="rounded-full"
+                    variant="outline"
+                    size="icon"
+                    onclick={handleStart}
+                >
+                    <Play />
+                </Button>
+            {:else if status === "Running"}
+                <small class="w-10 text-sm font-medium leading-none">
+                    {crrDuration}
+                </small>
+                <Button
+                    class="rounded-full"
+                    variant="outline"
+                    size="icon"
+                    onclick={handleStop}
+                >
+                    <Square />
+                </Button>
+            {/if}
+        </div>
     </div>
+{/snippet}
+
+{#if listDisabled}
+    {@render core()}
 {:else}
     <HoverCard.Root>
         <HoverCard.Trigger>
-            <div
-                class="inline-flex items-center justify-center gap-1 rounded-md border border-input bg-background p-2"
-            >
-                {#if status === "NotStarted"}
-                    <small class="text-sm font-medium leading-none">Sessions</small>
-                    <Button
-                        class="rounded-full"
-                        variant="outline"
-                        size="icon"
-                        onclick={handleStart}
-                    >
-                        <Play />
-                    </Button>
-                {:else if status === "Running"}
-                    <small class="w-10 text-sm font-medium leading-none">
-                        {duration}
-                    </small>
-                    <Button
-                        class="rounded-full"
-                        variant="outline"
-                        size="icon"
-                        onclick={handleStop}
-                    >
-                        <Square />
-                    </Button>
-                {:else}
-                    <Skeleton class="h-4 w-[100px]" />
-                {/if}
-            </div>
+            {@render core()}
         </HoverCard.Trigger>
-        <HoverCard.Content side="bottom">
+        <HoverCard.Content
+            side="bottom"
+            sideOffset={0}
+        >
             {#each timeTotals as total}
                 <div class="inline-block">
                     <UserAvatar

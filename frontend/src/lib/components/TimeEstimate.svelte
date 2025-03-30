@@ -7,11 +7,7 @@
     import { Label } from "$lib/components/ui/label"
     import type { ProjectState, Task } from "$lib/project_state.svelte"
 
-    let {
-        timeEstimate,
-        project,
-        task,
-    }: { timeEstimate: number; project: ProjectState; task: Task } = $props()
+    let { project, task }: { project: ProjectState; task: Task } = $props()
 
     let value = $state<string | undefined>()
     let contentRef = $state<HTMLElement | null>(null)
@@ -21,20 +17,21 @@
         isOpen = false
 
         //Attempt to convert value to number
-        let valueNum = Number(value)
-        if (isNaN(valueNum)) {
-            valueNum = 0
+        let estHours = Number(value)
+        if (isNaN(estHours)) {
+            estHours = 0
         }
         //Round number to nearest tenth
-        valueNum = Math.round(valueNum * 10) / 10
+        estHours = Math.round(estHours * 10) / 10
+        let estMillis = estHours * 60 * 60 * 1000
 
-        value = valueNum.toString()
+        value = estHours.toString()
         //Send to server
         //Component is updated when server updates the project state and replies
         //project.updateInProject(`Tasks[Id=${task.id}].TimeEstimate`, value)
 
         //TODO:remove
-        timeEstimate = valueNum
+        task.timeEstimate = estMillis
     }
 
     async function handleDelete(e: Event) {
@@ -44,7 +41,7 @@
         //project.updateInProject(`Tasks[Id=${task.id}].TimeEstimate`, 0)
 
         //TODO:remove
-        timeEstimate = 0
+        task.timeEstimate = 0
         value = undefined
     }
 </script>
@@ -57,11 +54,11 @@
         >
             <div class="flex items-center gap-1">
                 <Clock size="12" />
-                {#if timeEstimate === 0}
+                {#if task.timeEstimate === 0}
                     Add Estimated Time
                     <Plus size="15" />
                 {:else}
-                    {timeEstimate} Hrs
+                    {task.timeEstimate / 1000 / 60 / 60} Hrs
                     <Button.Root
                         class="
         inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
