@@ -3,7 +3,7 @@
     import { base } from "$app/paths"
     import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
     import { Button } from "$lib/components/ui/button"
-    import { LogOut, Moon, Sun } from "lucide-svelte"
+    import { Home, LogOut, Moon, Sun, UserRound } from "lucide-svelte"
     import { toggleMode } from "mode-watcher"
     import { onMount } from "svelte"
     import { toast } from "svelte-sonner"
@@ -34,34 +34,29 @@
             return
         }
         localStorage.removeItem("myId")
+        toast.success("Logged out")
+        loggedIn = false
         await goto(base + "/")
     }
 
-    function login() {
-        goto(base + "/login")
-    }
-
-    function account() {
-        goto(base + "/account")
-    }
-
-    function home() {
-        goto(base + "/home")
-    }
-
     onMount(async () => {
+        //Load cached login status to prevent flicker
+        loggedIn = localStorage.myId !== undefined
+
         await verifySession()
     })
 </script>
 
 <div class="flex justify-between border-b p-5">
     <div>
-        <h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Pleiades</h1>
+        <a href={base + "/"}>
+            <h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Pleiades</h1>
+        </a>
     </div>
-    <div class="flex gap-5">
+    <div class="flex gap-2 sm:gap-5">
         <Button
             onclick={toggleMode}
-            variant="outline"
+            variant="ghost"
             size="icon"
         >
             <Sun
@@ -73,8 +68,20 @@
             <span class="sr-only">Toggle theme</span>
         </Button>
         {#if loggedIn}
-            <Button onclick={account}>Account</Button>
-            <Button onclick={home}>Home</Button>
+            <Button
+                href={base + "/home"}
+                size="icon"
+                variant="secondary"
+            >
+                <Home />
+            </Button>
+            <Button
+                href={base + "/account"}
+                size="icon"
+                variant="secondary"
+            >
+                <UserRound />
+            </Button>
             <Button
                 onclick={logout}
                 size="icon"
@@ -82,7 +89,7 @@
                 <LogOut />
             </Button>
         {:else}
-            <Button onclick={login}>Login</Button>
+            <Button href={base + "/login"}>Login</Button>
         {/if}
     </div>
 </div>

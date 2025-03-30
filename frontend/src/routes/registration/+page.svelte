@@ -89,54 +89,68 @@
     }
 </script>
 
-<h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-    Register a New Account
-</h1>
-
-<p class="font- scroll-m-20 border-b pb-2 text-2xl tracking-tight transition-colors first:mt-0">
-    Please enter a valid email and password
-</p>
-<br />
-<form class="grid w-full max-w-sm items-center gap-1.5">
-    {#if error}
-        <div class="rounded-lg bg-red-100 p-2 text-red-700">
-            {error}
-        </div>
-    {/if}
-    <!--Create three input fields and then bind them to three variables-->
-    <Input
-        type="email"
-        id="email"
-        placeholder="Email"
-        bind:value={email}
-    />
-    <Input
-        type="text"
-        id="First name"
-        placeholder="First Name"
-        bind:value={firstname}
-    />
-    <Input
-        type="text"
-        id="Last Name"
-        placeholder="Last Name"
-        bind:value={lastname}
-    />
-    <Input
-        type="password"
-        id="password"
-        placeholder="Password"
-        bind:value={password}
-    />
-    <Input
-        type="password"
-        id="confirm password"
-        placeholder="confirm Password"
-        bind:value={passwordConfirm}
-    />
-    <Button onclick={isValid}>Register</Button>
-    <Button
-        variant="link"
-        onclick={() => goto(base + "/login" + location.search)}>Login</Button
+<div class="grid grid-cols-1 grid-rows-3 sm:h-dvh sm:grid-cols-3 sm:grid-rows-1">
+    <div class="row-span-1 bg-primary p-10 dark:bg-secondary sm:col-span-1">
+        <a href={base + "/"}>
+            <h1
+                class="scroll-m-20 text-4xl font-extrabold tracking-tight text-primary-foreground dark:text-secondary-foreground lg:text-5xl"
+            >
+                Pleiades
+            </h1>
+        </a>
+    </div>
+    <div
+        class="row-span-2 flex flex-col items-center p-10 sm:col-span-2 sm:items-start sm:justify-center"
     >
-</form>
+        <h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+            Register a New Account
+        </h1>
+        <p class="scroll-m-20 border-b pb-2 text-2xl tracking-tight transition-colors first:mt-0">
+            Please enter a valid email and password
+        </p>
+        <br />
+        <form class="grid w-full max-w-sm items-center gap-1.5">
+            {#if error}
+                <div class="rounded-lg bg-red-100 p-2 text-red-700">
+                    {error}
+                </div>
+            {/if}
+            <!--Create three input fields and then bind them to three variables-->
+            <Input
+                type="email"
+                id="email"
+                placeholder="Email"
+                bind:value={email}
+            />
+            <Input
+                type="text"
+                id="First name"
+                placeholder="First Name"
+                bind:value={firstname}
+            />
+            <Input
+                type="text"
+                id="Last Name"
+                placeholder="Last Name"
+                bind:value={lastname}
+            />
+            <Input
+                type="password"
+                id="password"
+                placeholder="Password"
+                bind:value={password}
+            />
+            <Input
+                type="password"
+                id="confirm password"
+                placeholder="Confirm password"
+                bind:value={passwordConfirm}
+            />
+            <Button onclick={isValid}>Register</Button>
+            <Button
+                variant="link"
+                onclick={() => goto(base + "/login" + location.search)}>Login</Button
+            >
+        </form>
+    </div>
+</div>
