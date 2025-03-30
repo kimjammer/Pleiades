@@ -124,7 +124,6 @@ func handleConnection(conn Connection, userId string) {
 	}
 
 	projectId, disconnect := conn.recv()
-	log.Println("Recv", projectId)
 	if disconnect {
 		return
 	}
@@ -134,7 +133,6 @@ func handleConnection(conn Connection, userId string) {
 	}
 
 	projectSpace := joinSpace(projectId)
-	log.Println("Joined space")
 	defer func() {
 		close(projectSpace.command_tx)
 	}()
@@ -145,7 +143,6 @@ func handleConnection(conn Connection, userId string) {
 		for {
 			select {
 			case newState, ok := <-projectSpace.state_rx:
-				log.Println("Recv state")
 				if !ok {
 					projectSpace.state_rx = nil
 					continue
@@ -181,8 +178,6 @@ func handleConnection(conn Connection, userId string) {
 		if disconnect {
 			return
 		}
-
-		log.Println("Recv command")
 
 		command := CommandMessage{}
 

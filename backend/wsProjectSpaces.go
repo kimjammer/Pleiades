@@ -46,9 +46,6 @@ var projectSpaces = make(map[string]ProjectSpaceContactPoint)
 
 // When a change is applied to a user (availability), this function will retransmit the data to all of the projects that the user is a member of
 func requeryUser(user User) {
-	projectSpacesMutex.Lock()
-	defer projectSpacesMutex.Unlock()
-
 	for _, project := range user.Projects {
 		requeryUsersForProject(project)
 	}
@@ -56,6 +53,9 @@ func requeryUser(user User) {
 
 // Requery the users for a particular project ID
 func requeryUsersForProject(projectId string) {
+	projectSpacesMutex.Lock()
+	defer projectSpacesMutex.Unlock()
+
 	if contactPoint, exists := projectSpaces[projectId]; exists {
 		contactPoint.requeryRequest <- struct{}{}
 	}
@@ -69,8 +69,8 @@ func joinSpace(projectId string) ConnectionForSocket {
 
 	if _, ok := projectSpaces[projectId]; !ok {
 		contactPoint := ProjectSpaceContactPoint{
-			sendNewConnection: make(chan ConnectionForSpace),
-			requeryRequest:    make(chan struct{}),
+			sendNewConnection: make(chan ConnectionForSpace, 1),
+			requeryRequest:    make(chan struct{}, 1),
 		}
 		go projectSpace(contactPoint, projectId)
 		projectSpaces[projectId] = contactPoint
