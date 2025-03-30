@@ -27,6 +27,8 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
                 return
             }
 
+            console.log(text)
+
             if (text.startsWith("FAIL:")) {
                 if (!gotFirstProjectState) {
                     reject(text)
@@ -63,6 +65,7 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
         }
 
         let onopen = () => {
+            console.log("Connect")
             socket.send(projectId)
         }
 
@@ -73,6 +76,7 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
         }
 
         let onclose = () => {
+            console.log("Close")
             setTimeout(() => {
                 if (window.location.pathname != "/project") {
                     return
@@ -208,7 +212,7 @@ function updatePoll(serverPoll: any, poll: Poll) {
     }
 
     for (let i = 0; i < poll.options.length; i++) {
-        updateOption(serverPoll.Sessions[i], poll.options[i])
+        updateOption(serverPoll.Options[i], poll.options[i])
     }
 }
 
@@ -318,24 +322,24 @@ export class ProjectState {
         goto(base + "/home")
     }
 
-    appendInProject(key: string, value: any) {
+    appendInProject<T>(key: string, value: T) {
         let message = JSON.stringify({
             Name: "append",
             Args: {
                 Selector: key,
-                NewValue: capitalizeFields(value),
+                NewValue: value,
             },
         })
-        console.log(message)
+        console.log(value, message)
         this.socket.send(message)
     }
 
-    updateInProject(key: string, value: any) {
+    updateInProject<T>(key: string, value: T) {
         let message = JSON.stringify({
             Name: "update",
             Args: {
                 Selector: key,
-                NewValue: capitalizeFields(value),
+                NewValue: value,
             },
         })
         console.log(message)
@@ -351,57 +355,5 @@ export class ProjectState {
         })
         console.log(message)
         this.socket.send(message)
-    }
-}
-
-function capitalizeFields(data: any): any {
-    let cloned = JSON.parse(JSON.stringify(data))
-
-    if (Array.isArray(cloned)) {
-        let newData = []
-
-        for (let item of cloned) {
-            newData.push(capitalizeFields(item))
-        }
-
-        return newData
-    } else if (typeof data === "object") {
-        let newData: Record<string, object> = {}
-
-        for (let key of Object.keys(data)) {
-            let newKey = key
-            newKey.replace(newKey[0], newKey[0].toUpperCase())
-            data[newKey] = capitalizeFields(data[key])
-        }
-
-        return newData
-    }
-
-    return data
-}
-
-function toPath(data: string): string[] {
-    // The `replaceAll` replaces instances of `things[5].etc` with `things.5.etc`
-    return data.replaceAll(/\[([^\]]*)\]/g, (_, idx) => `.${idx}`).split(".")
-}
-
-function traverseObject(
-    object: any,
-    key: string[],
-    toAffectObject: (final_spot: any, final_key: string) => void,
-    toAffectArray: (final_spot: Array<any>, final_key: number) => void,
-) {
-    if (Array.isArray(object)) {
-        if (key.length == 1) {
-            toAffectArray(object, parseInt(key[0]))
-        } else {
-            traverseObject(object[parseInt(key[0])], key.slice(1), toAffectObject, toAffectArray)
-        }
-    } else {
-        if (key.length == 1) {
-            toAffectObject(object, key[0])
-        } else {
-            traverseObject(object[key[0]], key.slice(1), toAffectObject, toAffectArray)
-        }
     }
 }

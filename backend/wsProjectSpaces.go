@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"log"
 	"slices"
 	"sync"
 	"time"
@@ -61,8 +62,10 @@ func requeryUsersForProject(projectId string) {
 }
 
 func joinSpace(projectId string) ConnectionForSocket {
+	log.Println("Locking mutex")
 	projectSpacesMutex.Lock()
 	defer projectSpacesMutex.Unlock()
+	log.Println("Locked mutex")
 
 	if _, ok := projectSpaces[projectId]; !ok {
 		contactPoint := ProjectSpaceContactPoint{
@@ -72,12 +75,15 @@ func joinSpace(projectId string) ConnectionForSocket {
 		go projectSpace(contactPoint, projectId)
 		projectSpaces[projectId] = contactPoint
 	}
+	log.Println("B")
 
 	state_chan := make(chan []byte, 1)
 	command_chan := make(chan Command, 1)
 	error_chan := make(chan error, 1)
+	log.Println("C")
 
 	projectSpaces[projectId].sendNewConnection <- ConnectionForSpace{state_tx: state_chan, command_rx: command_chan, error_tx: error_chan}
+	log.Println("D")
 
 	return ConnectionForSocket{
 		state_rx:   state_chan,

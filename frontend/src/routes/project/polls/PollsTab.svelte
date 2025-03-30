@@ -14,15 +14,12 @@
     let { project, data }: { project: ProjectState; data: PageData } = $props()
     console.log("data in PollsTab: " + data)
 
-
-    let showForm = false;
+    let showForm = false
     let polls = project.polls //string of poll titles
-
 
     function handlePollClick(pollTitle: string) {
         console.log("Poll clicked:", pollTitle)
     }
-
 </script>
 
 <Tabs.Content value="polls">
@@ -36,7 +33,7 @@
     {#each polls as poll}
         <button onclick={() => handlePollClick(poll.id)}>
             {poll.title}
-        </Button>
+        </button>
     {/each}
 {:else}
     <p>No polls available.</p>

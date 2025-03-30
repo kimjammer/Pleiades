@@ -1,18 +1,19 @@
 <script lang="ts">
-    import {buttonVariants} from "$lib/components/ui/button"
-    import {Input} from "$lib/components/ui/input"
-    import {Option, Poll, type ProjectState} from "$lib/project_state.svelte"
-    import {toast} from "svelte-sonner"
-    import {pollformSchema, type PollFormSchema} from "$lib/schema"
-    import {type Infer, superForm, type SuperValidated} from "sveltekit-superforms";
-    import {zodClient} from "sveltekit-superforms/adapters";
+    import { buttonVariants } from "$lib/components/ui/button"
+    import { Input } from "$lib/components/ui/input"
+    import { Option, Poll, type ProjectState } from "$lib/project_state.svelte"
+    import { toast } from "svelte-sonner"
+    import { pollformSchema, type PollFormSchema } from "$lib/schema"
+    import { type Infer, superForm, type SuperValidated } from "sveltekit-superforms"
+    import { zodClient } from "sveltekit-superforms/adapters"
     import * as Dialog from "$lib/components/ui/dialog"
     import * as Form from "$lib/components/ui/form"
 
     let {
         project,
         data,
-    }: { project: ProjectState; data: { pollform: SuperValidated<Infer<PollFormSchema>> } } = $props()
+    }: { project: ProjectState; data: { pollform: SuperValidated<Infer<PollFormSchema>> } } =
+        $props()
     let createDialogOpen = $state(false)
     let newPoll: Poll
 
@@ -24,8 +25,8 @@
     let options = $state("")
     const { form: formData } = form
 
-
-    function validateInput() { //does error checking
+    function validateInput() {
+        //does error checking
         error = false
         if ($formData.title.trim() === "") {
             error = true
@@ -38,40 +39,38 @@
         if (!error) {
             createPoll()
         }
-
     }
 
     async function createPoll() {
-        // console.log("creating poll")
-        // console.log($formData)
-        // newPoll = new Poll()
-        // newPoll.id = crypto.randomUUID();
-        // newPoll.title = $formData.title
-        // newPoll.description = $formData.description
-        // newPoll.dueDate = $formData.dueDate
-        // newPoll.options = []
-        //
-        // console.log(newPoll)
-        // project.appendInProject("Polls", newPoll)
-        //
-        // for (const title of options.split(",")) {
-        //     let option = new Option();
-        //     option.title = title;
-        //     project.appendInProject("Polls[Id=" + newPoll.id + "].Options", option)
-        // }
-        //
-        // createDialogOpen = false
-        // form.reset()
+        console.log("creating poll")
+        console.log($formData)
 
-        const validationResult = await form.validateForm({ update: true })
-        if (!validationResult.valid) return
-        console.log(validationResult.data)
-        project.appendInProject("Polls", validationResult.data)
+        project.appendInProject<Poll>("Polls", {
+            id: crypto.randomUUID(),
+            title: $formData.title,
+            description: $formData.description ?? "",
+            dueDate: $formData.dueDate,
+            options: options.split(",").map(title => {
+                return {
+                    id: crypto.randomUUID(),
+                    title: title,
+                    likedUsers: [],
+                    neutralUsers: [],
+                    dislikedUsers: [],
+                }
+            }),
+        })
+
         createDialogOpen = false
         form.reset()
+
+        // const validationResult = await form.validateForm({ update: true })
+        // if (!validationResult.valid) return
+        // console.log(validationResult.data)
+        // project.appendInProject("Polls", validationResult.data)
+        // createDialogOpen = false
+        // form.reset()
     }
-
-
 </script>
 
 <Dialog.Root bind:open={createDialogOpen}>
@@ -81,37 +80,35 @@
     <Dialog.Content>
         <Dialog.Header>
             <Dialog.Title>Create new poll</Dialog.Title>
-            <Dialog.Description>
-                Enter poll question and options
-            </Dialog.Description>
+            <Dialog.Description>Enter poll question and options</Dialog.Description>
             <form onsubmit={validateInput}>
                 <Form.Field
-                        {form}
-                        name="title"
+                    {form}
+                    name="title"
                 >
                     <Form.Control>
                         {#snippet children({ props })}
-                        <Form.Label>Title</Form.Label>
-                        <Input
+                            <Form.Label>Title</Form.Label>
+                            <Input
                                 {...props}
                                 bind:value={$formData.title}
-                        />
+                            />
                         {/snippet}
                     </Form.Control>
                     <Form.FieldErrors />
                 </Form.Field>
 
                 <Form.Field
-                        {form}
-                        name="description"
+                    {form}
+                    name="description"
                 >
                     <Form.Control>
                         {#snippet children({ props })}
-                        <Form.Label>Description</Form.Label>
-                        <Input
+                            <Form.Label>Description</Form.Label>
+                            <Input
                                 {...props}
                                 bind:value={$formData.description}
-                        />
+                            />
                         {/snippet}
                     </Form.Control>
                     <Form.Description>Implementation details, progress, or notes</Form.Description>
@@ -119,38 +116,37 @@
                 </Form.Field>
 
                 <Form.Field
-                        {form}
-                        name="dueDate"
+                    {form}
+                    name="dueDate"
                 >
                     <Form.Control>
                         {#snippet children({ props })}
-                        <Form.Label>Due date</Form.Label>
-                        <Input
+                            <Form.Label>Due date</Form.Label>
+                            <Input
                                 {...props}
                                 type="date"
                                 bind:value={$formData.dueDate}
-                        />
+                            />
                         {/snippet}
                     </Form.Control>
                     <Form.FieldErrors />
                 </Form.Field>
 
                 <Form.Field
-                        {form}
-                        name="options"
+                    {form}
+                    name="options"
                 >
                     <Form.Control>
                         {#snippet children({ props })}
-                        <Form.Label>Options (comma-separated)</Form.Label>
-                        <Input
+                            <Form.Label>Options (comma-separated)</Form.Label>
+                            <Input
                                 {...props}
                                 bind:value={options}
-                        />
+                            />
                         {/snippet}
                     </Form.Control>
                     <Form.FieldErrors />
                 </Form.Field>
-
 
                 <Dialog.Footer>
                     <Form.Button>Create</Form.Button>
