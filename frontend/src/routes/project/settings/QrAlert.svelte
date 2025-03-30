@@ -50,13 +50,11 @@
             loading...
         {:else}
             <div class="grid-columns-1 grid grid-rows-1">
-                <Skeleton
-                    class="col-start-1 col-end-1 row-start-1 row-end-1 mx-auto h-[150px] w-[150px] columns-1"
-                />
+                <Skeleton class="col-start-1 row-start-1 mx-auto h-[150px] w-[150px] columns-1" />
                 <img
                     src={"https://quickchart.io/qr?text=" + url}
                     alt="loading..."
-                    class="z-50 col-start-1 col-end-1 row-start-1 row-end-1 mx-auto h-[150px] w-[150px] columns-1"
+                    class="z-50 col-start-1 row-start-1 mx-auto h-[150px] w-[150px] columns-1"
                 />
             </div>
             <a
