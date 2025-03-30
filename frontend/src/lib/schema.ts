@@ -19,18 +19,17 @@ export type PollsResponse = {
     polls: string[]
 }
 
-
 export const taskformSchema = z.object({
     title: z.string().nonempty(),
     description: z.string(),
     due: z.string().date().optional(),
-    estimate: z.number().min(0).optional(),
+    timeEstimate: z.number().min(0).default(0),
     // this is an array of user ids NOT names. A custom component will make this easy for the user
-    asignees: z.array(z.string()),
+    assignees: z.array(z.string()),
 })
 
-export type FormSchema = typeof taskformSchema
-export type Task = z.infer<typeof taskformSchema>
+export type TaskFormSchema = typeof taskformSchema
+export type TaskForm = z.infer<typeof taskformSchema>
 
 export const pollformSchema = z.object({
     title: z.string().nonempty(),
@@ -40,4 +39,4 @@ export const pollformSchema = z.object({
 })
 
 export type PollFormSchema = typeof pollformSchema
-export type Poll = z.infer<typeof pollformSchema>;
+export type Poll = z.infer<typeof pollformSchema>

@@ -3,15 +3,16 @@
     import * as Dialog from "$lib/components/ui/dialog"
     import * as Form from "$lib/components/ui/form"
     import { Input } from "$lib/components/ui/input"
-    import type { ProjectState } from "$lib/project_state.svelte"
-    import { taskformSchema, type FormSchema } from "$lib/schema"
-    import { type Infer, superForm, type SuperValidated } from "sveltekit-superforms"
+    import type { ProjectState, Task } from "$lib/project_state.svelte"
+    import { taskformSchema, type TaskFormSchema } from "$lib/schema"
+    import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms"
     import { zodClient } from "sveltekit-superforms/adapters"
 
     let {
         project,
         data,
-    }: { project: ProjectState; data: { taskform: SuperValidated<Infer<FormSchema>> } } = $props()
+    }: { project: ProjectState; data: { taskform: SuperValidated<Infer<TaskFormSchema>> } } =
+        $props()
     let createDialogOpen = $state(false)
     const form = superForm(data.taskform, {
         validators: zodClient(taskformSchema),
@@ -22,8 +23,16 @@
     async function createTask() {
         const validationResult = await form.validateForm({ update: true })
         if (!validationResult.valid) return
+        const taskData = validationResult.data
         console.log(validationResult.data)
-        project.appendInProject("Tasks", validationResult.data)
+        project.appendInProject("Tasks", {
+            ...validationResult.data,
+            id: crypto.randomUUID(),
+            dueDate: validationResult.data.due ? new Date(validationResult.data.due).getTime() : 0,
+            kanbanColumn: "",
+            completed: false,
+            sessions: [],
+        } satisfies Task)
         createDialogOpen = false
         form.reset()
     }
@@ -105,7 +114,7 @@
                                 {...props}
                                 type="number"
                                 min="0"
-                                bind:value={$formData.estimate}
+                                bind:value={$formData.timeEstimate}
                             />
                         {/snippet}
                     </Form.Control>

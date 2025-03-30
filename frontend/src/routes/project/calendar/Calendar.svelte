@@ -1,7 +1,7 @@
 <script lang="ts">
-    import type { Task } from "$lib/schema"
+    import type { TaskForm } from "$lib/schema"
 
-    let { year, month, tasks = [] }: { year: number; month: number; tasks?: Task[] } = $props()
+    let { year, month, tasks = [] }: { year: number; month: number; tasks?: TaskForm[] } = $props()
     let calendar = $state<string[][]>([])
 
     const daysOfWeek = [
