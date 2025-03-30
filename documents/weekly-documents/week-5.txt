@@ -2,23 +2,32 @@
 
 Week 5 (Summary) (Scrum Master: John Kim)
 3/24 1hr   cdd4cb3 95fab39 task creation
+3/24 3hr   439d058 account button and polls page
 3/24 1hr   ea4d49d Implement appendInProject
 3/25 0.5hr 03731fb Prepare for chips for integration
 3/25 2hr   c50e510 Implement CI/CD pipeline through Github Actions
 3/26 1hr   58be81c Implement deleteInProject
+3/26 1hr   bc50cb0 small work on polls
 3/26 2hr   0a6f5ee Learn how to write WS endpoint tests in go
 3/26 4hr   6a9edc1 Refactor project state tests and debug a god awful deadlock condition
 3/26 1hr   033fb9f Fix more deadlocks and test leaving interaction with invitation
 3/27 0.5hr 361d456 Skeleton loader for home page
 3/27 2hr   9559ccc Implement core of time tracker
+3/27 3hr   f4e6ca5 poll dialog WORKING
 3/28 1.5hr 79b5621 More tests for leaving
 3/28 0.5hr edb4e39 Tests for project deletion
 3/28 1hr   2bb7a08 Progress on mutation endpoints
 3/28 0.5hr b4a654e Test all of the mutation endpoints
 3/28 2.5hr f467587 Display total time spent per user
+3/28 1hr   ba06937 backend for poll creation
+3/28 2hr   65762c1 polls no ws yet
+3/29 4hr   525dee5 polls
+3/29 1hr   7ea53fe profile pic upload
 3/29 3hr   36d87f2 Sessions now act as progress bar
 3/29 0.5hr 9712e25 API tests
 3/30 1hr   ecb360a Fix polls
+3/30 2hr   345380c some avatar work
+3/30 3hr   945543b uploading profile pictures
 
 Week 5 (Summary) (Scrum Master: John Kim)
 [Meetings]
@@ -28,5 +37,5 @@ Week 5 (Summary) (Scrum Master: John Kim)
 [Individual goals]
 Henry:
 John: Create burndown chart component and integrate components into task cards
-Cate:
+Cate: Implement adding users to tasks and write tests for this sprint
 Ethan:
