@@ -22,7 +22,7 @@ export type PollsResponse = {
 export const taskformSchema = z.object({
     title: z.string().nonempty(),
     description: z.string(),
-    due: z.string().date().optional(),
+    dueDate: z.string().date().optional(),
     timeEstimate: z.number().min(0).default(0),
     // this is an array of user ids NOT names. A custom component will make this easy for the user
     assignees: z.array(z.string()),

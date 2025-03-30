@@ -23,12 +23,13 @@
     async function createTask() {
         const validationResult = await form.validateForm({ update: true })
         if (!validationResult.valid) return
-        const taskData = validationResult.data
         console.log(validationResult.data)
         project.appendInProject("Tasks", {
             ...validationResult.data,
             id: crypto.randomUUID(),
-            dueDate: validationResult.data.due ? new Date(validationResult.data.due).getTime() : 0,
+            dueDate: validationResult.data.dueDate
+                ? new Date(validationResult.data.dueDate).getTime()
+                : 0,
             kanbanColumn: "",
             completed: false,
             sessions: [],
@@ -88,7 +89,7 @@
 
                 <Form.Field
                     {form}
-                    name="due"
+                    name="dueDate"
                 >
                     <Form.Control>
                         {#snippet children({ props })}
@@ -105,7 +106,7 @@
 
                 <Form.Field
                     {form}
-                    name="estimate"
+                    name="timeEstimate"
                 >
                     <Form.Control>
                         {#snippet children({ props })}
