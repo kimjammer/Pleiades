@@ -1,0 +1,25 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: John Kim
+
+Week 4 (Summary)
+3/11 0.5hr 67e1a81 Update shadcn-svelte
+3/11 0.5hr 0c5c507 Update TzPicker to Svelte 5
+3/11 2hr   d216d1b Implement DueDate Component
+3/14 1hr   c1381d9 Implement states to DueDate chip
+3/14 1hr   70741f3 Implement time estimation chip
+3/14 1hr   06940b6 Backend testing harness for e2e
+3/15 1.5hr 31fdcf7 Dockerfile and compose (and research about GitHub Actions)
+
+Week 5 (Summary)
+3/25 0.5hr 03731fb Prepare for chips for integration
+3/25 2hr   c50e510 Implement CI/CD pipeline through Github Actions
+3/27 0.5hr 361d456 Skeleton loader for home page
+3/27 2hr   9559ccc Implement core of time tracker
+3/28 2.5hr f467587 Display total time spent per user
+3/29 3hr   36d87f2 Sessions now act as progress bar
+3/29 0.5hr 9712e25 API tests
+
+Week 6 (Plan)
+3/1  3hr   Integrate components with chips
+3/2  1hr   Start burndown chart
+3/3  2hr   Finish burndown chart and test for sprint review
