@@ -425,7 +425,7 @@ func getProfilePic(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"found": false})
 	}
 	log.Println("returning profile pic")
-	c.Header("Content-Type", "image/png") // Or "image/png" depending on your image format
+	c.Header("Content-Type", "image/png")
 	c.Writer.Write(crrUser.UserPhoto)
 }
 
