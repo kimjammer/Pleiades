@@ -1,0 +1,5 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: Ethan Dawes
+
+Week 6 (Plan)
+3/31 0.24hr b37820a970aca9073efd5cb74992cd4bef77171e Fix SameSite logout header unset
