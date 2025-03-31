@@ -34,9 +34,13 @@ Week 5 (Summary) (Scrum Master: John Kim)
 3/29 0.5hr 9712e25 API tests
 3/29 0.5hr 752f510859cda97f514797acf5997d1bb61d1b48 Fix error in Polls: cannot undate derived state
 3/30 1hr   ecb360a Fix polls
+<<<<<<< HEAD
 3/30 2hr   345380c some avatar work
 3/30 3hr   945543b uploading profile pictures
 3/30 1hr 090de964f768b3cbe32256007899b6b59f791ea4 7f0eb4c6660485a9821e5fc63a23857095b3f7f5 fix task creation, manual testing, calendar
+=======
+3/30 0.5hr 2d279d1 Fix deadlock
+>>>>>>> 4a3183f (Documents)
 
 Week 5 (Summary) (Scrum Master: John Kim)
 [Meetings]
@@ -44,7 +48,7 @@ Week 5 (Summary) (Scrum Master: John Kim)
 3/26 Port over CI/CD pipeline to main repository, sync on blockers for user stories
 
 [Individual goals]
-Henry:
+Henry: Finish all of my user stories now that websockets works
 John: Create burndown chart component and integrate components into task cards
 Cate: Implement adding users to tasks and write tests for this sprint
 Ethan:

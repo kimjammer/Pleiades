@@ -1,0 +1,18 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: Henry
+
+Week 5 (Summary)
+3/24 1hr   ea4d49d Implement appendInProject
+3/26 1hr   58be81c Implement deleteInProject
+3/26 2hr   0a6f5ee Learn how to write WS endpoint tests in go
+3/26 4hr   6a9edc1 Refactor project state tests and debug a god awful deadlock condition
+3/26 1hr   033fb9f Fix more deadlocks and test leaving interaction with invitation
+3/28 1.5hr 79b5621 More tests for leaving
+3/28 0.5hr edb4e39 Tests for project deletion
+3/28 1hr   2bb7a08 Progress on mutation endpoints
+3/28 0.5hr b4a654e Test all of the mutation endpoints
+3/30 1hr   ecb360a Fix polls
+3/30 0.5hr 2d279d1 Fix deadlock
+
+Week 6 (Plan)
+3/31 10hr Implement all of my user stories
