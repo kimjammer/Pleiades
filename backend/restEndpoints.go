@@ -406,15 +406,13 @@ func uploadProfilePic(c *gin.Context) {
 }
 
 func getProfilePic(c *gin.Context) {
-	log.Println("getting profile pic")
-	//get user
-	crrUser, err := getUser(c)
+	//Get user
+	crrUser, err := getUserById(c, c.Query("id"))
 	if err != nil {
 		// TODO: convert to middleware
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
 	}
-	//log.Println("crrUser: ", crrUser)
 
 	if err != nil { //if no pic
 		log.Println("error encountered")

@@ -164,13 +164,17 @@
             sideOffset={0}
         >
             {#each timeTotals as total}
-                <div class="inline-block">
-                    <UserAvatar
-                        {project}
-                        userID={total.id}
-                    />
+                <div class="flex items-center gap-1">
+                    <div class="inline-block">
+                        <UserAvatar
+                            {project}
+                            userID={total.id}
+                        />
+                    </div>
+                    <p>
+                        {total.time}
+                    </p>
                 </div>
-                {total.time}
             {/each}
         </HoverCard.Content>
     </HoverCard.Root>
