@@ -12,6 +12,7 @@ node_modules
 /database
 tmp/
 __debug_bin*
+.vscode/times.json
 
 # OS
 .DS_Store
