@@ -341,6 +341,7 @@ func checkPassword(hashedPassword, plainPassword string) bool {
 
 // Reset token cookie
 func logout(c *gin.Context) {
+	c.SetSameSite(http.SameSiteNoneMode)
 	c.SetCookie("token", "", -1, "/", "", true, true)
 	c.Status(http.StatusOK)
 }

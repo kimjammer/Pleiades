@@ -356,6 +356,7 @@ func TestLogout(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodPost, "/logout", nil)
 	router.ServeHTTP(w, req)
+	require.Equal(t, w.Result().Cookies()[0].SameSite, http.SameSiteNoneMode)
 
 	require.Equal(t, http.StatusOK, w.Code)
 }
