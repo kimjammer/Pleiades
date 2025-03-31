@@ -4,16 +4,23 @@ Week 5 (Summary) (Scrum Master: John Kim)
 3/24 1hr   cdd4cb3 95fab39 task creation
 3/24 3hr   439d058 account button and polls page
 3/24 1hr   ea4d49d Implement appendInProject
+3/24 1hr cdd4cb3d8a65a8f077b4ad276122b83ff7434e58 95fab39ce0ebc7b50df4d9cef6fe4d56d3daf942 task creation
 3/25 0.5hr 03731fb Prepare for chips for integration
 3/25 2hr   c50e510 Implement CI/CD pipeline through Github Actions
+3/25 1hr f808a26cac22d10f9a12e79a6a6724152215530d logged out join project flow
 3/26 1hr   58be81c Implement deleteInProject
 3/26 1hr   bc50cb0 small work on polls
 3/26 2hr   0a6f5ee Learn how to write WS endpoint tests in go
 3/26 4hr   6a9edc1 Refactor project state tests and debug a god awful deadlock condition
 3/26 1hr   033fb9f Fix more deadlocks and test leaving interaction with invitation
+3/26 1hr ccf20f54144850e4c925dca755002fc36cfe850b 165297a67025752c2b211ebace5df52d3471281a f7bb5ea4eaec9bd9aa4dbf6036b37cd0cf9b8657 Help with setting up CI
+3/26 0.5hr 90391863da6c9d759979dea9f276142e09e69e25 Fix routing to account for GH pages basepath
+3/26 1hr 1c14a2bdf27a25d064f991c207a2794eda2606cc Implement calendar
+3/26 1hr 12f7afea051c053e058df41a8ff32aaba69dfef4 Reimplement calendar
 3/27 0.5hr 361d456 Skeleton loader for home page
 3/27 2hr   9559ccc Implement core of time tracker
 3/27 3hr   f4e6ca5 poll dialog WORKING
+3/27 0.75hr f2a534d58db4aa6122684c5d68848dea46deb1a0 e960cb81c376646f3fa74738eefba0d4bcc9312a Add backend testing CI step
 3/28 1.5hr 79b5621 More tests for leaving
 3/28 0.5hr edb4e39 Tests for project deletion
 3/28 1hr   2bb7a08 Progress on mutation endpoints
@@ -25,9 +32,11 @@ Week 5 (Summary) (Scrum Master: John Kim)
 3/29 1hr   7ea53fe profile pic upload
 3/29 3hr   36d87f2 Sessions now act as progress bar
 3/29 0.5hr 9712e25 API tests
+3/29 0.5hr 752f510859cda97f514797acf5997d1bb61d1b48 Fix error in Polls: cannot undate derived state
 3/30 1hr   ecb360a Fix polls
 3/30 2hr   345380c some avatar work
 3/30 3hr   945543b uploading profile pictures
+3/30 1hr 090de964f768b3cbe32256007899b6b59f791ea4 7f0eb4c6660485a9821e5fc63a23857095b3f7f5 fix task creation, manual testing, calendar
 
 Week 5 (Summary) (Scrum Master: John Kim)
 [Meetings]
