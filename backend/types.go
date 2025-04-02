@@ -57,7 +57,7 @@ type Task struct {
 	TimeEstimate int
 	Completed    bool
 	Sessions     []Session
-	Assignees    []string
+	Assignees    []string //user ids
 }
 
 type Option struct {

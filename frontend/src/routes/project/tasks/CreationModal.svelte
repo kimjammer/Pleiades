@@ -8,6 +8,7 @@
     import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms"
     import { zodClient } from "sveltekit-superforms/adapters"
     import UserAvatar from "$lib/components/UserAvatar.svelte"
+    import { Toggle } from "$lib/components/ui/toggle";
 
     let {
         project,
@@ -20,6 +21,14 @@
     })
 
     const { form: formData } = form
+
+    //For assigning users
+    let toggledUsers = new Map();
+
+    function toggleUser(userID) {
+        // Flip user's toggle state
+        toggledUsers.set(userID, !toggledUsers.get(userID));
+    }
 
     async function createTask(e: Event) {
         // Otherwise the form would overwrite the URL params and you would quit out of the project on reload
@@ -38,7 +47,10 @@
             kanbanColumn: "",
             completed: false,
             sessions: [],
+            assignees: Array.from(toggledUsers.entries()).filter(([_, value]) => value).map(([userID]) => userID)
         } satisfies Task)
+        console.log("assigned users:")
+        console.log(Array.from(toggledUsers.entries()).filter(([_, value]) => value).map(([userID]) => userID))
         createDialogOpen = false
         form.reset()
     }
@@ -128,18 +140,21 @@
                 </Form.Field>
 
                 <!-- TODO: assignees -->
-                <!-- NOTE to self: Put avatar in toggle-->
+                {#each project.users as user}
+                    <Toggle onclick={() => toggleUser(user.id)}>
+                        <UserAvatar
+                                {project}
+                                userID={user.id}
+                        />
+                    </Toggle>
+
+                {/each}
                 <Dialog.Footer>
                     <Form.Button>Create!</Form.Button>
                 </Dialog.Footer>
             </form>
 
-            {#each project.users as user}
-                <UserAvatar
-                        {project}
-                        userID={user.id}
-                />
-            {/each}
+
 
         </Dialog.Header>
     </Dialog.Content>
