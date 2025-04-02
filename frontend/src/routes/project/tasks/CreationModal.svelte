@@ -124,8 +124,7 @@
                 </Form.Field>
 
                 <!-- TODO: assignees -->
-                <!-- NOTE to self: Use Select with dynamically updated lists
-                        also have shown list of added ppl-->
+                <!-- NOTE to self: Put avatar in toggle-->
                 <Dialog.Footer>
                     <Form.Button>Create!</Form.Button>
                 </Dialog.Footer>

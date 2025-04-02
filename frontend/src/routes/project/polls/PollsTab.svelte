@@ -31,9 +31,11 @@
     <div>
         {#if polls.length > 0}
             {#each polls as poll}
-                <button onclick={() => handlePollClick(poll.id)}>
-                    {poll.title}
-                </button>
+                <div>
+                    <button onclick={() => handlePollClick(poll.id)}>
+                        {poll.title}
+                    </button>
+                </div>
             {/each}
         {:else}
             <p>No polls available.</p>

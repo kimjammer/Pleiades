@@ -34,7 +34,7 @@ export type TaskForm = z.infer<typeof taskformSchema>
 export const pollformSchema = z.object({
     title: z.string().nonempty(),
     description: z.string().optional(),
-    //options: z.string().nonempty(),
+    options: z.string().nonempty(),
     dueDate: z.string().date(),
 })
 

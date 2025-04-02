@@ -25,32 +25,35 @@
     let options = $state("")
     const { form: formData } = form
 
-    function validateInput() {
-        //does error checking
-        error = false
-        if ($formData.title.trim() === "") {
-            error = true
-            toast.error("Title must be at least one character")
-        }
-        if ($formData.due === "") {
-            error = true
-            toast.error("The poll must have an end date")
-        }
-        if (!error) {
-            createPoll()
-        }
-    }
+    // function validateInput() {
+    //     //does error checking
+    //     error = false
+    //     if ($formData.title.trim() === "") {
+    //         error = true
+    //         toast.error("Title must be at least one character")
+    //     }
+    //     if ($formData.due === "") {
+    //         error = true
+    //         toast.error("The poll must have an end date")
+    //     }
+    //     if (!error) {
+    //         createPoll()
+    //     }
+    // }
 
     async function createPoll() {
         console.log("creating poll")
         console.log($formData)
+        const validationResult = await form.validateForm({ update: true })
+        if (!validationResult.valid) return
+        console.log(validationResult.data)
 
         project.appendInProject<Poll>("Polls", {
             id: crypto.randomUUID(),
-            title: $formData.title,
-            description: $formData.description ?? "",
-            dueDate: $formData.dueDate,
-            options: options.split(",").map(title => {
+            title: validationResult.data.title,
+            description: validationResult.data.description ?? "",
+            dueDate: validationResult.data.dueDate,
+            options: validationResult.data.options.split(",").map(title => {
                 return {
                     id: crypto.randomUUID(),
                     title: title,
@@ -63,7 +66,6 @@
 
         createDialogOpen = false
         form.reset()
-
     }
 </script>
 
@@ -75,7 +77,7 @@
         <Dialog.Header>
             <Dialog.Title>Create new poll</Dialog.Title>
             <Dialog.Description>Enter poll question and options</Dialog.Description>
-            <form onsubmit={validateInput}>
+            <form onsubmit={createPoll}>
                 <Form.Field
                     {form}
                     name="title"
@@ -105,7 +107,7 @@
                             />
                         {/snippet}
                     </Form.Control>
-                    <Form.Description>Implementation details, progress, or notes</Form.Description>
+                    <Form.Description></Form.Description>
                     <Form.FieldErrors />
                 </Form.Field>
 
@@ -135,7 +137,7 @@
                             <Form.Label>Options (comma-separated)</Form.Label>
                             <Input
                                 {...props}
-                                bind:value={options}
+                                bind:value={$formData.options}
                             />
                         {/snippet}
                     </Form.Control>
