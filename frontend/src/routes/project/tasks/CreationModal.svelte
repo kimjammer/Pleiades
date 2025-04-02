@@ -30,6 +30,7 @@
             dueDate: validationResult.data.dueDate
                 ? new Date(validationResult.data.dueDate).getTime()
                 : 0,
+            timeEstimate: validationResult.data.timeEstimate * 60 * 60 * 1000,
             kanbanColumn: "",
             completed: false,
             sessions: [],
