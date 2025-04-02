@@ -8,6 +8,7 @@
     import Timer from "$lib/components/Timer.svelte"
     import Chart from "$lib/components/Chart.svelte"
     import BurndownChart from "$lib/components/BurndownChart.svelte"
+    import KanbanBoard from "./KanbanBoard.svelte"
 
     let { project, data }: { project: ProjectState; data: PageData } = $props()
     console.log("data in TasksTab: " + data)
@@ -37,4 +38,5 @@
         />
     </div>
     <BurndownChart {project} />
+    <KanbanBoard {project} />
 </Tabs.Content>
