@@ -6,7 +6,7 @@
     let { project }: { project: ProjectState } = $props()
 </script>
 
-<Card.Root>
+<Card.Root class="mt-2 w-fit">
     <Card.Header>
         <Card.Title>Team Members</Card.Title>
         <Card.Description>Invite your team members to collaborate</Card.Description>
