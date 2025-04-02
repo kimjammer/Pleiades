@@ -139,6 +139,7 @@ function updateProject(serverProject: any, state: ProjectState) {
     state.id = serverProject.Id
     state.title = serverProject.Title
     state.description = serverProject.Description
+    state.created = serverProject.Created
     state.demoButtonState = serverProject.DemoButtonState
     // TODO: Make the server send more comprehensive user info
 
@@ -281,6 +282,7 @@ export class ProjectState {
     id: string = $state("")
     title: string = $state("")
     description: string = $state("")
+    created: number = $state(0)
     users: UserInProject[] = $state([])
     tasks: Task[] = $state([])
     polls: Poll[] = $state([])

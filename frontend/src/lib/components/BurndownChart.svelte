@@ -1,26 +1,139 @@
 <script lang="ts">
     import Chart from "$lib/components/Chart.svelte"
-    import type { ProjectState } from "$lib/project_state.svelte"
+    import type { ProjectState, Session } from "$lib/project_state.svelte"
     import { onMount } from "svelte"
 
     let { project }: { project: ProjectState } = $props()
 
-    let data = {
-        labels: [1, 2, 3, 4, 5],
-        datasets: [
-            {
-                label: "test",
-                data: [1, 2, 3, 4, 5],
-            },
-        ],
+    let dataAvailable = $state(false)
+
+    type Data = {
+        labels: string[]
+        datasets: {
+            label: string
+            data: number[]
+        }[]
     }
 
-    onMount(() => {})
+    let data: Data = $state({
+        labels: [],
+        datasets: [
+            {
+                label: "ideal",
+                data: [],
+            },
+            {
+                label: "actual",
+                data: [],
+            },
+        ],
+    })
+
+    onMount(() => {
+        //Get all tasks with due dates and time estimates
+        let tasks = project.tasks.filter(task => task.dueDate && task.timeEstimate)
+
+        //If no tasks, return
+        if (tasks.length === 0) {
+            dataAvailable = false
+            return
+        } else {
+            dataAvailable = true
+        }
+
+        //Get all completed sessions spent on tasks with due dates and time estimates
+        let sessions: Session[] = []
+        tasks.forEach(task => {
+            task.sessions.forEach(session => {
+                if (session.startTime != 0 && session.endTime != 0) {
+                    sessions.push(session)
+                }
+            })
+        })
+
+        console.log(sessions)
+
+        //Get range for graph
+        let start = project.created
+        //Find last due date
+        let end = tasks.reduce((latest, task) => {
+            if (task.dueDate > latest) {
+                return task.dueDate
+            } else {
+                return latest
+            }
+        }, tasks[0].dueDate)
+
+        end += 1000 * 60 * 60 * 24 //Add one day to end date
+
+        //Loop through each day in the range
+        let labels = []
+        let idealLine = []
+        let actualLine = []
+        let currentDate = new Date(start)
+        let endDate = new Date(end)
+
+        while (currentDate <= endDate) {
+            console.log(currentDate.getTime())
+            labels.push(currentDate.toLocaleDateString())
+
+            //For each task not past due date, calculate idea progress towards time estimate
+            let idealTime = tasks.reduce((total, task) => {
+                if (task.dueDate >= currentDate.getTime()) {
+                    console.log("task not done", task.title)
+                    return (
+                        total +
+                        (task.timeEstimate / (task.dueDate - start)) *
+                            (currentDate.getTime() - start)
+                    )
+                } else {
+                    console.log("task done", task.title)
+                    return total + task.timeEstimate
+                }
+            }, 0)
+            idealLine.push(idealTime)
+
+            //For each session, sum time spent on tasks
+            let actualTime = sessions.reduce((total, session) => {
+                //If session was completed on or before current date
+                if (session.endTime <= currentDate.getTime()) {
+                    console.log("adding time", session.endTime - session.startTime)
+                    return total + (session.endTime - session.startTime)
+                }
+
+                return total
+            }, 0)
+            actualLine.push(actualTime)
+
+            //Increment date by 1 day
+            currentDate.setDate(currentDate.getDate() + 1)
+        }
+
+        data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: "ideal",
+                    data: idealLine,
+                },
+                {
+                    label: "actual",
+                    data: actualLine,
+                },
+            ],
+        }
+    })
 </script>
 
 <div>
-    <Chart
-        type="line"
-        {data}
-    />
+    {#if dataAvailable}
+        <Chart
+            type="line"
+            data={$state.snapshot(data)}
+        />
+    {:else}
+        <p class="leading-7 [&:not(:first-child)]:mt-6">
+            Create a task with a due date and time estimate to see the burndown chart.
+        </p>
+    {/if}
 </div>

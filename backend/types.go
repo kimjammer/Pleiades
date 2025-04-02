@@ -15,6 +15,7 @@ type Project struct {
 	Id              string `bson:"_id"`
 	Title           string
 	Description     string
+	Created         int
 	Users           []UserAndLeft
 	Tasks           []Task
 	Polls           []Poll
