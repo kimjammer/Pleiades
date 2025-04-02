@@ -1,19 +1,32 @@
 <script lang="ts">
-    import { onMount, onDestroy } from "svelte"
-    import { Chart as ChartJS } from "chart.js"
     import {
-        Colors,
         BarController,
+        BarElement,
         CategoryScale,
+        Chart as ChartJS,
+        Colors,
+        Legend,
         LineController,
+        LineElement,
         LinearScale,
         PointElement,
-        LineElement,
-        BarElement,
-        Legend,
+        type ChartConfiguration,
+        type ChartType,
+        type DefaultDataPoint,
     } from "chart.js"
+    import { onDestroy, onMount } from "svelte"
 
-    let { type, data, options = {}, plugins = [], ...props } = $props()
+    type TType = ChartType
+    type TData = DefaultDataPoint<TType>
+    type TLabel = unknown
+
+    let {
+        type,
+        data,
+        options = {},
+        plugins = [],
+        ...props
+    }: ChartConfiguration<TType, TData, TLabel> = $props()
 
     //Register graph types that can be used
     ChartJS.register(

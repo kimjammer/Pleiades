@@ -1,16 +1,17 @@
 <script lang="ts">
-    import { connectToProject, ProjectState } from "$lib/project_state.svelte.ts"
-    import { onMount } from "svelte"
-    import * as Tabs from "$lib/components/ui/tabs/index.js"
     import PleiadesNav from "$lib/components/PleiadesNav.svelte"
-    import SettingsTab from "./settings/SettingsTab.svelte"
-    import TasksTab from "./tasks/TasksTab.svelte"
+    import { Button } from "$lib/components/ui/button"
+    import * as Dialog from "$lib/components/ui/dialog"
+    import * as Tabs from "$lib/components/ui/tabs/index.js"
+    import { connectToProject, ProjectState } from "$lib/project_state.svelte.js"
+    import { onMount } from "svelte"
+    import type { PageData } from "./$types.js"
     import AvailabilityTab from "./availability/AvailabilityTab.svelte"
     import CalendarTab from "./calendar/CalendarTab.svelte"
     import PollsTab from "./polls/PollsTab.svelte"
-    import * as Dialog from "$lib/components/ui/dialog"
-    import { Button } from "$lib/components/ui/button"
-    import type { PageData } from "./$types.js"
+    import SettingsTab from "./settings/SettingsTab.svelte"
+    import StatsTab from "./stats/StatsTab.svelte"
+    import TasksTab from "./tasks/TasksTab.svelte"
 
     let { data }: { data: PageData } = $props()
 
@@ -91,6 +92,7 @@
                 <Tabs.Trigger value="tasks">Task Board</Tabs.Trigger>
                 <Tabs.Trigger value="calendar">Calendar</Tabs.Trigger>
                 <Tabs.Trigger value="availability">Availability</Tabs.Trigger>
+                <Tabs.Trigger value="stats">Stats</Tabs.Trigger>
                 <Tabs.Trigger value="polls">Polls</Tabs.Trigger>
                 <Tabs.Trigger value="settings">Settings</Tabs.Trigger>
                 <Tabs.Trigger value="debug">Debugging</Tabs.Trigger>
@@ -111,6 +113,8 @@
             />
 
             <SettingsTab {project} />
+
+            <StatsTab {project} />
 
             <Tabs.Content value="debug">
                 <h1>Project page for {project.title}!</h1>

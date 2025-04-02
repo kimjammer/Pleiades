@@ -1,13 +1,12 @@
 <script lang="ts">
-    import * as Tabs from "$lib/components/ui/tabs"
-    import { type ProjectState, Task } from "$lib/project_state.svelte"
+    import BurndownChart from "$lib/components/BurndownChart.svelte"
     import DueDate from "$lib/components/DueDate.svelte"
-    import CreationModal from "./CreationModal.svelte"
-    import type { PageData } from "./$types"
     import TimeEstimate from "$lib/components/TimeEstimate.svelte"
     import Timer from "$lib/components/Timer.svelte"
-    import Chart from "$lib/components/Chart.svelte"
-    import BurndownChart from "$lib/components/BurndownChart.svelte"
+    import * as Tabs from "$lib/components/ui/tabs"
+    import { type ProjectState, Task } from "$lib/project_state.svelte"
+    import type { PageData } from "./$types"
+    import CreationModal from "./CreationModal.svelte"
     import KanbanBoard from "./KanbanBoard.svelte"
 
     let { project, data }: { project: ProjectState; data: PageData } = $props()
