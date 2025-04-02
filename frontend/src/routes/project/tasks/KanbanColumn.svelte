@@ -10,28 +10,9 @@
 </script>
 
 <div
-    class="column border"
-    ondragover={e => {
-        if (e.dataTransfer === null) {
-            throw "Bruh"
-        }
-        e.preventDefault()
-        console.log("over")
-
-        e.dataTransfer.dropEffect = "move"
-    }}
-    ondrop={e => {
-        if (e.dataTransfer === null) {
-            throw "Bruh"
-        }
-
-        e.preventDefault()
-
-        let id = e.dataTransfer.getData("text/plain")
-        console.log(id)
-
-        project.updateInProject(`Tasks[Id=${id}].KanbanColumn`, columnId)
-    }}
+    class="kanban-column border"
+    id={columnId}
+    role="list"
 >
     <h1 class="text-[1.5em]">{columnName}</h1>
     {#each project.tasks as task}
@@ -45,9 +26,10 @@
 </div>
 
 <style>
-    .column {
+    .kanban-column {
         text-align: center;
         flex-grow: 1;
+        flex-basis: 0;
         display: flex;
         flex-direction: column;
         align-items: stretch;

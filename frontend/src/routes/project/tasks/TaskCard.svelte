@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { ProjectState, Task } from "$lib/project_state.svelte"
+    import { ProjectState, Task, mouse } from "$lib/project_state.svelte"
     import * as ContextMenu from "$lib/components/ui/context-menu"
 
     let { project, task }: { project: ProjectState; task: Task } = $props()
@@ -10,21 +10,42 @@
             .map(id => project.users.find(user => user.id === id))
             .map(user => `${user?.firstName} ${user?.lastName}`),
     )
+
+    let dragging = $state(false)
+    let startX: number = $state(0)
+    let startY: number = $state(0)
+
+    let card: HTMLDivElement
 </script>
 
 <ContextMenu.Root>
     <ContextMenu.Trigger>
         <div
+            bind:this={card}
             class="task bg-muted"
-            draggable="true"
-            ondragstart={e => {
-                if (e.dataTransfer === null) {
-                    throw "Bruh"
-                }
-
-                e.dataTransfer.setData("text/plain", task.id)
-                e.dataTransfer.dropEffect = "move"
+            role="listitem"
+            onmousedown={e => {
+                startX = mouse.x
+                startY = mouse.y
+                dragging = true
             }}
+            onmouseup={e => {
+                setTimeout(() => {
+                    dragging = false
+                }, 100)
+
+                card.hidden = true
+                let elemBelow = document.elementFromPoint(e.clientX, e.clientY)
+                card.hidden = false
+
+                let elt = elemBelow?.closest(".kanban-column")
+
+                console.log(elt)
+                if (elt != null) {
+                    project.updateInProject(`Tasks[Id=${task.id}].KanbanColumn`, elt.id)
+                }
+            }}
+            style={dragging ? `top:${mouse.y - startY}px;left:${mouse.x - startX}px` : ``}
         >
             <h1 class="text-[1.2em]">{task.title}</h1>
             <p>{task.description}</p>
@@ -55,7 +76,7 @@
     .task {
         margin: 0.5em;
         border-radius: 0.5em;
-        position: relative; /* Allow the date to position itself absolutely inside this element */
+        position: relative;
     }
 
     .date {

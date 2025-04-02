@@ -2,6 +2,21 @@ import { goto } from "$app/navigation"
 import { base } from "$app/paths"
 import { PUBLIC_API_HOST, PUBLIC_WS_PROTOCOL } from "$env/static/public"
 
+class Mouse {
+    x = $state(0)
+    y = $state(0)
+}
+
+export let mouse = new Mouse()
+document.addEventListener("mousemove", e => {
+    mouse.x = e.pageX
+    mouse.y = e.pageY
+})
+document.addEventListener("dragover", e => {
+    mouse.x = e.pageX
+    mouse.y = e.pageY
+})
+
 class ReactiveTesting {
     bruh = $state("X")
     list = $state(["A", "B", "C"])
@@ -44,6 +59,7 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
             if (text == "UNAUTHORIZED") {
                 this.close()
                 goto(base + "/login")
+                return
             }
 
             if (text == "PROJECT ID DNE") {
