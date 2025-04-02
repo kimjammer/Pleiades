@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Chart from "$lib/components/Chart.svelte"
+    import Chart, { type ChartData } from "$lib/components/Chart.svelte"
     import type { ProjectState, Session } from "$lib/project_state.svelte"
     import { onMount } from "svelte"
 
@@ -7,15 +7,7 @@
 
     let dataAvailable = $state(false)
 
-    type Data = {
-        labels: string[]
-        datasets: {
-            label: string
-            data: number[]
-        }[]
-    }
-
-    let data: Data = $state({
+    let data = $state({
         labels: [],
         datasets: [
             {
@@ -27,7 +19,7 @@
                 data: [],
             },
         ],
-    })
+    }) as ChartData<"line">
 
     onMount(() => {
         //Get all tasks with due dates and time estimates

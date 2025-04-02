@@ -1,4 +1,17 @@
-<script lang="ts">
+<script module>
+    type TLabel = string
+    export type DefaultChartConfig<TType extends ChartType> = ChartConfiguration<
+        TType,
+        DefaultDataPoint<TType>,
+        TLabel
+    >
+    export type ChartData<TType extends ChartType> = DefaultChartConfig<TType>["data"]
+</script>
+
+<script
+    lang="ts"
+    generics="TChartType extends ChartType"
+>
     import {
         BarController,
         BarElement,
@@ -16,17 +29,13 @@
     } from "chart.js"
     import { onDestroy, onMount } from "svelte"
 
-    type TType = ChartType
-    type TData = DefaultDataPoint<TType>
-    type TLabel = unknown
-
     let {
         type,
         data,
-        options = {},
+        options = undefined,
         plugins = [],
         ...props
-    }: ChartConfiguration<TType, TData, TLabel> = $props()
+    }: DefaultChartConfig<TChartType> = $props()
 
     //Register graph types that can be used
     ChartJS.register(
@@ -41,14 +50,18 @@
         Legend,
     )
 
+    type TData = DefaultDataPoint<TChartType>
+    type TypedChartJS = ChartJS<TChartType, TData, TLabel>
+    type ChartOptions = TypedChartJS["options"]
+
     let canvasRef: HTMLCanvasElement
-    let chart: ChartJS | null = null
+    let chart: TypedChartJS | null = null
 
     onMount(() => {
         chart = new ChartJS(canvasRef, {
             type,
             data,
-            options,
+            options: options,
             plugins,
         })
     })
@@ -57,7 +70,7 @@
         if (!chart) return
 
         chart.data = data
-        Object.assign(chart.options, options)
+        Object.assign(chart.options ?? {}, options)
         chart.update()
     })
 

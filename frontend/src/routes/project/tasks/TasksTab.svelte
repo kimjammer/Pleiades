@@ -1,5 +1,4 @@
 <script lang="ts">
-    import BurndownChart from "$lib/components/BurndownChart.svelte"
     import DueDate from "$lib/components/DueDate.svelte"
     import TimeEstimate from "$lib/components/TimeEstimate.svelte"
     import Timer from "$lib/components/Timer.svelte"
@@ -36,6 +35,5 @@
             {task}
         />
     </div>
-    <BurndownChart {project} />
     <KanbanBoard {project} />
 </Tabs.Content>
