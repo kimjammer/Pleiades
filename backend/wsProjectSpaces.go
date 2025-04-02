@@ -38,6 +38,7 @@ type UserInProject struct {
 	LeftProject  bool
 	FirstName    string
 	LastName     string
+	Email        string
 	Availability []Availability
 }
 
@@ -325,12 +326,14 @@ func queryUsers(users []UserAndLeft) []UserInProject {
 		if err != nil {
 			panic(err)
 		}
+		log.Println(userInDB.Email)
 
 		userInProject := UserInProject{
 			Id:           user.User,
 			LeftProject:  user.LeftProject,
 			FirstName:    userInDB.FirstName,
 			LastName:     userInDB.LastName,
+			Email:        userInDB.Email,
 			Availability: userInDB.Availability,
 		}
 

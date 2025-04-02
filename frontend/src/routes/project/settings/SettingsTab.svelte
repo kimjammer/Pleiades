@@ -1,9 +1,10 @@
 <script lang="ts">
-    import * as Tabs from "$lib/components/ui/tabs/index.js"
-    import * as Dialog from "$lib/components/ui/dialog"
     import { Button } from "$lib/components/ui/button"
-    import QrAlert from "./QrAlert.svelte"
+    import * as Dialog from "$lib/components/ui/dialog"
+    import * as Tabs from "$lib/components/ui/tabs/index.js"
     import type { ProjectState } from "$lib/project_state.svelte"
+    import QrAlert from "./QrAlert.svelte"
+    import Teammates from "./Teammates.svelte"
 
     let { project }: { project: ProjectState } = $props()
 
@@ -54,4 +55,5 @@
             </div>
         </Dialog.Content>
     </Dialog.Root>
+    <Teammates {project} />
 </Tabs.Content>

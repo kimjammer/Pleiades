@@ -115,6 +115,7 @@ function updateUser(serverUser: any, user: UserInProject) {
     user.leftProject = serverUser.LeftProject
     user.firstName = serverUser.FirstName
     user.lastName = serverUser.LastName
+    user.email = serverUser.Email
 
     while (user.availability.length > serverUser.Availability.length) {
         user.availability.pop()
@@ -236,6 +237,7 @@ export class UserInProject {
     leftProject: boolean = $state(false)
     firstName: string = $state("")
     lastName: string = $state("")
+    email: string = $state("")
     availability: Availability[] = $state([])
 }
 
