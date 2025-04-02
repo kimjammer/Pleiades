@@ -1,0 +1,13 @@
+=== Weekly Team Report (Team 5: Pleiades) ===
+
+Week 6 (Summary) (Scrum Master: John Kim)
+4/2 050b2f4 2hr Basic kanban board stuff
+
+Week 6 (Summary) (Scrum Master: John Kim)
+[Meetings]
+
+[Individual goals]
+Henry: Finish all of my user stories now that websockets works
+John: Create burndown chart component and integrate components into task cards
+Cate: Implement adding users to tasks and write tests for this sprint
+Ethan:
