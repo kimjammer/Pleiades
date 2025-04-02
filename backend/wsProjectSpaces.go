@@ -103,7 +103,10 @@ func encodeProject(project Project, users []UserInProject) []byte {
 	return encoded
 }
 
-func timeout(channel chan<- struct{}) {
+func timeout(wg *sync.WaitGroup) {
+	wg.Add(1)
+	defer wg.Done()
+
 	secs := 10.
 
 	duration := time.Duration(secs * 1000 * 1000 * 1000)
@@ -113,8 +116,6 @@ func timeout(channel chan<- struct{}) {
 	}
 
 	time.Sleep(duration)
-
-	channel <- struct{}{}
 }
 
 func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
@@ -139,17 +140,23 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 
 	users := queryUsers(project.Users)
 
-	var noConnectionsTimeout = make(chan struct{})
+	var wg sync.WaitGroup
 
-	go timeout(noConnectionsTimeout)
+	go timeout(&wg)
 
 	projectStateFanOut := []StateFanOutTx{}
 	var commandChannel chan FanInMessage = make(chan FanInMessage, 16)
-	connectionCount := 0
+
+	done := make(chan struct{})
+
+	go func() {
+		wg.Wait()
+		close(done)
+	}()
 
 	defer func() {
 		for _, conn := range projectStateFanOut {
-			close(conn.recvStates)
+			close(conn.txStates)
 		}
 	}()
 
@@ -158,31 +165,18 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 
 		select {
 		case newConnection := <-connectionsChannel:
-			connectionCount += 1
 			// Guaranteed not to block since it's the first one and there's a buffer of one
 			newConnection.state_tx <- encodeProject(project, users)
 			stateChannel := make(chan []byte, 1)
 			killedChannel := make(chan interface{})
-			go fanInCommandsFrom(newConnection, commandChannel, StateFanOutRecv{stateChannel, killedChannel})
+			go fanInCommandsFrom(newConnection, commandChannel, StateFanOutRecv{stateChannel, killedChannel}, &wg)
 			projectStateFanOut = append(projectStateFanOut, StateFanOutTx{stateChannel, killedChannel})
-		case _ = <-noConnectionsTimeout:
-			if connectionCount == 0 {
-				return
-			}
+		case _ = <-done:
+			return
 		case _ = <-requeryChannel:
 			users = queryUsers(project.Users)
 			appliedChange = true
 		case message := <-commandChannel:
-			if message.wasKilled {
-				connectionCount -= 1
-
-				if connectionCount == 0 {
-					go timeout(noConnectionsTimeout)
-				}
-
-				continue
-			}
-
 			maybe_err := message.command.apply(&project)
 
 			var deleted bool
@@ -228,7 +222,7 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 			projectStateFanOut = slices.DeleteFunc(projectStateFanOut, func(v StateFanOutTx) bool {
 				select {
 				case _ = <-v.killed:
-					close(v.recvStates)
+					close(v.txStates)
 					return true
 
 				default:
@@ -237,7 +231,7 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 			})
 
 			for _, fanOut := range projectStateFanOut {
-				fanOut.recvStates <- encoded
+				fanOut.txStates <- encoded
 			}
 
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -263,15 +257,17 @@ type StateFanOutRecv struct {
 }
 
 type StateFanOutTx struct {
-	recvStates chan<- []byte
-	killed     <-chan interface{}
+	txStates chan<- []byte
+	killed   <-chan interface{}
 }
 
-func fanInCommandsFrom(connection ConnectionForSpace, sendTo chan<- FanInMessage, recvStates StateFanOutRecv) {
+func fanInCommandsFrom(connection ConnectionForSpace, sendTo chan<- FanInMessage, recvStates StateFanOutRecv, wg *sync.WaitGroup) {
+	wg.Add(1)
 	defer func() {
 		close(connection.state_tx)
 		close(connection.error_tx)
 		close(recvStates.killed)
+		wg.Done()
 	}()
 
 	defunct := false
@@ -280,7 +276,6 @@ func fanInCommandsFrom(connection ConnectionForSpace, sendTo chan<- FanInMessage
 		select {
 		case command, ok := <-connection.command_rx:
 			if !ok {
-				sendTo <- FanInMessage{command: nil, connection: connection, wasKilled: true}
 				connection.command_rx = nil
 				defunct = true
 				continue

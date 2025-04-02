@@ -10,7 +10,7 @@
 </script>
 
 <div
-    class="column bg-slate-900"
+    class="column border"
     ondragover={e => {
         if (e.dataTransfer === null) {
             throw "Bruh"

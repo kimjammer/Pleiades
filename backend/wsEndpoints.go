@@ -4,11 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"net/http"
 	"slices"
+	"sync"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -100,10 +102,12 @@ func (self WsConn) close() {
 }
 
 func handleConnection(conn Connection, userId string) {
-	disconnectSignal := make(chan struct{})
-	defer func() {
-		// Don't close until the wsProjectSpace has closed
-		<-disconnectSignal
+	var wg sync.WaitGroup
+	wg.Add(1)
+	defer wg.Done()
+
+	go func() {
+		wg.Wait()
 		conn.close()
 	}()
 
@@ -140,7 +144,8 @@ func handleConnection(conn Connection, userId string) {
 	}()
 
 	go func() {
-		defer func() { disconnectSignal <- struct{}{} }()
+		wg.Add(1)
+		defer wg.Done()
 
 		for {
 			select {
@@ -162,8 +167,6 @@ func handleConnection(conn Connection, userId string) {
 					if err == nil {
 						continue
 					}
-
-					log.Println(err.Error())
 
 					disconnect := conn.send("FAIL: " + err.Error())
 					if disconnect {

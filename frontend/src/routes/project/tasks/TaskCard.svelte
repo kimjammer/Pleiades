@@ -15,7 +15,7 @@
 <ContextMenu.Root>
     <ContextMenu.Trigger>
         <div
-            class="task bg-slate-800"
+            class="task bg-muted"
             draggable="true"
             ondragstart={e => {
                 if (e.dataTransfer === null) {
