@@ -2,6 +2,8 @@ import json
 import subprocess
 from datetime import datetime
 
+# For use with the vscode `S-Mitterlehner.time-tracker-vscode` extension
+
 TIME_FILE = "../.vscode/times.json"
 
 def get_git_commits(start, end):
