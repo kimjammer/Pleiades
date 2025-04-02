@@ -20,7 +20,10 @@
 
     const { form: formData } = form
 
-    async function createTask() {
+    async function createTask(e: Event) {
+        // Otherwise the form would overwrite the URL params and you would quit out of the project on reload
+        e.preventDefault()
+
         const validationResult = await form.validateForm({ update: true })
         if (!validationResult.valid) return
         console.log(validationResult.data)

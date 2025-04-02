@@ -2,6 +2,7 @@
 
 Week 6 (Summary) (Scrum Master: John Kim)
 4/2 050b2f4 2hr Basic kanban board stuff
+4/2 8e04d27 1hr Task deletion
 
 Week 6 (Summary) (Scrum Master: John Kim)
 [Meetings]

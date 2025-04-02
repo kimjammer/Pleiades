@@ -65,6 +65,7 @@ func (self WsConn) send(data string) bool {
 		if _, ok := err.(*websocket.CloseError); ok {
 			return true
 		}
+
 		panic(err)
 	}
 
@@ -130,6 +131,7 @@ func handleConnection(conn Connection, userId string) {
 
 	if !slices.Contains(crrUser.Projects, projectId) {
 		conn.send("PROJECT ID DNE")
+		return
 	}
 
 	projectSpace := joinSpace(projectId)
