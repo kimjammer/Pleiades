@@ -13,7 +13,10 @@
     </Card.Header>
     <Card.Content class="grid gap-6">
         {#each project.users as user}
-            <Teammate details={user} />
+            <Teammate
+                details={user}
+                {project}
+            />
         {/each}
     </Card.Content>
 </Card.Root>
