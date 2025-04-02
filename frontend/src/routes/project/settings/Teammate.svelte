@@ -17,7 +17,9 @@
         </Avatar.Root>
         <div>
             <p class="text-sm font-medium leading-none">{details.firstName} {details.lastName}</p>
-            <p class="text-muted-foreground text-sm">{details.email}</p>
+            <p class="text-sm text-blue-500">
+                <a href="mailto:{details.email}">Contact</a>
+            </p>
         </div>
     </div>
 </div>
