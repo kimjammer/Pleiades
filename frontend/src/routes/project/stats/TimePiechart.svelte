@@ -46,7 +46,7 @@
     {#if dataAvailable}
         <Chart
             type="pie"
-            data={$state.snapshot(data)}
+            {data}
         />
     {:else}
         <p class="leading-7 [&:not(:first-child)]:mt-6">

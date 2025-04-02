@@ -7,7 +7,7 @@
 
     let dataAvailable = $state(false)
 
-    let data = $state({
+    let data: ChartData<"line"> = $state({
         labels: [],
         datasets: [
             {
@@ -19,7 +19,7 @@
                 data: [],
             },
         ],
-    }) as ChartData<"line">
+    })
 
     onMount(() => {
         //Get all tasks with due dates and time estimates
@@ -121,7 +121,7 @@
     {#if dataAvailable}
         <Chart
             type="line"
-            data={$state.snapshot(data)}
+            data={$state.snapshot(data) as any}
         />
     {:else}
         <p class="leading-7 [&:not(:first-child)]:mt-6">

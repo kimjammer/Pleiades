@@ -10,7 +10,7 @@
 
 <script
     lang="ts"
-    generics="TChartType extends ChartType"
+    generics="TChartType extends ChartType, TChartData = DefaultDataPoint<TChartType>, TChartLabel = unknown"
 >
     import {
         BarController,
@@ -35,7 +35,7 @@
         options = undefined,
         plugins = [],
         ...props
-    }: DefaultChartConfig<TChartType> = $props()
+    }: ChartConfiguration<TChartType, TChartData, TChartLabel> = $props()
 
     //Register graph types that can be used
     ChartJS.register(
@@ -50,9 +50,7 @@
         Legend,
     )
 
-    type TData = DefaultDataPoint<TChartType>
-    type TypedChartJS = ChartJS<TChartType, TData, TLabel>
-    type ChartOptions = TypedChartJS["options"]
+    type TypedChartJS = ChartJS<TChartType, TChartData, TChartLabel>
 
     let canvasRef: HTMLCanvasElement
     let chart: TypedChartJS | null = null
@@ -61,7 +59,7 @@
         chart = new ChartJS(canvasRef, {
             type,
             data,
-            options: options,
+            options,
             plugins,
         })
     })
@@ -70,7 +68,7 @@
         if (!chart) return
 
         chart.data = data
-        Object.assign(chart.options ?? {}, options)
+        if (chart.options) Object.assign(chart.options, options)
         chart.update()
     })
 
