@@ -124,7 +124,8 @@
                 </Form.Field>
 
                 <!-- TODO: assignees -->
-
+                <!-- NOTE to self: Use Select with dynamically updated lists
+                        also have shown list of added ppl-->
                 <Dialog.Footer>
                     <Form.Button>Create!</Form.Button>
                 </Dialog.Footer>
