@@ -7,6 +7,7 @@
     import { taskformSchema, type TaskFormSchema } from "$lib/schema"
     import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms"
     import { zodClient } from "sveltekit-superforms/adapters"
+    import UserAvatar from "$lib/components/UserAvatar.svelte"
 
     let {
         project,
@@ -132,6 +133,14 @@
                     <Form.Button>Create!</Form.Button>
                 </Dialog.Footer>
             </form>
+
+            {#each project.users as user}
+                <UserAvatar
+                        {project}
+                        userID={user.id}
+                />
+            {/each}
+
         </Dialog.Header>
     </Dialog.Content>
 </Dialog.Root>
