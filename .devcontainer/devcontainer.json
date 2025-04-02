@@ -38,7 +38,7 @@
     "air install": "go install github.com/air-verse/air@latest"
   },
 
-  "postStartCommand": "echo $(date +%s) > .time/start_time.txt"
+  "postStartCommand": "echo $(date +%s) > /workspaces/Pleiades/.time/start_time.txt"
 
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
   // "remoteUser": "root"
