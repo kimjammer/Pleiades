@@ -14,10 +14,24 @@
 
 <ContextMenu.Root>
     <ContextMenu.Trigger>
-        <div class="task bg-slate-800">
+        <div
+            class="task bg-slate-800"
+            draggable="true"
+            ondragstart={e => {
+                if (e.dataTransfer === null) {
+                    throw "Bruh"
+                }
+
+                e.dataTransfer.setData("text/plain", task.id)
+                e.dataTransfer.dropEffect = "move"
+            }}
+        >
             <h1 class="text-[1.2em]">{task.title}</h1>
             <p>{task.description}</p>
-            <p class="date">{dueDate.toLocaleDateString()}</p>
+            {#if task.dueDate !== 0}
+                <p class="date">{dueDate.toLocaleDateString()}</p>
+            {/if}
+
             {#each assignees as assignee}
                 <p>{assignee}</p>
             {/each}
