@@ -1,16 +1,18 @@
-<script>
+<script lang="ts">
     import { Input } from "$lib/components/ui/input" // shadcn-svelte Input
-    import { toast } from "svelte-sonner"
+    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
     import PleiadesNav from "$lib/components/PleiadesNav.svelte"
     import { Label } from "$lib/components/ui/label"
-    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public" // Optional: for notifications
+    import { toast } from "svelte-sonner"
+    // Optional: for notifications
     import UserAvatar from "$lib/components/UserAvatar.svelte"
+    import type { ChangeEventHandler } from "svelte/elements"
 
     let selectedFile
 
     // Handle file selection and upload
-    async function handleFileSelect(event) {
-        const file = event.target.files[0]
+    async function handleFileSelect(event: Parameters<ChangeEventHandler<HTMLInputElement>>[0]) {
+        const file = event.currentTarget.files![0]
         if (!file) return
 
         const reader = new FileReader()
