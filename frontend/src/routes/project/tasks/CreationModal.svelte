@@ -141,7 +141,7 @@
 
                 <!-- TODO: assignees -->
                 {#each project.users as user}
-                    <Toggle onclick={() => toggleUser(user.id)}>
+                    <Toggle variant="outline" onclick={() => toggleUser(user.id)}>
                         <UserAvatar
                                 {project}
                                 userID={user.id}
