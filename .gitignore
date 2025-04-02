@@ -13,6 +13,7 @@ node_modules
 tmp/
 __debug_bin*
 .vscode/times.json
+.time/start_time.txt
 
 # OS
 .DS_Store

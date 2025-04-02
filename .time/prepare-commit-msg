@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+# Copy this file to `.git/hooks`
+
+import time
+import sys
+
+START_TIME_FILE = ".time/start_time.txt"
+COMMIT_MSG_FILE = sys.argv[1]
+
+# Get the current timestamp
+current_time = time.time()
+
+try:
+    # Read the previous start time if the file exists
+    with open(START_TIME_FILE, "r") as f:
+        prev_time = float(f.read().strip())
+    
+    # Calculate time difference in hours, rounded to 2 decimal places
+    time_diff_hr = round((current_time - prev_time) / 3600, 2)
+    
+    # Append "(__hr)" to the commit message
+    with open(COMMIT_MSG_FILE, "a") as f:
+        f.write(f" ({time_diff_hr}hr)")
+except FileNotFoundError:
+    pass  # Ignore if the file doesn't exist yet
+
+# Update the start time file with the current timestamp
+with open(START_TIME_FILE, "w") as f:
+    f.write(str(current_time))

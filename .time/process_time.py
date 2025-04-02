@@ -2,6 +2,8 @@ import json
 import subprocess
 from datetime import datetime
 
+TIME_FILE = "../.vscode/times.json"
+
 def get_git_commits(start, end):
     """Retrieve commit hashes between start and end timestamps."""
     cmd = [
@@ -25,14 +27,14 @@ def process_time_entries(data):
     return data
 
 # Load JSON file
-with open("times.json") as f:
+with open(TIME_FILE) as f:
     data = json.load(f)
 
 # Process and update data
 data = process_time_entries(data)
 
 # Save the updated JSON
-with open("times.json", "w") as f:
+with open(TIME_FILE) as f:
     json.dump(data, f, indent=2)
 
 print("Updated data saved to times.json")
