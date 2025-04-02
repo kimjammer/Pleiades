@@ -6,21 +6,14 @@
     import type { PageData } from "./$types"
     import TimeEstimate from "$lib/components/TimeEstimate.svelte"
     import Timer from "$lib/components/Timer.svelte"
+    import Chart from "$lib/components/Chart.svelte"
+    import BurndownChart from "$lib/components/BurndownChart.svelte"
 
     let { project, data }: { project: ProjectState; data: PageData } = $props()
     console.log("data in TasksTab: " + data)
 
     //Testing
-    const task: Task = new Task()
-    task.id = crypto.randomUUID()
-    task.title = "My epic task"
-    task.description = "super cool description"
-    task.dueDate = 0
-    task.kanbanColumn = ""
-    task.timeEstimate = 0
-    task.completed = false
-    task.sessions = []
-    task.assignees = []
+    const task: Task = project.tasks[0] ?? new Task()
 </script>
 
 <Tabs.Content value="tasks">
@@ -29,6 +22,7 @@
         {data}
     />
     <div>
+        {task.title}
         <DueDate
             {project}
             {task}
@@ -42,4 +36,5 @@
             {task}
         />
     </div>
+    <BurndownChart {project} />
 </Tabs.Content>

@@ -13,6 +13,10 @@
     let contentRef = $state<HTMLElement | null>(null)
     let isOpen = $state(false)
 
+    $effect(() => {
+        value = task.timeEstimate === 0 ? "" : (task.timeEstimate / 1000 / 60 / 60).toString()
+    })
+
     async function handleEdit() {
         isOpen = false
 
@@ -28,21 +32,14 @@
         value = estHours.toString()
         //Send to server
         //Component is updated when server updates the project state and replies
-        //project.updateInProject(`Tasks[Id=${task.id}].TimeEstimate`, value)
-
-        //TODO:remove
-        task.timeEstimate = estMillis
+        project.updateInProject(`Tasks[Id=${task.id}].TimeEstimate`, estMillis)
     }
 
     async function handleDelete(e: Event) {
         e.stopPropagation()
         isOpen = false
 
-        //project.updateInProject(`Tasks[Id=${task.id}].TimeEstimate`, 0)
-
-        //TODO:remove
-        task.timeEstimate = 0
-        value = undefined
+        project.updateInProject(`Tasks[Id=${task.id}].TimeEstimate`, 0)
     }
 </script>
 

@@ -81,21 +81,21 @@
 
     //Start session
     const handleStart = () => {
-        const newSession: Session = {
+        project.appendInProject(`Tasks[Id=${task.id}].Sessions`, {
             id: crypto.randomUUID(),
             startTime: Date.now(),
             endTime: 0,
             user: localStorage.myId,
-        }
-        task.sessions.push(newSession)
-        //project.appendInProject(`Tasks`, newSession)
+        })
     }
 
     //Stop session
     const handleStop = () => {
         if (crrSession) {
-            crrSession.endTime = Date.now()
-            //project.updateInProject(`Tasks[Id=${task.id}].Sessions[Id=${crrSession.id}].endTime`, Date.now())
+            project.updateInProject(
+                `Tasks[Id=${task.id}].Sessions[Id=${crrSession.id}].EndTime`,
+                Date.now(),
+            )
         } else {
             toast.error("Failed to stop session")
         }

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { type DateValue, getLocalTimeZone } from "@internationalized/date"
+    import { CalendarDate, type DateValue, getLocalTimeZone } from "@internationalized/date"
     import { Button } from "bits-ui"
     import { Badge } from "$lib/components/ui/badge"
     import { Calendar } from "$lib/components/ui/calendar"
@@ -9,25 +9,28 @@
 
     let { project, task }: { project: ProjectState; task: Task } = $props()
 
-    let value = $state<DateValue | undefined>()
+    let dueDateInit = new Date(task.dueDate)
+    let dueDayPreComp =
+        task.dueDate === 0
+            ? undefined
+            : new CalendarDate(
+                  dueDateInit.getFullYear(),
+                  dueDateInit.getMonth() + 1,
+                  dueDateInit.getDate(),
+              )
+
+    let value = $state<DateValue | undefined>(dueDayPreComp)
     let contentRef = $state<HTMLElement | null>(null)
 
     async function handleEdit() {
         //Send to server
         //Component is updated when server updates the project state and replies
-        const timestamp = value?.toDate(getLocalTimeZone()).getTime()
-        //project.updateInProject(`Tasks[Id=${task.id}].DueDate`, timestamp)
-
-        //TODO:remove
-        task.dueDate = timestamp || 0
+        const timestamp = value?.toDate(getLocalTimeZone()).getTime() ?? 0
+        project.updateInProject(`Tasks[Id=${task.id}].DueDate`, timestamp)
     }
     async function handleDelete(e: Event) {
         e.stopPropagation()
-        //project.updateInProject(`Tasks[Id=${task.id}].DueDate`, 0)
-
-        //TODO:remove
-        task.dueDate = 0
-        value = undefined
+        project.updateInProject(`Tasks[Id=${task.id}].DueDate`, 0)
     }
 </script>
 

@@ -176,11 +176,11 @@ function updateTask(serverTask: any, task: Task) {
     task.timeEstimate = serverTask.TimeEstimate
     task.completed = serverTask.completed
 
-    while (task.sessions.length > serverTask.Sessions.length) {
+    while (task.sessions.length > (serverTask.Sessions?.length ?? 0)) {
         task.sessions.pop()
     }
 
-    while (task.sessions.length < serverTask.Sessions.length) {
+    while (task.sessions.length < (serverTask.Sessions?.length ?? 0)) {
         task.sessions.push(new Session())
     }
 
@@ -194,7 +194,7 @@ function updateTask(serverTask: any, task: Task) {
 function updateSession(serverSession: any, session: Session) {
     session.id = serverSession.Id
     session.startTime = serverSession.StartTime
-    session.startTime = serverSession.EndTime
+    session.endTime = serverSession.EndTime
     session.user = serverSession.User
 }
 
