@@ -81,7 +81,11 @@
                 size="icon"
                 variant="secondary"
             >
-                <UserRound />
+<!--                <UserRound />-->
+                <UserAvatar
+                        project={null}
+                        userID={localStorage.myId}
+                />
             </Button>
             <Button
                 onclick={logout}
@@ -89,6 +93,7 @@
             >
                 <LogOut />
             </Button>
+
         {:else}
             <Button href={base + "/login"}>Login</Button>
         {/if}

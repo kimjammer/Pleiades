@@ -64,8 +64,8 @@
         accept="image/png, image/jpeg"
         onchange={handleFileSelect}
     />
-    <UserAvatar
-        project={null}
-        userID={localStorage.myId}
-    />
+<!--    <UserAvatar-->
+<!--        project={null}-->
+<!--        userID={localStorage.myId}-->
+<!--    />-->
 </div>
