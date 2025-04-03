@@ -7,19 +7,14 @@
 
     let dataAvailable = $state(false)
 
-    let data: ChartData<"pie"> = $state({
-        labels: [],
+    let data = $state({
+        labels: project.users.map(user => user.firstName + " " + user.lastName),
         datasets: [
             {
-                label: "ideal",
-                data: [],
-            },
-            {
-                label: "actual",
                 data: [],
             },
         ],
-    })
+    } as ChartData<"pie">)
 
     onMount(() => {
         // Mapping of user id to hours spent on all tasks in this project
@@ -28,17 +23,19 @@
         for (const task of project.tasks) {
             for (const session of task.sessions) {
                 accumulatedUserTime[session.user] +=
-                    (session.endTime - session.endTime) / 1000 / 60 / 60
+                    (session.endTime - session.startTime) / 1000 / 60 / 60
             }
         }
 
-        /* TODO: If no tasks, return
-        if (tasks.length === 0) {
+        // If no tasks, return
+        if (Object.values(accumulatedUserTime).every(time => !time)) {
             dataAvailable = false
             return
         } else {
             dataAvailable = true
-        }*/
+        }
+
+        data.datasets[0].data = Object.values(accumulatedUserTime)
     })
 </script>
 
@@ -46,12 +43,12 @@
     {#if dataAvailable}
         <Chart
             type="pie"
-            {data}
+            data={$state.snapshot(data) as any}
         />
     {:else}
         <div
-            class="flex w-full flex-col items-center justify-center rounded-xl border-4
-                    border-primary p-5"
+            class="border-primary flex w-full flex-col items-center justify-center rounded-xl
+                    border-4 p-5"
         >
             <p class="leading-7 [&:not(:first-child)]:mt-6">
                 Record sessions to see the time breakdown pie chart.

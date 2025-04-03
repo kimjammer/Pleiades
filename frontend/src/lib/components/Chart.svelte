@@ -13,6 +13,7 @@
     generics="TChartType extends ChartType, TChartData = DefaultDataPoint<TChartType>, TChartLabel = unknown"
 >
     import {
+        ArcElement,
         BarController,
         BarElement,
         CategoryScale,
@@ -22,6 +23,7 @@
         LineController,
         LineElement,
         LinearScale,
+        PieController,
         PointElement,
         Title,
         type ChartConfiguration,
@@ -50,6 +52,8 @@
         LineElement,
         Legend,
         Title,
+        PieController,
+        ArcElement,
     )
 
     type TypedChartJS = ChartJS<TChartType, TChartData, TChartLabel>
