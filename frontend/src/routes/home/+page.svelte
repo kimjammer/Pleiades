@@ -6,8 +6,8 @@
     import { Button } from "$lib/components/ui/button"
     import * as Dialog from "$lib/components/ui/dialog"
     import { Input } from "$lib/components/ui/input"
-    import { Skeleton } from "$lib/components/ui/skeleton"
     import { Label } from "$lib/components/ui/label"
+    import { Skeleton } from "$lib/components/ui/skeleton"
     import type { ProjectsResponse, newProjectRequest } from "$lib/schema.js"
     import { onMount } from "svelte"
     import { toast } from "svelte-sonner"
@@ -60,7 +60,7 @@
             return
         }
 
-        response = await loadProjects()
+        response = Promise.resolve(await loadProjects())
     }
 </script>
 
@@ -81,9 +81,9 @@
         <div class="mb-5 mt-5 flex flex-wrap gap-10">
             {#each response.projects as project}
                 <a
-                    class="flex h-60 w-60 flex-col justify-end overflow-hidden
-            rounded-xl border-8
-            border-primary p-5
+                    class="border-primary flex h-60 w-60 flex-col justify-end
+            overflow-hidden rounded-xl
+            border-8 p-5
             transition duration-300
             hover:bg-slate-300 hover:dark:bg-slate-800"
                     href="{base}/project?id={project.id}"
@@ -99,8 +99,8 @@
             <Dialog.Root bind:open={createDialogOpen}>
                 <Dialog.Trigger>
                     <div
-                        class="flex h-60 w-60 flex-col justify-center rounded-xl
-                    border-8 border-dashed border-primary
+                        class="border-primary flex h-60 w-60 flex-col justify-center
+                    rounded-xl border-8 border-dashed
                     p-5 transition
                     duration-300 hover:hover:bg-slate-300
                     hover:dark:bg-slate-800"
