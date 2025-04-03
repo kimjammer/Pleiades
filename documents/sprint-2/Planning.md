@@ -1,4 +1,4 @@
-**Team 5 Sprint 2 Planning**  
+# Team 5 Sprint 2 Planning
 **Pleiades**  
 Cate Harrison, John Kim, Henry Rovnyak, Ethan Dawes
 
