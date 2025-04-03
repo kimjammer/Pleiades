@@ -221,6 +221,7 @@ function updatePoll(serverPoll: any, poll: Poll) {
     poll.id = serverPoll.Id
     poll.title = serverPoll.Title
     poll.description = serverPoll.Description
+    poll.dueDate = serverPoll.DueDate
 
     while (poll.options.length > serverPoll.Options.length) {
         poll.options.pop()

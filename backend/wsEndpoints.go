@@ -98,6 +98,7 @@ func (self WsConn) recv() (string, bool) {
 }
 
 func (self WsConn) close() {
+	log.Println("Calling close")
 	self.socket.Close()
 }
 
