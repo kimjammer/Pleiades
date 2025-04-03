@@ -170,6 +170,7 @@ func registerUser(c *gin.Context) {
 
 func login(c *gin.Context) {
 	listUsers()
+
 	email := c.Query("email")
 	password := c.Query("password")
 	var user User

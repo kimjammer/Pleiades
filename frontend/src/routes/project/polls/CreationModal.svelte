@@ -47,7 +47,8 @@
         e.preventDefault()
         const validationResult = await form.validateForm({ update: true })
         if (!validationResult.valid) return
-        console.log(validationResult.data)
+        console.log("validation dueDate")
+        console.log(validationResult.data.dueDate)
 
         project.appendInProject<Poll>("Polls", {
             id: crypto.randomUUID(),

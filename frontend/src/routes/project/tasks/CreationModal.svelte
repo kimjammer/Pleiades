@@ -156,6 +156,7 @@
                             onclick={() => toggleUser(user.id)}
                         >
                             <UserAvatar
+
                                 {project}
                                 userID={user.id}
                             />

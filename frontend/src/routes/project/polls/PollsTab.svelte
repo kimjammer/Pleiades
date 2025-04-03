@@ -10,6 +10,8 @@
     import { toast } from "svelte-sonner"
     import type { PollsResponse } from "$lib/schema.js"
     import { Button } from "$lib/components/ui/button"
+    import PollDueDate from "./PollDueDate.svelte"
+    import {Poll} from "$lib/project_state.svelte.ts";
 
     let { project, data }: { project: ProjectState; data: PageData } = $props()
     console.log("data in PollsTab: " + data)
@@ -17,8 +19,8 @@
     let showForm = false
     let polls = project.polls //string of poll titles
 
-    function handlePollClick(pollTitle: string) {
-        console.log("Poll clicked:", pollTitle)
+    function handlePollClick(poll: Poll) {
+        console.log("Poll clicked:", poll.title, " ", poll.dueDate)
     }
 </script>
 
@@ -32,9 +34,10 @@
         {#if polls.length > 0}
             {#each polls as poll}
                 <div>
-                    <button onclick={() => handlePollClick(poll.id)}>
+                    <Button onclick={() => handlePollClick(poll)}>
                         {poll.title}
-                    </button>
+<!--                        DueDate: {poll.dueDate}-->
+                    </Button>
                 </div>
             {/each}
         {:else}
