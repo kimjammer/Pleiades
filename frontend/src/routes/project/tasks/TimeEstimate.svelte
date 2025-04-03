@@ -52,7 +52,7 @@
             <div class="flex items-center gap-1">
                 <Clock size="12" />
                 {#if task.timeEstimate === 0}
-                    Add Estimated Time
+                    Time Estimate
                     <Plus size="15" />
                 {:else}
                     {task.timeEstimate / 1000 / 60 / 60} Hrs

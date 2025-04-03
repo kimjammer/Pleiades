@@ -7,7 +7,11 @@
     import { onMount } from "svelte"
     import UserAvatar from "$lib/components/UserAvatar.svelte"
 
-    let { project, task }: { project: ProjectState; task: Task } = $props()
+    let {
+        project,
+        task,
+        progress = $bindable(),
+    }: { project: ProjectState; task: Task; progress: number | undefined } = $props()
 
     //Infer correct session
     let crrSession: Session | undefined = $derived.by(() => {
@@ -115,18 +119,16 @@
 
         return () => clearInterval(interval)
     })
+
+    $effect(() => {
+        progress = (100 * (totalDuration ?? 0)) / (totalEstimate ?? 1)
+    })
 </script>
 
 {#snippet core()}
-    <!--TODO: When inside task card, probably don't want all this padding-->
-    <div class="relative inline-block overflow-hidden rounded-md border border-input">
-        <div
-            class="absolute z-[-1] h-full w-full bg-secondary transition-all"
-            style={`transform: translateX(-${100 - (100 * (totalDuration ?? 0)) / (totalEstimate ?? 1)}%)`}
-        ></div>
+    <div class="inline-block">
         <div class="flex items-center justify-center gap-1 p-2">
             {#if status === "NotStarted"}
-                <small class="text-sm font-medium leading-none">Sessions</small>
                 <Button
                     class="rounded-full"
                     variant="outline"
@@ -135,10 +137,8 @@
                 >
                     <Play />
                 </Button>
+                <small class="text-sm font-medium leading-none">Sessions</small>
             {:else if status === "Running"}
-                <small class="w-10 text-sm font-medium leading-none">
-                    {crrDuration}
-                </small>
                 <Button
                     class="rounded-full"
                     variant="outline"
@@ -147,6 +147,9 @@
                 >
                     <Square />
                 </Button>
+                <small class="w-10 text-sm font-medium leading-none">
+                    {crrDuration}
+                </small>
             {/if}
         </div>
     </div>
@@ -161,6 +164,7 @@
         </HoverCard.Trigger>
         <HoverCard.Content
             side="bottom"
+            align="start"
             sideOffset={0}
         >
             {#each timeTotals as total}

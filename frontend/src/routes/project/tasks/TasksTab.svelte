@@ -20,20 +20,5 @@
         {project}
         {data}
     />
-    <div>
-        {task.title}
-        <DueDate
-            {project}
-            {task}
-        />
-        <TimeEstimate
-            {project}
-            {task}
-        />
-        <Timer
-            {project}
-            {task}
-        />
-    </div>
     <KanbanBoard {project} />
 </Tabs.Content>

@@ -43,7 +43,7 @@
             <div class="flex items-center gap-1">
                 <CalendarDays size="12" />
                 {#if task.dueDate === 0}
-                    Add Due Date
+                    Due Date
                     <Plus size="15" />
                 {:else}
                     {new Date(task.dueDate).toLocaleString("default", { month: "long" })}

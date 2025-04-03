@@ -1,10 +1,15 @@
 <script lang="ts">
     import { ProjectState, Task, mouse } from "$lib/project_state.svelte"
     import * as ContextMenu from "$lib/components/ui/context-menu"
+    import { Accordion } from "bits-ui"
+    import DueDate from "./DueDate.svelte"
+    import TimeEstimate from "./TimeEstimate.svelte"
+    import Timer from "./Timer.svelte"
 
     let { project, task }: { project: ProjectState; task: Task } = $props()
 
-    let dueDate = $derived(new Date(task.dueDate))
+    let progress: number | undefined = $state()
+
     let assignees = $derived(
         task.assignees
             .map(id => project.users.find(user => user.id === id))
@@ -18,13 +23,74 @@
     let card: HTMLDivElement
 </script>
 
+{#snippet content()}
+    <Accordion.Root type="single">
+        <Accordion.Item
+            value="1"
+            class="group"
+        >
+            <Accordion.Header>
+                <Accordion.Trigger class="w-full">
+                    <h1 class="text-[1.2em]">
+                        {task.title}
+                    </h1>
+                    <p>
+                        {task.description}
+                    </p>
+                </Accordion.Trigger>
+            </Accordion.Header>
+            <Accordion.Content
+                class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+                onmousedown={e => {
+                    e.stopPropagation()
+                }}
+                onmouseup={e => {
+                    e.stopPropagation()
+                }}
+            >
+                <div class="grid grid-cols-3">
+                    <div class="col-span-1">
+                        <Timer
+                            {project}
+                            {task}
+                            bind:progress
+                        />
+                    </div>
+                    <div class="col-span-1">
+                        {#each assignees as assignee}
+                            <p>{assignee}</p>
+                        {/each}
+                    </div>
+                    <div class="col-span-1">
+                        <DueDate
+                            {project}
+                            {task}
+                        />
+                        <TimeEstimate
+                            {project}
+                            {task}
+                        />
+                    </div>
+                </div>
+            </Accordion.Content>
+        </Accordion.Item>
+    </Accordion.Root>
+
+    <div class="relative h-2 w-full overflow-hidden">
+        <div
+            class="absolute h-full w-full bg-primary transition-all"
+            style={`transform: translateX(-${100 - (progress ?? 0)}%)`}
+        ></div>
+    </div>
+{/snippet}
+
 <ContextMenu.Root>
     <ContextMenu.Trigger>
         <div
             bind:this={card}
-            class="task bg-muted"
-            role="listitem"
-            onmousedown={e => {
+            class="task bg- bg-muted"
+            role="presentation"
+            onmousedown={() => {
                 startX = mouse.x
                 startY = mouse.y
                 dragging = true
@@ -47,15 +113,7 @@
             }}
             style={dragging ? `top:${mouse.y - startY}px;left:${mouse.x - startX}px` : ``}
         >
-            <h1 class="text-[1.2em]">{task.title}</h1>
-            <p>{task.description}</p>
-            {#if task.dueDate !== 0}
-                <p class="date">{dueDate.toLocaleDateString()}</p>
-            {/if}
-
-            {#each assignees as assignee}
-                <p>{assignee}</p>
-            {/each}
+            {@render content()}
         </div>
     </ContextMenu.Trigger>
     <ContextMenu.Content>
@@ -77,11 +135,6 @@
         margin: 0.5em;
         border-radius: 0.5em;
         position: relative;
-    }
-
-    .date {
-        position: absolute;
-        top: 0px;
-        right: 0.4em;
+        overflow: hidden;
     }
 </style>
