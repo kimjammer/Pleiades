@@ -4,7 +4,7 @@
     import * as Dialog from "$lib/components/ui/dialog"
     import * as Form from "$lib/components/ui/form"
     import { Input } from "$lib/components/ui/input"
-    import { Toggle } from "$lib/components/ui/toggle"
+    import * as ToggleGroup from "$lib/components/ui/toggle-group"
     import type { ProjectState, Task } from "$lib/project_state.svelte"
     import { taskformSchema, type TaskFormSchema, type UserId } from "$lib/schema"
     import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms"
@@ -145,18 +145,23 @@
                     <Form.FieldErrors />
                 </Form.Field>
 
-                <!-- TODO: assignees -->
-                {#each project.users as user}
-                    <Toggle
-                        variant="outline"
-                        onclick={() => toggleUser(user.id)}
-                    >
-                        <UserAvatar
-                            {project}
-                            userID={user.id}
-                        />
-                    </Toggle>
-                {/each}
+                <ToggleGroup.Root
+                    type="multiple"
+                    variant="outline"
+                >
+                    {#each project.users as user}
+                        <ToggleGroup.Item
+                            value={user.id}
+                            class="p-3"
+                            onclick={() => toggleUser(user.id)}
+                        >
+                            <UserAvatar
+                                {project}
+                                userID={user.id}
+                            />
+                        </ToggleGroup.Item>
+                    {/each}
+                </ToggleGroup.Root>
                 <Dialog.Footer>
                     <Form.Button>Create!</Form.Button>
                 </Dialog.Footer>
