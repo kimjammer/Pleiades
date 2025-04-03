@@ -1,5 +1,5 @@
 <script lang="ts">
-    import BurndownChart from "$lib/components/BurndownChart.svelte"
+    import BurndownChart from "./BurndownChart.svelte"
     import * as Tabs from "$lib/components/ui/tabs/index.js"
     import type { ProjectState } from "$lib/project_state.svelte"
     import TimePiechart from "./TimePiechart.svelte"
@@ -8,6 +8,8 @@
 </script>
 
 <Tabs.Content value="stats">
-    <BurndownChart {project} />
-    <TimePiechart {project} />
+    <div class="flex flex-col gap-5">
+        <BurndownChart {project} />
+        <TimePiechart {project} />
+    </div>
 </Tabs.Content>

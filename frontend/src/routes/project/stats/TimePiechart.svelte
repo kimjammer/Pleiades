@@ -49,8 +49,13 @@
             {data}
         />
     {:else}
-        <p class="leading-7 [&:not(:first-child)]:mt-6">
-            Create a task with a due date and time estimate to see the burndown chart.
-        </p>
+        <div
+            class="flex w-full flex-col items-center justify-center rounded-xl border-4
+                    border-primary p-5"
+        >
+            <p class="leading-7 [&:not(:first-child)]:mt-6">
+                Record sessions to see the time breakdown pie chart.
+            </p>
+        </div>
     {/if}
 </div>

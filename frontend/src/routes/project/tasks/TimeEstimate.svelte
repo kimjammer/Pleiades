@@ -5,7 +5,7 @@
     import { Clock, X, Plus } from "lucide-svelte"
     import { Input } from "$lib/components/ui/input"
     import { Label } from "$lib/components/ui/label"
-    import type { ProjectState, Task } from "$lib/project_state.svelte"
+    import type { ProjectState, Task } from "$lib/project_state.svelte.js"
 
     let { project, task }: { project: ProjectState; task: Task } = $props()
 

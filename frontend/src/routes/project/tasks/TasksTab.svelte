@@ -1,7 +1,7 @@
 <script lang="ts">
-    import DueDate from "$lib/components/DueDate.svelte"
-    import TimeEstimate from "$lib/components/TimeEstimate.svelte"
-    import Timer from "$lib/components/Timer.svelte"
+    import DueDate from "./DueDate.svelte"
+    import TimeEstimate from "./TimeEstimate.svelte"
+    import Timer from "./Timer.svelte"
     import * as Tabs from "$lib/components/ui/tabs"
     import { type ProjectState, Task } from "$lib/project_state.svelte"
     import type { PageData } from "./$types"

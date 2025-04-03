@@ -23,6 +23,7 @@
         LineElement,
         LinearScale,
         PointElement,
+        Title,
         type ChartConfiguration,
         type ChartType,
         type DefaultDataPoint,
@@ -48,6 +49,7 @@
         PointElement,
         LineElement,
         Legend,
+        Title,
     )
 
     type TypedChartJS = ChartJS<TChartType, TChartData, TChartLabel>

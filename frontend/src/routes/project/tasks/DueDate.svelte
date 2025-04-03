@@ -5,7 +5,7 @@
     import { Calendar } from "$lib/components/ui/calendar"
     import * as Popover from "$lib/components/ui/popover"
     import { CalendarDays, X, Plus } from "lucide-svelte"
-    import type { ProjectState, Task } from "$lib/project_state.svelte"
+    import type { ProjectState, Task } from "$lib/project_state.svelte.js"
 
     let { project, task }: { project: ProjectState; task: Task } = $props()
 

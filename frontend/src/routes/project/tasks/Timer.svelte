@@ -2,7 +2,7 @@
     import { Button } from "$lib/components/ui/button"
     import * as HoverCard from "$lib/components/ui/hover-card"
     import { Play, Square } from "lucide-svelte"
-    import type { ProjectState, Task, Session } from "$lib/project_state.svelte"
+    import type { ProjectState, Task, Session } from "$lib/project_state.svelte.js"
     import { toast } from "svelte-sonner"
     import { onMount } from "svelte"
     import UserAvatar from "$lib/components/UserAvatar.svelte"
