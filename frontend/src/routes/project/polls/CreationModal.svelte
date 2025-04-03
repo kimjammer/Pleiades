@@ -41,9 +41,10 @@
     //     }
     // }
 
-    async function createPoll() {
+    async function createPoll(e: Event) {
         console.log("creating poll")
         console.log($formData)
+        e.preventDefault()
         const validationResult = await form.validateForm({ update: true })
         if (!validationResult.valid) return
         console.log(validationResult.data)

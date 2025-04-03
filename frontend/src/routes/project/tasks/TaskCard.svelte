@@ -5,6 +5,7 @@
     import DueDate from "./DueDate.svelte"
     import TimeEstimate from "./TimeEstimate.svelte"
     import Timer from "./Timer.svelte"
+    import { Button } from "$lib/components/ui/button"
 
     let { project, task }: { project: ProjectState; task: Task } = $props()
 
@@ -16,11 +17,26 @@
             .map(user => `${user?.firstName} ${user?.lastName}`),
     )
 
+    let assigned = $derived(task.assignees.includes(localStorage.myId))
+
     let dragging = $state(false)
     let startX: number = $state(0)
     let startY: number = $state(0)
 
     let card: HTMLDivElement
+
+    function changeTaskMembership() {
+        if (task.assignees.includes(localStorage.myId)) { //if an assignee of the task, leave
+            task.assignees = task.assignees.filter(id => id !== localStorage.myId)
+        } else { //if not an assignee, join
+            task.assignees.push(localStorage.myId)
+        }
+        //update in project
+        project.updateInProject(`Tasks[Id=${task.id}].Assignees`, task.assignees)
+        let assigned = task.assignees.includes(localStorage.myId)
+    }
+
+
 </script>
 
 {#snippet content()}
@@ -70,6 +86,13 @@
                             {project}
                             {task}
                         />
+                    </div>
+                    <div>
+                        {#if assigned}
+                            <Button variant="destructive" onclick={changeTaskMembership}>Leave Task</Button>
+                        {:else}
+                            <Button onclick={changeTaskMembership}>Join Task</Button>
+                        {/if}
                     </div>
                 </div>
             </Accordion.Content>
