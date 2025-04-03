@@ -1,8 +1,8 @@
 <script>
     import { goto } from "$app/navigation"
     import { base } from "$app/paths"
-    import { Button } from "$lib/components/ui/button/index"
     import PleiadesNav from "$lib/components/PleiadesNav.svelte"
+    import { Button } from "$lib/components/ui/button/index"
 </script>
 
 <PleiadesNav />
@@ -24,7 +24,7 @@
     </div>
     <div class="flex content-center justify-center">
         <Button
-            onclick={() => goto(base + "/registration")}
+            onclick={() => goto(base + (localStorage.myId ? "/login" : "/registration"))}
             size="lg"
         >
             Get Started

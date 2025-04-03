@@ -34,7 +34,8 @@
             toast.error("Failed to logout")
             return
         }
-        localStorage.removeItem("myId")
+        // do not remove myId from localStorage because it is usedto determine
+        // if user has an account and should be directed to register or login page
         toast.success("Logged out")
         loggedIn = false
         await goto(base + "/")
