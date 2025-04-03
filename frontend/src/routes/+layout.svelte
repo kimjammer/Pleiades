@@ -2,8 +2,9 @@
     import { Toaster } from "$lib/components/ui/sonner/index"
     import { ModeWatcher } from "mode-watcher"
     import "../app.css"
+    let { children } = $props()
 </script>
 
 <ModeWatcher />
 <Toaster richColors />
-<slot></slot>
+{@render children()}
