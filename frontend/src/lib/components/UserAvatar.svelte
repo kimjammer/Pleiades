@@ -30,8 +30,24 @@
         }
     })
 
-    let initial = $derived.by(() => {
-        if (project == null) return ""
+    let initial = $derived.by(async () => {
+        if (project == null) {
+            const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/fetchName?id=" + userID, {
+                method: "GET",
+                mode: "cors",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+            })
+
+            if (!res.ok) {
+                throw new Error("User not found")
+            }
+            const data = await res.json();
+            const firstName = data.firstName || ""
+            const lastName = data.lastName || ""
+            console.log(firstName.charAt(0) + lastName.charAt(0))
+            return (firstName.charAt(0) + lastName.charAt(0))
+        }
         let user = project.users.find(user => user.id === userID)
         if (user) {
             return (user.firstName[0] + user.lastName[0]).toUpperCase()
@@ -45,5 +61,7 @@
     {#await image then image}
         <Avatar.Image src={image} />
     {/await}
-    <Avatar.Fallback>{initial}</Avatar.Fallback>
+    {#await initial then initial}
+        <Avatar.Fallback>{initial}</Avatar.Fallback>
+    {/await}
 </Avatar.Root>

@@ -47,6 +47,7 @@ func defineRoutes(router *gin.Engine) {
 	router.GET("/userInfo", authRequired(), getUserInfo) //TODO: remove this
 	router.POST("/profilepic", authRequired(), uploadProfilePic)
 	router.GET("/getprofilepic", authRequired(), getProfilePic)
+	router.GET("/fetchName", authRequired(), fetchName)
 }
 
 func defineTestRoutes(router *gin.Engine) {

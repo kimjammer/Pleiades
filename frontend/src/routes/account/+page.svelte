@@ -56,6 +56,10 @@
 </div>
 
 <div class="grid w-full max-w-sm items-center gap-1.5">
+    <UserAvatar
+            project={null}
+            userID={localStorage.myId}
+    />
     <Label>Upload Profile Picture</Label>
     <!-- Trigger file input -->
     <Input
@@ -63,9 +67,5 @@
         type="file"
         accept="image/png, image/jpeg"
         onchange={handleFileSelect}
-    />
-    <UserAvatar
-        project={null}
-        userID={localStorage.myId}
     />
 </div>

@@ -429,6 +429,17 @@ func getProfilePic(c *gin.Context) {
 	c.Writer.Write(crrUser.UserPhoto)
 }
 
+func fetchName(c *gin.Context) {
+	//Get user
+	crrUser, err := getUserById(c, c.Query("id"))
+	if err != nil {
+		// TODO: convert to middleware
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"firstName": crrUser.FirstName, "lastName": crrUser.LastName})
+}
+
 // TEMPORARY
 func listUsers() {
 	collection := db.Collection("users") // Reference the "users" collection

@@ -81,8 +81,11 @@
                 size="icon"
                 variant="secondary"
             >
-                <UserRound />
-
+<!--                <UserRound />-->
+                <UserAvatar
+                        project={null}
+                        userID={localStorage.myId}
+                />
             </Button>
             <Button
                 onclick={logout}
