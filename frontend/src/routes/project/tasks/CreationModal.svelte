@@ -1,14 +1,14 @@
 <script lang="ts">
+    import UserAvatar from "$lib/components/UserAvatar.svelte"
     import { buttonVariants } from "$lib/components/ui/button"
     import * as Dialog from "$lib/components/ui/dialog"
     import * as Form from "$lib/components/ui/form"
     import { Input } from "$lib/components/ui/input"
+    import { Toggle } from "$lib/components/ui/toggle"
     import type { ProjectState, Task } from "$lib/project_state.svelte"
-    import { taskformSchema, type TaskFormSchema } from "$lib/schema"
+    import { taskformSchema, type TaskFormSchema, type UserId } from "$lib/schema"
     import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms"
     import { zodClient } from "sveltekit-superforms/adapters"
-    import UserAvatar from "$lib/components/UserAvatar.svelte"
-    import { Toggle } from "$lib/components/ui/toggle";
 
     let {
         project,
@@ -23,11 +23,11 @@
     const { form: formData } = form
 
     //For assigning users
-    let toggledUsers = new Map();
+    let toggledUsers = new Map<UserId, boolean>()
 
-    function toggleUser(userID) {
+    function toggleUser(userID: UserId) {
         // Flip user's toggle state
-        toggledUsers.set(userID, !toggledUsers.get(userID));
+        toggledUsers.set(userID, !toggledUsers.get(userID))
     }
 
     async function createTask(e: Event) {
@@ -47,10 +47,16 @@
             kanbanColumn: "",
             completed: false,
             sessions: [],
-            assignees: Array.from(toggledUsers.entries()).filter(([_, value]) => value).map(([userID]) => userID)
+            assignees: Array.from(toggledUsers.entries())
+                .filter(([_, value]) => value)
+                .map(([userID]) => userID),
         } satisfies Task)
         console.log("assigned users:")
-        console.log(Array.from(toggledUsers.entries()).filter(([_, value]) => value).map(([userID]) => userID))
+        console.log(
+            Array.from(toggledUsers.entries())
+                .filter(([_, value]) => value)
+                .map(([userID]) => userID),
+        )
         createDialogOpen = false
         form.reset()
     }
@@ -141,21 +147,20 @@
 
                 <!-- TODO: assignees -->
                 {#each project.users as user}
-                    <Toggle variant="outline" onclick={() => toggleUser(user.id)}>
+                    <Toggle
+                        variant="outline"
+                        onclick={() => toggleUser(user.id)}
+                    >
                         <UserAvatar
-                                {project}
-                                userID={user.id}
+                            {project}
+                            userID={user.id}
                         />
                     </Toggle>
-
                 {/each}
                 <Dialog.Footer>
                     <Form.Button>Create!</Form.Button>
                 </Dialog.Footer>
             </form>
-
-
-
         </Dialog.Header>
     </Dialog.Content>
 </Dialog.Root>

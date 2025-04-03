@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+export type UserId = string
+
 export type ProjectsResponse = {
     projects: minimalProject[]
 }

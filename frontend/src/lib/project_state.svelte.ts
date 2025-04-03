@@ -1,6 +1,7 @@
 import { goto } from "$app/navigation"
 import { base } from "$app/paths"
 import { PUBLIC_API_HOST, PUBLIC_WS_PROTOCOL } from "$env/static/public"
+import type { UserId } from "./schema"
 
 class Mouse {
     x = $state(0)
@@ -249,7 +250,7 @@ export class Availability {
 }
 
 export class UserInProject {
-    id: string = $state("")
+    id: UserId = $state("")
     leftProject: boolean = $state(false)
     firstName: string = $state("")
     lastName: string = $state("")
@@ -261,7 +262,7 @@ export class Session {
     id: string = $state("")
     startTime: number = $state(0)
     endTime: number = $state(0)
-    user: string = $state("")
+    user: UserId = $state("")
 }
 
 export class Task {
@@ -273,15 +274,15 @@ export class Task {
     timeEstimate: number = $state(0)
     completed: boolean = $state(false)
     sessions: Session[] = $state([])
-    assignees: string[] = $state([])
+    assignees: UserId[] = $state([])
 }
 
 export class Option {
     id: string = $state("")
     title: string = $state("")
-    likedUsers: string[] = $state([])
-    neutralUsers: string[] = $state([])
-    dislikedUsers: string[] = $state([])
+    likedUsers: UserId[] = $state([])
+    neutralUsers: UserId[] = $state([])
+    dislikedUsers: UserId[] = $state([])
 }
 
 export class Poll {

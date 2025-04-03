@@ -1,9 +1,10 @@
 <script lang="ts">
-    import * as Avatar from "$lib/components/ui/avatar"
     import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
+    import * as Avatar from "$lib/components/ui/avatar"
     import type { ProjectState } from "$lib/project_state.svelte"
+    import type { UserId } from "$lib/schema"
 
-    let { project, userID }: { project: ProjectState | null; userID: string } = $props()
+    let { project, userID }: { project: ProjectState | null; userID: UserId } = $props()
 
     let image: Promise<string | null | undefined> = $derived.by(async () => {
         const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/getprofilepic?id=" + userID, {
@@ -42,11 +43,11 @@
             if (!res.ok) {
                 throw new Error("User not found")
             }
-            const data = await res.json();
+            const data = await res.json()
             const firstName = data.firstName || ""
             const lastName = data.lastName || ""
             console.log(firstName.charAt(0) + lastName.charAt(0))
-            return (firstName.charAt(0) + lastName.charAt(0))
+            return firstName.charAt(0) + lastName.charAt(0)
         }
         let user = project.users.find(user => user.id === userID)
         if (user) {
