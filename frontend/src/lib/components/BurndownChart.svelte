@@ -1,7 +1,6 @@
 <script lang="ts">
     import Chart, { type ChartData } from "$lib/components/Chart.svelte"
     import type { ProjectState, Session } from "$lib/project_state.svelte"
-    import { onMount } from "svelte"
 
     let { project }: { project: ProjectState } = $props()
 
@@ -21,7 +20,11 @@
         ],
     })
 
-    onMount(() => {
+    $effect(() => {
+        console.log("Updating chart")
+
+        //TODO: Refactor this terrible code with sensible time zone handling
+
         //Get all tasks with due dates and time estimates
         let tasks = project.tasks.filter(task => task.dueDate && task.timeEstimate)
 
@@ -42,8 +45,6 @@
                 }
             })
         })
-
-        console.log(sessions)
 
         //Get range for graph
         let start = project.created
@@ -66,20 +67,17 @@
         let endDate = new Date(end)
 
         while (currentDate <= endDate) {
-            console.log(currentDate.getTime())
             labels.push(currentDate.toLocaleDateString())
 
             //For each task not past due date, calculate idea progress towards time estimate
             let idealTime = tasks.reduce((total, task) => {
                 if (task.dueDate >= currentDate.getTime()) {
-                    console.log("task not done", task.title)
                     return (
                         total +
                         (task.timeEstimate / (task.dueDate - start)) *
                             (currentDate.getTime() - start)
                     )
                 } else {
-                    console.log("task done", task.title)
                     return total + task.timeEstimate
                 }
             }, 0)
@@ -89,7 +87,6 @@
             let actualTime = sessions.reduce((total, session) => {
                 //If session was completed on or before current date
                 if (session.endTime <= currentDate.getTime()) {
-                    console.log("adding time", session.endTime - session.startTime)
                     return total + (session.endTime - session.startTime)
                 }
 
