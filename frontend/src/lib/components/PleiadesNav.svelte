@@ -3,11 +3,11 @@
     import { base } from "$app/paths"
     import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
     import { Button } from "$lib/components/ui/button"
-    import { Home, LogOut, Moon, Sun, UserRound } from "lucide-svelte"
+    import UserAvatar from "$lib/components/UserAvatar.svelte"
+    import { Home, LogOut, Moon, Sun } from "lucide-svelte"
     import { toggleMode } from "mode-watcher"
     import { onMount } from "svelte"
     import { toast } from "svelte-sonner"
-    import UserAvatar from "$lib/components/UserAvatar.svelte";
 
     let loggedIn = $state(false)
     async function verifySession() {
@@ -50,7 +50,7 @@
 
 <div class="flex justify-between border-b p-5">
     <div>
-        <a href={base + "/"}>
+        <a href={base + (loggedIn ? "/home" : "/")}>
             <h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Pleiades</h1>
         </a>
     </div>
@@ -81,10 +81,10 @@
                 size="icon"
                 variant="secondary"
             >
-<!--                <UserRound />-->
+                <!--                <UserRound />-->
                 <UserAvatar
-                        project={null}
-                        userID={localStorage.myId}
+                    project={null}
+                    userID={localStorage.myId}
                 />
             </Button>
             <Button
@@ -93,7 +93,6 @@
             >
                 <LogOut />
             </Button>
-
         {:else}
             <Button href={base + "/login"}>Login</Button>
         {/if}
