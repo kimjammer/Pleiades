@@ -36,7 +36,9 @@
                 <div>
                     <Button onclick={() => handlePollClick(poll)}>
                         {poll.title}
-<!--                        DueDate: {poll.dueDate}-->
+                        <div>
+                            Due: {poll.dueDate}
+                        </div>
                     </Button>
                 </div>
             {/each}
