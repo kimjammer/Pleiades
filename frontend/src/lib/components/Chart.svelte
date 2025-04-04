@@ -31,6 +31,7 @@
         type DefaultDataPoint,
     } from "chart.js"
     import { onDestroy, onMount } from "svelte"
+    import type { HTMLCanvasAttributes } from "svelte/elements"
 
     let {
         type,
@@ -38,7 +39,7 @@
         options = undefined,
         plugins = [],
         ...props
-    }: ChartConfiguration<TChartType, TChartData, TChartLabel> = $props()
+    }: ChartConfiguration<TChartType, TChartData, TChartLabel> & HTMLCanvasAttributes = $props()
 
     //Register graph types that can be used
     ChartJS.register(

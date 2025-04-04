@@ -39,7 +39,7 @@
     })
 </script>
 
-<div>
+<div style="max-width: 500px; aspect-ratio: 1;">
     {#if dataAvailable}
         <Chart
             type="pie"

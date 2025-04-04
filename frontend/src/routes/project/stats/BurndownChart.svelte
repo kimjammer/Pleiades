@@ -141,7 +141,7 @@
     }
 </script>
 
-<div>
+<div style="max-width: 500px; aspect-ratio: 2;">
     {#if dataAvailable}
         <Chart
             type="line"
@@ -150,8 +150,8 @@
         />
     {:else}
         <div
-            class="flex w-full flex-col items-center justify-center rounded-xl border-4
-                    border-primary p-5"
+            class="border-primary flex w-full flex-col items-center justify-center rounded-xl
+                    border-4 p-5"
         >
             <p class="leading-7 [&:not(:first-child)]:mt-6">
                 Create a task with a due date and time estimate to see the burndown chart.
