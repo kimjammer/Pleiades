@@ -44,6 +44,13 @@
         <Chart
             type="pie"
             data={$state.snapshot(data) as any}
+            options={{
+                plugins: {
+                    tooltip: {
+                        callbacks: { label: ({ formattedValue }) => formattedValue + " hr" },
+                    },
+                },
+            }}
         />
     {:else}
         <div

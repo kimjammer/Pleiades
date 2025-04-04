@@ -26,6 +26,7 @@
         PieController,
         PointElement,
         Title,
+        Tooltip,
         type ChartConfiguration,
         type ChartType,
         type DefaultDataPoint,
@@ -55,6 +56,7 @@
         Title,
         PieController,
         ArcElement,
+        Tooltip,
     )
 
     type TypedChartJS = ChartJS<TChartType, TChartData, TChartLabel>
