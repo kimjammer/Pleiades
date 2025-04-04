@@ -56,8 +56,8 @@
 
         // nlp time estimate
         let totalHourEstimate = 0
-        const minutesMatch = newVal.match(/(\d+) ?min(?:utes?)?/)!
-        const hoursMatch = newVal.match(/(\d+) ?(?:h|hours?|hrs?)/)!
+        const minutesMatch = newVal.match(/(\d+)(?:m| *min(?:utes?)?)(?: |$|\d)/)
+        const hoursMatch = newVal.match(/(\d+)(?:h| *(?:hours?|hrs?))(?: |$|\d)/)
 
         if (hoursMatch) {
             const { [0]: fullMatch, [1]: hourVal } = hoursMatch
