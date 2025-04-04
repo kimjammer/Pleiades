@@ -35,16 +35,20 @@
 
     const onTitleChange: FormEventHandler<HTMLInputElement> = ev => {
         const newVal = (ev.target as HTMLInputElement).value
-        // Date input can't handle Date objects ironically, so I'm using this SO workaround: https://stackoverflow.com/a/29774197
-        let parsedDate = chrono.parseDate(newVal, new Date())
-        const parseResult = chrono.parse(newVal, new Date())
-        debugger
-        if (parsedDate) {
-            console.log(parsedDate.getTime())
+        const parseResult = chrono.parse(newVal, new Date())[0]
+        if (parseResult) {
+            let parsedDate = parseResult.date()
+            // Date input can't handle Date objects ironically, so I'm using this workaround
+            // to ensure when converting to ISO string (UTC) it remains the correct date: https://stackoverflow.com/a/29774197
             const offset = parsedDate.getTimezoneOffset()
             parsedDate = new Date(parsedDate.getTime() - offset * 60 * 1000)
             const dueDate = parsedDate.toISOString().split("T")[0]
-            form.form.update(form => ({ ...form, dueDate }))
+
+            form.form.update(form => ({
+                ...form,
+                dueDate,
+                title: form.title.replace(parseResult.text, "").trim(),
+            }))
         }
     }
 
