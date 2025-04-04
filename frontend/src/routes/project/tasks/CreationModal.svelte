@@ -7,6 +7,9 @@
     import * as ToggleGroup from "$lib/components/ui/toggle-group"
     import type { ProjectState, Task } from "$lib/project_state.svelte"
     import { taskformSchema, type TaskFormSchema, type UserId } from "$lib/schema"
+    import { debounce } from "$lib/utils"
+    import * as chrono from "chrono-node"
+    import type { FormEventHandler } from "svelte/elements"
     import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms"
     import { zodClient } from "sveltekit-superforms/adapters"
 
@@ -28,6 +31,21 @@
     function toggleUser(userID: UserId) {
         // Flip user's toggle state
         toggledUsers.set(userID, !toggledUsers.get(userID))
+    }
+
+    const onTitleChange: FormEventHandler<HTMLInputElement> = ev => {
+        const newVal = (ev.target as HTMLInputElement).value
+        // Date input can't handle Date objects ironically, so I'm using this SO workaround: https://stackoverflow.com/a/29774197
+        let parsedDate = chrono.parseDate(newVal, new Date())
+        const parseResult = chrono.parse(newVal, new Date())
+        debugger
+        if (parsedDate) {
+            console.log(parsedDate.getTime())
+            const offset = parsedDate.getTimezoneOffset()
+            parsedDate = new Date(parsedDate.getTime() - offset * 60 * 1000)
+            const dueDate = parsedDate.toISOString().split("T")[0]
+            form.form.update(form => ({ ...form, dueDate }))
+        }
     }
 
     async function createTask(e: Event) {
@@ -83,6 +101,7 @@
                             <Input
                                 {...props}
                                 bind:value={$formData.title}
+                                oninput={debounce(onTitleChange, 1000)}
                             />
                         {/snippet}
                     </Form.Control>
@@ -156,7 +175,6 @@
                             onclick={() => toggleUser(user.id)}
                         >
                             <UserAvatar
-
                                 {project}
                                 userID={user.id}
                             />
