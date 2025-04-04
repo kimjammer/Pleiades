@@ -97,7 +97,7 @@
         border: 1px solid black;
         padding: 5px;
         width: calc(100% / 7);
-        height: calc(100vw / 7);
+        height: calc(100vh / 7);
     }
 
     th {
