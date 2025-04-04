@@ -252,16 +252,7 @@ func join(c *gin.Context) {
 		return
 	}
 
-	// Add project to user
 	userId := c.GetString("userId")
-	objId, _ := primitive.ObjectIDFromHex(userId)
-	filter := bson.D{{Key: "_id", Value: objId}, {Key: "projects", Value: bson.M{"$ne": invitation.ProjectId}}}
-	update := bson.M{"$push": bson.M{"projects": invitation.ProjectId}}
-	_, err = db.Collection("users").UpdateOne(c, filter, update)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
-		return
-	}
 
 	// Add user to project
 	err = updateProject(invitation.ProjectId, func(project *Project) error {
@@ -281,6 +272,16 @@ func join(c *gin.Context) {
 	}
 
 	requeryUsersForProject(invitation.ProjectId)
+
+	// Add project to user
+	objId, _ := primitive.ObjectIDFromHex(userId)
+	filter := bson.D{{Key: "_id", Value: objId}, {Key: "projects", Value: bson.M{"$ne": invitation.ProjectId}}}
+	update := bson.M{"$push": bson.M{"projects": invitation.ProjectId}}
+	_, err = db.Collection("users").UpdateOne(c, filter, update)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
 
 	c.String(http.StatusOK, "success")
 }

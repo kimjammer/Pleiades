@@ -6,6 +6,7 @@ Week 6 (Summary) (Scrum Master: John Kim)
 4/2 9cc509f 2hr Drop & drop + bug fixes
 4/2 0b42644 2hr Make styling work with dark mode and simplify synchronization with wait groups
 4/2 2086e31 2hr Make drag&drop better
+4/3 99cafe2 0.5hr Fix parsing from server
 
 Week 6 (Summary) (Scrum Master: John Kim)
 [Meetings]

@@ -26,17 +26,17 @@
     let card: HTMLDivElement
 
     function changeTaskMembership() {
-        if (task.assignees.includes(localStorage.myId)) { //if an assignee of the task, leave
+        if (task.assignees.includes(localStorage.myId)) {
+            //if an assignee of the task, leave
             task.assignees = task.assignees.filter(id => id !== localStorage.myId)
-        } else { //if not an assignee, join
+        } else {
+            //if not an assignee, join
             task.assignees.push(localStorage.myId)
         }
         //update in project
         project.updateInProject(`Tasks[Id=${task.id}].Assignees`, task.assignees)
         let assigned = task.assignees.includes(localStorage.myId)
     }
-
-
 </script>
 
 {#snippet content()}
@@ -89,7 +89,10 @@
                     </div>
                     <div>
                         {#if assigned}
-                            <Button variant="destructive" onclick={changeTaskMembership}>Leave Task</Button>
+                            <Button
+                                variant="destructive"
+                                onclick={changeTaskMembership}>Leave Task</Button
+                            >
                         {:else}
                             <Button onclick={changeTaskMembership}>Join Task</Button>
                         {/if}
@@ -140,11 +143,6 @@
         </div>
     </ContextMenu.Trigger>
     <ContextMenu.Content>
-        <ContextMenu.Item
-            onclick={() => {
-                // Todo
-            }}>Assign</ContextMenu.Item
-        >
         <ContextMenu.Item
             onclick={() => {
                 project.deleteInProject(`Tasks[Id=${task.id}]`)
