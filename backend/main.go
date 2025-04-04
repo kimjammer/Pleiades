@@ -61,6 +61,8 @@ func main() {
 		dbName = "pleiades-test"
 	}
 
+	//backend change for demo
+
 	//Connect to database
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")

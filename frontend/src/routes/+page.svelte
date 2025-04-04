@@ -19,7 +19,7 @@
     <div class="flex content-center justify-center pb-5">
         <h3 class="max-w-lg scroll-m-20 text-center text-lg font-normal tracking-tight sm:text-2xl">
             Real-time collaborative task boards for students. Share tasks, track progress, and
-            succeed together.
+            succeed together. WOW NEW WORDS EPIC
         </h3>
     </div>
     <div class="flex content-center justify-center">
