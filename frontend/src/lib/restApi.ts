@@ -1,6 +1,6 @@
 import { goto } from "$app/navigation"
-import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
 import { base } from "$app/paths"
+import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
 
 export async function joinProject(projectId: string) {
     const resp = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/join" + location.search, {
@@ -14,9 +14,17 @@ export async function joinProject(projectId: string) {
     return resp
 }
 
+/**
+ * @returns true if success, false otherwise. Used to determine if should continue to home
+ */
 export async function tryJoinProject() {
     const params = new URLSearchParams(location.search)
     const projectId = params.get("project")
+    const joinId = params.get("id")
+    if (projectId && !joinId) {
+        goto(base + "/project?id=" + projectId)
+        return true
+    }
     if (projectId === null) return false
     await joinProject(projectId)
     return true

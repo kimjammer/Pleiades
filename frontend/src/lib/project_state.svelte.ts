@@ -59,7 +59,7 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
 
             if (text == "UNAUTHORIZED") {
                 this.close()
-                goto(base + "/login")
+                goto(base + "/login?project=" + projectId)
                 return
             }
 
