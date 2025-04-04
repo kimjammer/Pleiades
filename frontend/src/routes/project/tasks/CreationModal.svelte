@@ -34,7 +34,9 @@
     }
 
     const onTitleChange: FormEventHandler<HTMLInputElement> = ev => {
-        const newVal = (ev.target as HTMLInputElement).value
+        let newVal = (ev.target as HTMLInputElement).value
+
+        // nlp date
         const parseResult = chrono.parse(newVal, new Date())[0]
         if (parseResult) {
             let parsedDate = parseResult.date()
@@ -44,12 +46,35 @@
             parsedDate = new Date(parsedDate.getTime() - offset * 60 * 1000)
             const dueDate = parsedDate.toISOString().split("T")[0]
 
+            newVal = newVal.replace(parseResult.text, "").trim()
             form.form.update(form => ({
                 ...form,
                 dueDate,
-                title: form.title.replace(parseResult.text, "").trim(),
+                title: newVal,
             }))
         }
+
+        // nlp time estimate
+        let totalHourEstimate = 0
+        const minutesMatch = newVal.match(/(\d+) ?min(?:utes?)?/)!
+        const hoursMatch = newVal.match(/(\d+) ?(?:h|hours?|hrs?)/)!
+
+        if (hoursMatch) {
+            const { [0]: fullMatch, [1]: hourVal } = hoursMatch
+            newVal = newVal.replace(fullMatch, "").trim()
+            totalHourEstimate = Number.parseInt(hourVal)
+        }
+        if (minutesMatch) {
+            const { [0]: fullMatch, [1]: minuteVal } = minutesMatch
+            newVal = newVal.replace(fullMatch, "").trim()
+            totalHourEstimate = Number.parseInt(minuteVal) / 60
+        }
+
+        form.form.update(form => ({
+            ...form,
+            timeEstimate: form.timeEstimate + totalHourEstimate,
+            title: newVal,
+        }))
     }
 
     async function createTask(e: Event) {
