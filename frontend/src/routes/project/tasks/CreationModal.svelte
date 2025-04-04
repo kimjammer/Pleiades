@@ -56,18 +56,18 @@
 
         // nlp time estimate
         let totalHourEstimate = 0
-        const minutesMatch = newVal.match(/(\d+)(?:m| *min(?:utes?)?)(?: |$|\d)/)
-        const hoursMatch = newVal.match(/(\d+)(?:h| *(?:hours?|hrs?))(?: |$|\d)/)
+        const minutesMatch = newVal.match(/(\d+)(?:m| *min(?:utes?)?)(?= |$|\d)/)
+        const hoursMatch = newVal.match(/(\d+)(?:h| *(?:hours?|hrs?))(?= |$|\d)/)
 
         if (hoursMatch) {
             const { [0]: fullMatch, [1]: hourVal } = hoursMatch
             newVal = newVal.replace(fullMatch, "").trim()
-            totalHourEstimate = Number.parseInt(hourVal)
+            totalHourEstimate += Number.parseInt(hourVal)
         }
         if (minutesMatch) {
             const { [0]: fullMatch, [1]: minuteVal } = minutesMatch
             newVal = newVal.replace(fullMatch, "").trim()
-            totalHourEstimate = Number.parseInt(minuteVal) / 60
+            totalHourEstimate += Number.parseInt(minuteVal) / 60
         }
 
         form.form.update(form => ({
@@ -186,6 +186,7 @@
                                 {...props}
                                 type="number"
                                 min="0"
+                                step="0.01"
                                 bind:value={$formData.timeEstimate}
                             />
                         {/snippet}
