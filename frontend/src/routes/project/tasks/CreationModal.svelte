@@ -84,11 +84,15 @@
         const validationResult = await form.validateForm({ update: true })
         if (!validationResult.valid) return
         console.log(validationResult.data)
+
+        const offset = new Date().getTimezoneOffset()
+
+        debugger
         project.appendInProject("Tasks", {
             ...validationResult.data,
             id: crypto.randomUUID(),
             dueDate: validationResult.data.dueDate
-                ? new Date(validationResult.data.dueDate).getTime()
+                ? new Date(validationResult.data.dueDate).getTime() + offset * 60 * 1000
                 : 0,
             timeEstimate: validationResult.data.timeEstimate * 60 * 60 * 1000,
             kanbanColumn: "",

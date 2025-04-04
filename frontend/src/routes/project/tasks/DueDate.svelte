@@ -1,15 +1,17 @@
 <script lang="ts">
-    import { CalendarDate, type DateValue, getLocalTimeZone } from "@internationalized/date"
-    import { Button } from "bits-ui"
     import { Badge } from "$lib/components/ui/badge"
     import { Calendar } from "$lib/components/ui/calendar"
     import * as Popover from "$lib/components/ui/popover"
-    import { CalendarDays, X, Plus } from "lucide-svelte"
     import type { ProjectState, Task } from "$lib/project_state.svelte.js"
+    import { CalendarDate, type DateValue, getLocalTimeZone } from "@internationalized/date"
+    import { Button } from "bits-ui"
+    import { CalendarDays, Plus, X } from "lucide-svelte"
 
     let { project, task }: { project: ProjectState; task: Task } = $props()
 
     let dueDateInit = new Date(task.dueDate)
+    console.log(task)
+    debugger
     let dueDayPreComp =
         task.dueDate === 0
             ? undefined
@@ -51,7 +53,7 @@
                     {new Date(task.dueDate).toLocaleString("default", { day: "numeric" })}
                     <Button.Root
                         class="
-        inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+        ring-offset-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
         disabled:pointer-events-none disabled:opacity-50"
                         onclick={handleDelete}
                     >
