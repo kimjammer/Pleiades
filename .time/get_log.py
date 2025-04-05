@@ -12,7 +12,7 @@ def process_git_log():
         cleaned = re.sub(r'\s*\([^)]+\)', '', line)
         try:
             time = extracted[0]
-            total_time += float(time.replace("hr", ""))
+            total_time += float(re.sub(r'[^\d.]', '', time))
         except (IndexError, ValueError):
             time = "\t"
         [date, git_hash, *msg] = cleaned.split(" ")

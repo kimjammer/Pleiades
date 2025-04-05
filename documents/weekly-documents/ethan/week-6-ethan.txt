@@ -43,4 +43,4 @@ Week 6 (Summary)
 2025-04-04 3e32244       Add better project description
 2025-04-05 def422f 0.34hr Make script to convert to report format
 
-total time: 7.81
+total time: 8.7
