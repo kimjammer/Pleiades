@@ -26,3 +26,9 @@ Week 6 (Summary)
 4/1  1hr   00f1a45 Burnup chart
 4/2  2hr   3a000a3 Integrate chips with card
 4/3  1hr   n/a     Test burndown chart and create demo data for sprint review
+
+Week 7 (Plan)
+4/8  2hr   Start refactoring due dates
+4/9  1.5hr Finish refactoring due dates
+4/11 3hr   Refactor session aggregation
+4/12 3hr   Add toggling to stacked burndown chart and test
