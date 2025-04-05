@@ -3,8 +3,12 @@
 Week 6 (Summary) (Scrum Master: John Kim)
 2025-03-31 51fbec0       Add my logs
 2025-03-31 689aba2       Time tracking
+3/31 1hr   3657da3 Display pfps for session list
 2025-03-31 b37820a 0.24hr Fix SameSite logout header unset
 2025-03-31 df55430 0.01hr Create week 6 doc
+4/1  0.5hr 75cd573 Start burndown chart
+4/1  2hr   6cca764 Integrate chips with task
+4/1  1hr   00f1a45 Burnup chart
 4/2 050b2f4 2hr Basic kanban board stuff
 4/2 8e04d27 1hr Task deletion
 4/2 9cc509f 2hr Drop & drop + bug fixes
@@ -24,6 +28,7 @@ Week 6 (Summary) (Scrum Master: John Kim)
 2025-04-02 4698490 0.05hr document
 2025-04-02 1f9cc8b 0.97hr Remove redundant types
 2025-04-02 e8303f2 0.28hr Fix remaining type errors
+4/2  2hr   3a000a3 Integrate chips with card
 4/3 99cafe2 0.5hr Fix parsing from server
 2025-04-03 fd89078       Style title
 2025-04-03 478005c 0.7hr Fix pie chart calculations
@@ -33,6 +38,7 @@ Week 6 (Summary) (Scrum Master: John Kim)
 2025-04-03 9781c08 0.06hr Go home instead of landing if logged in
 2025-04-03 7dfc175 0.13hr Go to login if already have account from landing
 2025-04-03 3a522e8 0.03hr Fix type error
+4/3  1hr   n/a     Test burndown chart and create demo data for sprint review
 2025-04-04 b03b63f 0.47hr auto direct back to project page if signed out
 2025-04-04 a31688a 0.59hr Fix chart sizing/aspect
 2025-04-04 3fa95af 0.19hr Add tooltip
@@ -50,9 +56,11 @@ Week 6 (Summary) (Scrum Master: John Kim)
 
 Week 6 (Summary) (Scrum Master: John Kim)
 [Meetings]
+3/31 Sync on blockers and remaining tasks for the sprint
+4/2  Review progress, fix bugs that caused backend to crash
 
 [Individual goals]
 Henry: Finish all of my user stories now that websockets works
-John: Create burndown chart component and integrate components into task cards
-Cate: Implement adding users to tasks and write tests for this sprint
+John: Refactor due dates and burndown chart to be consistent across timezones
+Cate:
 Ethan: Implement pie chart and nlp processing for text input
