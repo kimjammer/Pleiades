@@ -1,5 +1,46 @@
 === Weekly Individual Report (Team 5: Pleiades) ===
 Name: Ethan Dawes
 
-Week 6 (Plan)
-3/31 0.24hr b37820a970aca9073efd5cb74992cd4bef77171e Fix SameSite logout header unset
+Week 6 (Summary)
+2025-03-31 51fbec0       Add my logs
+2025-03-31 689aba2       Time tracking
+2025-03-31 b37820a 0.24hr Fix SameSite logout header unset
+2025-03-31 df55430 0.01hr Create week 6 doc
+2025-04-02 59a0436 meta More time tracking
+2025-04-02 1530eee 0.01hr Add post start command
+2025-04-02 c23c4c2 0.26hr Fix prod redirection issue
+2025-04-02 86fe2c3 0.66hr Load and show team members
+2025-04-02 e375c67 0.06hr Add contact buttons
+2025-04-02 29b2560 0.05hr style
+2025-04-02 db7dd05 0.14hr Add typing information
+2025-04-02 5fb9e27 0.06hr Teammate list: show profile pictures
+2025-04-02 0e0aeaa 0.69hr Set up scaffolding for pie chart, add typescript
+2025-04-02 11633fc       Create Sprint 2 Planning
+2025-04-02 8a5fb2f 0.15hr use absolute path
+2025-04-02 4698490 0.05hr document
+2025-04-02 1f9cc8b 0.97hr Remove redundant types
+2025-04-02 e8303f2 0.28hr Fix remaining type errors
+2025-04-03 fd89078       Style title
+2025-04-03 478005c 0.7hr Fix pie chart calculations
+2025-04-03 1010ca7 0.19hr Create UserID type
+2025-04-03 6509a5e 0.25hr Restyle assignment selector new task
+2025-04-03 30e84cb 0.08hr Revert "use svelte4 syntax" Commit 35b9fbb72e4e3b804567a47f1b36fa8f7a4c0f10
+2025-04-03 9781c08 0.06hr Go home instead of landing if logged in
+2025-04-03 7dfc175 0.13hr Go to login if already have account from landing
+2025-04-03 3a522e8 0.03hr Fix type error
+2025-04-04 b03b63f 0.47hr auto direct back to project page if signed out
+2025-04-04 a31688a 0.59hr Fix chart sizing/aspect
+2025-04-04 3fa95af 0.19hr Add tooltip
+2025-04-04 605b4c4 ~0.5hr Parse date nlp
+2025-04-04 28b76f3 0.33hr Polish date parsing
+2025-04-04 b59e2b7 0.12hr Create time commit extraction script
+2025-04-04 2a44197 0.47hr nlp time estimation
+2025-04-04 29f63b2 ~0.25hr revise regex
+2025-04-04 578aa9f 0.13hr bugfixes
+2025-04-04 039824d 0.07hr Fix over-tall calendar
+2025-04-04 340fb09 0.27hr fix date wrong if today
+2025-04-04 7ee1191       Add sprint 2 testing report
+2025-04-04 3e32244       Add better project description
+2025-04-05 def422f 0.34hr Make script to convert to report format
+
+total time: 7.81
