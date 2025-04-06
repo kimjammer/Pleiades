@@ -4,6 +4,7 @@ Week 6 (Summary) (Scrum Master: John Kim)
 2025-03-31 51fbec0       Add my logs
 2025-03-31 689aba2       Time tracking
 3/31 1hr   3657da3 Display pfps for session list
+3/31 .5hr   c0162e4 moving poll buttons
 2025-03-31 b37820a 0.24hr Fix SameSite logout header unset
 2025-03-31 df55430 0.01hr Create week 6 doc
 4/1  0.5hr 75cd573 Start burndown chart
@@ -29,6 +30,8 @@ Week 6 (Summary) (Scrum Master: John Kim)
 2025-04-02 1f9cc8b 0.97hr Remove redundant types
 2025-04-02 e8303f2 0.28hr Fix remaining type errors
 4/2  2hr   3a000a3 Integrate chips with card
+4/02 2hr    f8c188a polls fixed & better error messages
+4/02 3hr    adfc728 assignees functionality
 4/3 99cafe2 0.5hr Fix parsing from server
 2025-04-03 fd89078       Style title
 2025-04-03 478005c 0.7hr Fix pie chart calculations
@@ -39,6 +42,10 @@ Week 6 (Summary) (Scrum Master: John Kim)
 2025-04-03 7dfc175 0.13hr Go to login if already have account from landing
 2025-04-03 3a522e8 0.03hr Fix type error
 4/3  1hr   n/a     Test burndown chart and create demo data for sprint review
+4/03 .5hr   1cc3ddc profile pic in UserAvatar
+4/03 2hr    e12045d leaving/joining tasks
+4/03 2hr    76b61ad User initials w/ no project
+4/04 1hr    c2f430b poll date visibility
 2025-04-04 b03b63f 0.47hr auto direct back to project page if signed out
 2025-04-04 a31688a 0.59hr Fix chart sizing/aspect
 2025-04-04 3fa95af 0.19hr Add tooltip
@@ -62,5 +69,5 @@ Week 6 (Summary) (Scrum Master: John Kim)
 [Individual goals]
 Henry: Finish all of my user stories now that websockets works
 John: Refactor due dates and burndown chart to be consistent across timezones
-Cate:
+Cate: Create personal task UI and begin work on project filtering
 Ethan: Implement pie chart and nlp processing for text input
