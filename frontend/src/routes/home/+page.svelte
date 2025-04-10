@@ -11,6 +11,8 @@
     import type { ProjectsResponse, newProjectRequest } from "$lib/schema.js"
     import { onMount } from "svelte"
     import { toast } from "svelte-sonner"
+    import Calendar from "../project/calendar/Calendar.svelte"
+
 
     let title = $state("")
     let description = $state("")

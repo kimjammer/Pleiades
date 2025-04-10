@@ -37,6 +37,14 @@
         project.updateInProject(`Tasks[Id=${task.id}].Assignees`, task.assignees)
         let assigned = task.assignees.includes(localStorage.myId)
     }
+
+    //for color coding the progress bar
+    function getProgressColor(progress) {
+        if (progress < 20) return '#FF8C00';
+        if (progress < 50) return '#facc15';
+        if (progress < 70) return '#9ACD32'; //
+        return '#22c55e'; // green-500
+    }
 </script>
 
 {#snippet content()}
@@ -104,8 +112,8 @@
 
     <div class="relative h-2 w-full overflow-hidden">
         <div
-            class="absolute h-full w-full bg-primary transition-all"
-            style={`transform: translateX(-${100 - (progress ?? 0)}%)`}
+                class="absolute h-full w-full transition-all"
+                style={`transform: translateX(-${100 - Math.min(progress ?? 0, 100)}%); background-color: ${getProgressColor(progress)}`}
         ></div>
     </div>
 {/snippet}
