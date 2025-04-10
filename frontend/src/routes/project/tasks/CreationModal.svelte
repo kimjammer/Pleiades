@@ -87,7 +87,6 @@
 
         const offset = new Date().getTimezoneOffset()
 
-        debugger
         project.appendInProject("Tasks", {
             ...validationResult.data,
             id: crypto.randomUUID(),

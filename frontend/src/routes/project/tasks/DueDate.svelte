@@ -11,7 +11,6 @@
 
     let dueDateInit = new Date(task.dueDate)
     console.log(task)
-    debugger
     let dueDayPreComp =
         task.dueDate === 0
             ? undefined

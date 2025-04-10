@@ -7,6 +7,7 @@
     // Optional: for notifications
     import UserAvatar from "$lib/components/UserAvatar.svelte"
     import type { ChangeEventHandler } from "svelte/elements"
+    import Calendar from "../project/calendar/Calendar.svelte"
 
     let selectedFile
 

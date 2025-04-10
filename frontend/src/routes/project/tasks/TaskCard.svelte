@@ -40,10 +40,18 @@
 
     //for color coding the progress bar
     function getProgressColor(progress) {
-        if (progress < 20) return '#FF8C00';
-        if (progress < 50) return '#facc15';
-        if (progress < 70) return '#9ACD32'; //
+        if (progress < 20) return '#FF8C00'
+        if (progress < 50) return '#facc15'
+        if (progress < 70) return '#9ACD32'
         return '#22c55e'; // green-500
+    }
+
+    function getTitleColor(column) {
+        console.log(column)
+        if (column == "" && progress == 0) return '#000000'
+        else if (column == "") return '#FF8C00'
+        else if (column == "progress") return '#dfff00'
+        else return '#22c55e'
     }
 </script>
 
@@ -55,7 +63,9 @@
         >
             <Accordion.Header>
                 <Accordion.Trigger class="w-full">
-                    <h1 class="text-[1.2em]">
+                    <h1 class="text-[1.2em] font-bold"
+                        style={`color: ${getTitleColor(task.kanbanColumn)}`}
+                    >
                         {task.title}
                     </h1>
                     <p>
@@ -113,7 +123,8 @@
     <div class="relative h-2 w-full overflow-hidden">
         <div
                 class="absolute h-full w-full transition-all"
-                style={`transform: translateX(-${100 - Math.min(progress ?? 0, 100)}%); background-color: ${getProgressColor(progress)}`}
+                style={`transform: translateX(-${100 - Math.min(progress ?? 0, 100)}%);
+                                    background-color: ${getProgressColor(progress)}`}
         ></div>
     </div>
 {/snippet}
