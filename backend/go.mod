@@ -1,4 +1,4 @@
-module github.com/funblaster22/Pleiades
+module github.com/EthanDawes/Pleiades
 
 go 1.24.0
 
