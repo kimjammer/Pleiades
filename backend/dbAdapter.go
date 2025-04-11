@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -46,36 +45,4 @@ func getInvite(c *gin.Context) (invitation Invitation, err error) {
 		}
 	}
 	return
-}
-
-/**
- * Iterate over every document in a collection and sum the length of the specified field.
- * Sets Gin status to server error if error encountered
- */
-func countArrayField(ctx *gin.Context, collection, field string) int64 {
-	cursor, err := db.Collection(collection).Aggregate(ctx, mongo.Pipeline{
-		{{Key: "$group", Value: bson.D{
-			{Key: "_id", Value: nil},
-			{Key: "total", Value: bson.D{{
-				Key: "$sum",
-				Value: bson.D{{
-					Key: "$size",
-					Value: "$" + field,
-				}},
-			}}},
-		}}},
-	})
-	if err != nil {
-		ctx.Status(http.StatusInternalServerError)
-		return 0
-	}
-	defer cursor.Close(ctx)
-
-	var r struct{ Total int64 }
-	if cursor.Next(ctx) && cursor.Decode(&r) == nil {
-		ctx.Status(http.StatusInternalServerError)
-		return r.Total
-	}
-	ctx.Status(http.StatusInternalServerError)
-	return 0
 }
