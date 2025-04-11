@@ -10,7 +10,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  MONGODB_URI: mongodb://localhost:27017
 
 jobs:
   build-and-publish:
