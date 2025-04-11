@@ -360,3 +360,47 @@ func TestLogout(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, w.Code)
 }
+
+func TestStats(t *testing.T) {
+	// Setup
+	router := setupTestRouter()
+	resetDB()
+	w := httptest.NewRecorder()
+	var resp map[string]any
+
+	// Is empty on first load
+	req, _ := http.NewRequest(http.MethodGet, "/stats", nil)
+	router.ServeHTTP(w, req)
+	require.Equal(t, http.StatusOK, w.Code)
+	err := json.Unmarshal(w.Body.Bytes(), &resp)
+	require.NoError(t, err)
+	require.Empty(t, resp)
+
+	// Increment stat by one
+	req = httptest.NewRequest(http.MethodGet, "/event?name=test", nil)
+	w = httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	require.Equal(t, http.StatusOK, w.Code)
+
+	// Check new state
+	req = httptest.NewRequest(http.MethodGet, "/stats", nil)
+	w = httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	err = json.Unmarshal(w.Body.Bytes(), &resp)
+	require.NoError(t, err)
+	require.Equal(t, float64(1), resp["test"])
+
+	// Increment stat by ten
+	req = httptest.NewRequest(http.MethodGet, "/event?name=test&value=10", nil)
+	w = httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	require.Equal(t, http.StatusOK, w.Code)
+
+	// Check new state
+	req = httptest.NewRequest(http.MethodGet, "/stats", nil)
+	w = httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	err = json.Unmarshal(w.Body.Bytes(), &resp)
+	require.NoError(t, err)
+	require.Equal(t, float64(11), resp["test"])
+}

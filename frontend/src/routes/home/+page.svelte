@@ -8,11 +8,10 @@
     import { Input } from "$lib/components/ui/input"
     import { Label } from "$lib/components/ui/label"
     import { Skeleton } from "$lib/components/ui/skeleton"
+    import { recordEvent } from "$lib/restApi"
     import type { ProjectsResponse, newProjectRequest } from "$lib/schema.js"
     import { onMount } from "svelte"
     import { toast } from "svelte-sonner"
-    import Calendar from "../project/calendar/Calendar.svelte"
-
 
     let title = $state("")
     let description = $state("")
@@ -62,6 +61,7 @@
             return
         }
 
+        recordEvent("projects")
         response = Promise.resolve(await loadProjects())
     }
 </script>

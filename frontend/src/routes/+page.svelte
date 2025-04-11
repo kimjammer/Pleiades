@@ -1,8 +1,14 @@
 <script>
     import { goto } from "$app/navigation"
     import { base } from "$app/paths"
+    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
     import PleiadesNav from "$lib/components/PleiadesNav.svelte"
     import { Button } from "$lib/components/ui/button/index"
+
+    const res = fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/stats", {
+        method: "GET",
+        mode: "cors",
+    }).then(res => res.json())
 </script>
 
 <PleiadesNav />
@@ -22,6 +28,12 @@
             succeed together.
         </h3>
     </div>
+    <p class="scroll-m-20 pb-5 text-center tracking-tight">
+        {#await res then stats}
+            Our {stats.users ?? 0} users have logged {Math.floor((stats.seconds ?? 0) / 60 / 60)} hours
+            to {stats.tasks ?? 0} tasks over {stats.projects ?? 0} projects!
+        {/await}
+    </p>
     <div class="flex content-center justify-center">
         <Button
             onclick={() => goto(base + (localStorage.myId ? "/login" : "/registration"))}

@@ -49,6 +49,7 @@ func defineRoutes(router *gin.Engine) {
 	router.GET("/getprofilepic", authRequired(), getProfilePic)
 	router.GET("/fetchName", authRequired(), fetchName)
 	router.GET("/event", handleEvent)
+	router.GET("/stats", reportStats)
 }
 
 func defineTestRoutes(router *gin.Engine) {

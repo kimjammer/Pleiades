@@ -4,7 +4,7 @@
     import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
     import { Button } from "$lib/components/ui/button/index"
     import { Input } from "$lib/components/ui/input/index"
-    import { tryJoinProject } from "$lib/restApi"
+    import { recordEvent, tryJoinProject } from "$lib/restApi"
 
     //TODO: implement password recovery link & page?
 
@@ -27,6 +27,7 @@
 
         const data = await res.json()
         if (data.exists) {
+            recordEvent("login")
             error = ""
             localStorage.myId = data.userId
             if (!(await tryJoinProject())) await goto(base + "/home")
@@ -37,10 +38,10 @@
 </script>
 
 <div class="grid grid-cols-1 grid-rows-3 sm:h-dvh sm:grid-cols-3 sm:grid-rows-1">
-    <div class="row-span-1 bg-primary p-10 dark:bg-secondary sm:col-span-1">
+    <div class="bg-primary dark:bg-secondary row-span-1 p-10 sm:col-span-1">
         <a href={base + "/"}>
             <h1
-                class="scroll-m-20 text-4xl font-extrabold tracking-tight text-primary-foreground dark:text-secondary-foreground lg:text-5xl"
+                class="text-primary-foreground dark:text-secondary-foreground scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
             >
                 Pleiades
             </h1>

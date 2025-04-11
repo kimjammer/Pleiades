@@ -8,6 +8,7 @@ export async function joinProject(projectId: string) {
         credentials: "include",
     })
     if (resp.status === 200) {
+        recordEvent("join")
         goto(base + "/project?id=" + projectId)
     }
 
@@ -28,4 +29,12 @@ export async function tryJoinProject() {
     if (projectId === null) return false
     await joinProject(projectId)
     return true
+}
+
+/** Log an event and return a promise resolving to boolean success */
+export function recordEvent(name: string, count = 1) {
+    return fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + `/event?name=${name}&value=${count}`, {
+        method: "GET",
+        mode: "cors",
+    }).then(res => res.status === 200)
 }
