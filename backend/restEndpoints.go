@@ -442,6 +442,11 @@ func fetchName(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"firstName": crrUser.FirstName, "lastName": crrUser.LastName})
 }
 
+func crunchStats(c *gin.Context) {
+	taskLength := countArrayField(c, "projects", "tasks")
+	c.JSON(http.StatusOK, gin.H{"tasks": taskLength})
+}
+
 // TEMPORARY
 func listUsers() {
 	collection := db.Collection("users") // Reference the "users" collection
