@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"slices"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -440,6 +441,40 @@ func fetchName(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"firstName": crrUser.FirstName, "lastName": crrUser.LastName})
+}
+
+func handleEvent(c *gin.Context) {
+	// TODO: there should probably be auth for events that need login or spam prevention, but an attacker could spam create tasks anyways
+	name := c.Query("name")
+	valueStr := c.Query("value")
+
+	if name == "" || valueStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing name or value"})
+		return
+	}
+
+	value, err := strconv.Atoi(valueStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid value"})
+		return
+	}
+
+	update := bson.M{"$inc": bson.M{name: value}}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err = db.Collection("events").UpdateOne(ctx,
+		bson.M{"_id": "events_document"},
+		update,
+		options.UpdateOne().SetUpsert(true),
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
 // TEMPORARY
