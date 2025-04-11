@@ -29,3 +29,11 @@ export async function tryJoinProject() {
     await joinProject(projectId)
     return true
 }
+
+/** Log an event and return a promise resolving to boolean success */
+export function recordEvent(name: string, count = 1) {
+    return fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + `/event?name=${name}&value=${count}`, {
+        method: "GET",
+        mode: "cors",
+    }).then(res => res.status === 200)
+}
