@@ -447,8 +447,11 @@ func handleEvent(c *gin.Context) {
 	// TODO: there should probably be auth for events that need login or spam prevention, but an attacker could spam create tasks anyways
 	name := c.Query("name")
 	valueStr := c.Query("value")
+	if valueStr == "" {
+		valueStr = "1"
+	}
 
-	if name == "" || valueStr == "" {
+	if name == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "missing name or value"})
 		return
 	}
@@ -475,6 +478,21 @@ func handleEvent(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
+func reportStats(c *gin.Context) {
+	var result bson.M
+	err := db.Collection("events").FindOne(c, bson.M{"_id": "events_document"}).Decode(&result)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			c.JSON(http.StatusOK, bson.M{})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
 // TEMPORARY
