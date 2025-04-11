@@ -8,6 +8,7 @@ export async function joinProject(projectId: string) {
         credentials: "include",
     })
     if (resp.status === 200) {
+        recordEvent("join")
         goto(base + "/project?id=" + projectId)
     }
 

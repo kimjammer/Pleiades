@@ -33,7 +33,7 @@
             Users: {stats.users ?? 0}<br />
             Projects: {stats.projects ?? 0}<br />
             Tasks: {stats.tasks ?? 0}<br />
-            Hours logged: {stats.hours ?? 0}<br />
+            Hours logged: {Math.floor((stats.hours ?? 0) / 60 / 60)}<br />
         {/await}
     </p>
     <div class="flex content-center justify-center">

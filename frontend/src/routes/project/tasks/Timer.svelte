@@ -1,11 +1,12 @@
 <script lang="ts">
     import { Button } from "$lib/components/ui/button"
     import * as HoverCard from "$lib/components/ui/hover-card"
-    import { Play, Square } from "lucide-svelte"
-    import type { ProjectState, Task, Session } from "$lib/project_state.svelte.js"
-    import { toast } from "svelte-sonner"
-    import { onMount } from "svelte"
     import UserAvatar from "$lib/components/UserAvatar.svelte"
+    import type { ProjectState, Session, Task } from "$lib/project_state.svelte.js"
+    import { recordEvent } from "$lib/restApi"
+    import { Play, Square } from "lucide-svelte"
+    import { onMount } from "svelte"
+    import { toast } from "svelte-sonner"
 
     let {
         project,
@@ -100,6 +101,8 @@
                 `Tasks[Id=${task.id}].Sessions[Id=${crrSession.id}].EndTime`,
                 Date.now(),
             )
+            let secs = Math.floor((Date.now() - crrSession.startTime) / 1000)
+            recordEvent("time", secs)
         } else {
             toast.error("Failed to stop session")
         }
