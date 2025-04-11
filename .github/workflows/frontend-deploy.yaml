@@ -1,10 +1,12 @@
-name: Build Frontend
+name: Deploy Frontend
+
 on:
   push:
     branches:
       - main
     paths:
       - frontend/**
+
 jobs:
   build-and-deploy:
     permissions:
