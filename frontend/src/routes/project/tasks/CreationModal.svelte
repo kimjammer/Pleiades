@@ -6,6 +6,7 @@
     import { Input } from "$lib/components/ui/input"
     import * as ToggleGroup from "$lib/components/ui/toggle-group"
     import type { ProjectState, Task } from "$lib/project_state.svelte"
+    import { recordEvent } from "$lib/restApi"
     import { taskformSchema, type TaskFormSchema, type UserId } from "$lib/schema"
     import { debounce } from "$lib/utils"
     import * as chrono from "chrono-node"
@@ -35,6 +36,7 @@
 
     const onTitleChange: FormEventHandler<HTMLInputElement> = ev => {
         let newVal = (ev.target as HTMLInputElement).value
+        let usedNlp = false
 
         // nlp date
         const parseResult = chrono.parse(newVal, new Date())[0]
@@ -46,6 +48,7 @@
             parsedDate = new Date(parsedDate.getTime() - offset * 60 * 1000)
             const dueDate = parsedDate.toISOString().split("T")[0]
 
+            usedNlp = true
             newVal = newVal.replace(parseResult.text, "").trim()
             form.form.update(form => ({
                 ...form,
@@ -60,11 +63,13 @@
         const hoursMatch = newVal.match(/(\d+)(?:h| *(?:hours?|hrs?))(?= |$|\d)/)
 
         if (hoursMatch) {
+            usedNlp = true
             const { [0]: fullMatch, [1]: hourVal } = hoursMatch
             newVal = newVal.replace(fullMatch, "").trim()
             totalHourEstimate += Number.parseInt(hourVal)
         }
         if (minutesMatch) {
+            usedNlp = true
             const { [0]: fullMatch, [1]: minuteVal } = minutesMatch
             newVal = newVal.replace(fullMatch, "").trim()
             totalHourEstimate += Number.parseInt(minuteVal) / 60
@@ -75,6 +80,7 @@
             timeEstimate: form.timeEstimate + totalHourEstimate,
             title: newVal,
         }))
+        if (usedNlp) recordEvent("task_nlp")
     }
 
     async function createTask(e: Event) {
@@ -107,6 +113,7 @@
                 .filter(([_, value]) => value)
                 .map(([userID]) => userID),
         )
+        recordEvent("tasks")
         createDialogOpen = false
         form.reset()
     }

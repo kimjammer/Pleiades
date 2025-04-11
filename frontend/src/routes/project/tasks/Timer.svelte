@@ -102,7 +102,7 @@
                 Date.now(),
             )
             let secs = Math.floor((Date.now() - crrSession.startTime) / 1000)
-            recordEvent("time", secs)
+            recordEvent("seconds", secs)
         } else {
             toast.error("Failed to stop session")
         }

@@ -33,7 +33,7 @@
         const data = await res.json()
         console.log(data) // Handle success or error messages
         if (data.success) {
-            recordEvent("register")
+            recordEvent("users")
             localStorage.myId = data.userId
             if (!(await tryJoinProject())) await goto(base + "/home")
         }
