@@ -11,12 +11,14 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/mailjet/mailjet-apiv3-go/v4"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 var db *mongo.Database
+var mailjetClient *mailjet.Client
 var allowedOrigins = []string{"http://localhost:5173", "http://localhost:4173", "https://pleiades.pages.dev", "https://ethandawes.github.io"}
 
 func setupRouter() *gin.Engine {
@@ -88,6 +90,15 @@ func main() {
 				panic(err)
 			}
 		}()
+	}
+
+	//Creat mailjet client
+	publicKey := os.Getenv("MJ_APIKEY_PUBLIC")
+	secretKey := os.Getenv("MJ_APIKEY_PRIVATE")
+	if (publicKey != "" && secretKey != "") || TEST {
+		mailjetClient = mailjet.NewMailjetClient(publicKey, secretKey)
+	} else {
+		log.Println("No Mailjet API keys found, email sending disabled.")
 	}
 
 	router := setupRouter()

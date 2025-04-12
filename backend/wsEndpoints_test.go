@@ -124,6 +124,8 @@ func TestLeavingDeletesProject(t *testing.T) {
 	_, disconnect := conn.recvState()
 	require.True(t, disconnect)
 
+	time.Sleep(500 * time.Millisecond)
+
 	user, err := getUserById(context.TODO(), "67c7b20021675682e4395270")
 	require.Nil(t, err)
 	require.Equal(t, len(user.Projects), 0)
@@ -548,5 +550,5 @@ func TestProjectMutation(t *testing.T) {
 
 	require.Equal(t, proj.Project.Polls[0].Options[0].LikedUsers, []string{"Henry", "Cate"})
 
-	time.Sleep(5000 * time.Millisecond)
+	time.Sleep(500 * time.Millisecond)
 }

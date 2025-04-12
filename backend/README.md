@@ -28,6 +28,16 @@ Environment Variables:
    <td>http://</td>
    <td>The protocol to use when connecting to the frontend.</td>
   </tr>
+  <tr>
+   <td>MJ_APIKEY_PUBLIC</td>
+   <td>abcde...</td>
+   <td>API Key for Mailjet account</td>
+  </tr>
+  <tr>
+   <td>MJ_APIKEY_PRIVATE</td>
+   <td>abcde...</td>
+   <td>API Secret Key for Mailjet account</td>
+  </tr>
 </table>
 
 ## Runnning

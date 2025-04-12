@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"github.com/mailjet/mailjet-apiv3-go/v4"
 	"log"
 	"net/http"
 	"os"
@@ -506,8 +507,8 @@ func forgotPasswordHandler(c *gin.Context) {
 	}
 
 	//Check if email exists
-	var result User
-	err := db.Collection("users").FindOne(c, bson.M{"email": forgotRequest.Email}).Decode(&result)
+	var user User
+	err := db.Collection("users").FindOne(c, bson.M{"email": forgotRequest.Email}).Decode(&user)
 
 	if err == nil {
 		//Generate magic link
@@ -536,7 +537,7 @@ func forgotPasswordHandler(c *gin.Context) {
 		resetToken := PwdResetToken{
 			CreatedAt: time.Now(),
 			Token:     token,
-			User:      result.Id,
+			User:      user.Id,
 		}
 		_, err = pwdResetTokens.InsertOne(c, resetToken)
 		if err != nil {
@@ -548,6 +549,34 @@ func forgotPasswordHandler(c *gin.Context) {
 		log.Println("Magic link: ", magicLink)
 
 		//TODO: Send email with reset link
+		messagesInfo := []mailjet.InfoMessagesV31{
+			{
+				From: &mailjet.RecipientV31{
+					Email: "support@kimjammer.com",
+					Name:  "Pleiades Support",
+				},
+				To: &mailjet.RecipientsV31{
+					mailjet.RecipientV31{
+						Email: user.Email,
+						Name:  user.FirstName + " " + user.LastName,
+					},
+				},
+				Subject:  "Password Reset",
+				TextPart: "Forgot your password?\nClick the link below to reset it:\n" + magicLink,
+				HTMLPart: "<h1 style=\"font-family:sans-serif\">Forgot your password?</h1><p style=\"font-family:sans-serif\">Click the link below to reset it:</p><div style=\"display:flex; justify-content:center;\"><a style=\"font-family:sans-serif; text-decoration:none; background-color:#272e3f; padding:0.8em; border-radius:0.5em; color:#ffffff;\" href=\"" + magicLink + "\">Reset Password<a></div>",
+			},
+		}
+		messages := mailjet.MessagesV31{Info: messagesInfo}
+		if mailjetClient != nil {
+			_, err = mailjetClient.SendMailV31(&messages)
+			if err != nil {
+				log.Println(err)
+				c.AbortWithStatus(http.StatusInternalServerError)
+				return
+			}
+		} else {
+			log.Println("No Mailjet client, email not sent!")
+		}
 	}
 
 	c.Status(http.StatusOK)
