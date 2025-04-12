@@ -1,0 +1,14 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: John Kim
+
+Week 7 (Summary)
+4/11 2hr   6141044 Password Recovery (No Email)
+4/11 1hr   3f702f0 Testing for password reset
+4/11 2hr   1056a7a Attempt to make tests more consistent (Long debugging session)
+4/12 2hr   6d5d7f3 Send password recovery email
+
+Week 8 (Plan)
+4/15  2hr  Refactor due dates to have a time
+4/17  2hr  Refactor session aggregation logic to support iterating over users
+4/18  3hr  Start adding stacked line plot by user
+4/19  3hr  Finish stacked line plot and write tests

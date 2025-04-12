@@ -1,0 +1,18 @@
+=== Weekly Team Report (Team 5: Pleiades) ===
+
+Week 7 (Summary) (Scrum Master: Henry Rovnyak)
+4/11 2hr   6141044 Password Recovery (No Email)
+4/11 1hr   3f702f0 Testing for password reset
+4/11 2hr   1056a7a Attempt to make tests more consistent (Long debugging session)
+4/12 2hr   6d5d7f3 Send password recovery email
+
+Week 7 (Summary) (Scrum Master: Henry Rovnyak)
+[Meetings]
+4/7 Worked on sprint 3 planning and sprint 2 retrospective
+4/9 Decided on final user story
+
+[Individual goals]
+Henry:
+John: Refactor due dates and add stacked line plot to burndown chart.
+Cate:
+Ethan:
