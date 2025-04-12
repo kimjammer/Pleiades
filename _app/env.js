@@ -1,0 +1,1 @@
+export const env={"PUBLIC_WS_PROTOCOL":"wss://","PUBLIC_PROTOCOL":"https://","PUBLIC_API_HOST":"pleiadesapi.kimjammer.com"}
