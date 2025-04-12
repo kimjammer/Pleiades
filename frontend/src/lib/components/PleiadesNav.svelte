@@ -4,7 +4,7 @@
     import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
     import { Button } from "$lib/components/ui/button"
     import UserAvatar from "$lib/components/UserAvatar.svelte"
-    import { Home, LogOut, Moon, Sun } from "lucide-svelte"
+    import { Home, LogOut, MessageCircleWarning, Moon, Sun } from "lucide-svelte"
     import { toggleMode } from "mode-watcher"
     import { onMount } from "svelte"
     import { toast } from "svelte-sonner"
@@ -56,6 +56,14 @@
         </a>
     </div>
     <div class="flex gap-2 sm:gap-5">
+        <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSfPaVUSroOYBp4TMJ7jshZ1ShgtSos-P045BgL6TDW3FijxIA/viewform"
+        >
+            <Button
+                variant="ghost"
+                size="icon"><MessageCircleWarning /></Button
+            >
+        </a>
         <Button
             onclick={toggleMode}
             variant="ghost"

@@ -7,6 +7,7 @@ Install MongoDB and note the URI.
 Create the .env file based on the .env.example file.
 
 Environment Variables:
+
 <table>
   <tr>
    <td>Variable</td>
@@ -41,8 +42,9 @@ Environment Variables:
 </table>
 
 ## Runnning
+
 `go run .`
 
 ## Testing
 
-`go test .`
+`go test .` or `go test . -cover`
