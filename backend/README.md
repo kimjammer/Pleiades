@@ -18,6 +18,16 @@ Environment Variables:
    <td>mongodb://localhost:27017</td>
    <td>The URI of the MongoDB server to connect to.</td>
   </tr>
+  <tr>
+   <td>HOST</td>
+   <td>localhost:5173/BASE_PATH</td>
+   <td>The URL of the frontend.</td>
+  </tr>
+  <tr>
+   <td>PROTOCOL</td>
+   <td>http://</td>
+   <td>The protocol to use when connecting to the frontend.</td>
+  </tr>
 </table>
 
 ## Runnning

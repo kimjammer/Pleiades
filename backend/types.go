@@ -80,3 +80,9 @@ type Invitation struct {
 	CreatedAt time.Time
 	ProjectId string
 }
+
+type PwdResetToken struct {
+	CreatedAt time.Time
+	Token     string
+	User      primitive.ObjectID
+}

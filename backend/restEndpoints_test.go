@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"golang.org/x/crypto/bcrypt"
 	"io"
 	"log"
 	"net/http"
@@ -403,4 +404,107 @@ func TestStats(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &resp)
 	require.NoError(t, err)
 	require.Equal(t, float64(11), resp["test"])
+}
+
+func TestForgotPasswordInvalidEmail(t *testing.T) {
+	router := setupTestRouter()
+	resetDB()
+
+	request := ForgotPasswordRequest{
+		Email: "invalid@email.com",
+	}
+	jsonData, _ := json.Marshal(request)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/forgotPassword", bytes.NewBuffer(jsonData))
+	router.ServeHTTP(w, req)
+
+	//Status should be 200 OK since we don't want bad actors to know if the email is valid
+	require.Equal(t, http.StatusOK, w.Code)
+
+	//No tokens should be created
+	count, _ := db.Collection("pwdResetTokens").CountDocuments(context.TODO(), bson.D{})
+	require.Equal(t, int64(0), count)
+}
+
+func TestForgotPasswordValidEmail(t *testing.T) {
+	router := setupTestRouter()
+	resetDB()
+
+	request := ForgotPasswordRequest{
+		Email: "example@example.com",
+	}
+	jsonData, _ := json.Marshal(request)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/forgotPassword", bytes.NewBuffer(jsonData))
+	router.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusOK, w.Code)
+
+	//1 token should be created
+	count, _ := db.Collection("pwdResetTokens").CountDocuments(context.TODO(), bson.D{})
+	require.Equal(t, int64(1), count)
+}
+
+func TestResetPasswordInvalidToken(t *testing.T) {
+	router := setupTestRouter()
+	resetDB()
+
+	request := PasswordResetRequest{
+		Token:       "invalid",
+		NewPassword: "doesn't matter",
+	}
+	jsonData, _ := json.Marshal(request)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/resetPassword", bytes.NewBuffer(jsonData))
+	router.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusBadRequest, w.Code)
+}
+
+func TestResetPasswordValidToken(t *testing.T) {
+	router := setupTestRouter()
+	resetDB()
+
+	//Create token first
+	forgotRequest := ForgotPasswordRequest{
+		Email: "example@example.com",
+	}
+	jsonData, _ := json.Marshal(forgotRequest)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/forgotPassword", bytes.NewBuffer(jsonData))
+	router.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusOK, w.Code)
+
+	//Get token from DB
+	var pwdResetToken PwdResetToken
+	_ = db.Collection("pwdResetTokens").FindOne(context.TODO(), bson.D{}).Decode(&pwdResetToken)
+
+	//Send reset request
+	resetRequest := PasswordResetRequest{
+		Token:       pwdResetToken.Token,
+		NewPassword: "newpassword",
+	}
+	jsonData, _ = json.Marshal(resetRequest)
+
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest(http.MethodPost, "/resetPassword", bytes.NewBuffer(jsonData))
+	router.ServeHTTP(w, req)
+
+	//Check status
+	require.Equal(t, http.StatusOK, w.Code)
+
+	//Check token is now deleted
+	count, _ := db.Collection("pwdResetTokens").CountDocuments(context.TODO(), bson.D{})
+	require.Equal(t, int64(0), count)
+
+	//Check password is updated
+	var user User
+	_ = db.Collection("users").FindOne(context.TODO(), bson.D{}).Decode(&user)
+	result := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("newpassword"))
+	require.Nil(t, result)
 }

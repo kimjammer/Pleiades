@@ -33,3 +33,12 @@ type EmailCheckResponse struct {
 type LoginResponse struct {
 	Exists bool `json:"exists"`
 }
+
+type ForgotPasswordRequest struct {
+	Email string `json:"email"`
+}
+
+type PasswordResetRequest struct {
+	Token       string
+	NewPassword string
+}

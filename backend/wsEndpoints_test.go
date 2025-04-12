@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -546,4 +547,6 @@ func TestProjectMutation(t *testing.T) {
 	proj, _ = conn.recvState()
 
 	require.Equal(t, proj.Project.Polls[0].Options[0].LikedUsers, []string{"Henry", "Cate"})
+
+	time.Sleep(5000 * time.Millisecond)
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"slices"
 	"strconv"
 	"time"
@@ -120,7 +121,7 @@ func checkEmail(c *gin.Context) {
 	collection := db.Collection("users")
 	var result bson.M
 
-	err := collection.FindOne(c.Request.Context(), bson.M{"email": email}).Decode(&result)
+	err := collection.FindOne(c, bson.M{"email": email}).Decode(&result)
 
 	if err == mongo.ErrNoDocuments {
 		c.JSON(http.StatusOK, gin.H{"exists": false})
@@ -153,7 +154,7 @@ func registerUser(c *gin.Context) {
 	newUser.Projects = []string{}
 	//Insert new user into db
 	collection := db.Collection("users")
-	_, err = collection.InsertOne(c.Request.Context(), newUser)
+	_, err = collection.InsertOne(c, newUser)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert user"})
@@ -177,7 +178,7 @@ func login(c *gin.Context) {
 	var user User
 
 	log.Println("fetching from database")
-	err := db.Collection("users").FindOne(c.Request.Context(), bson.M{"email": email}).Decode(&user)
+	err := db.Collection("users").FindOne(c, bson.M{"email": email}).Decode(&user)
 
 	if err == mongo.ErrNoDocuments {
 		c.JSON(http.StatusOK, gin.H{"exists": false})
@@ -495,6 +496,113 @@ func reportStats(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+func forgotPasswordHandler(c *gin.Context) {
+	//Read request
+	var forgotRequest ForgotPasswordRequest
+	if err := c.ShouldBindJSON(&forgotRequest); err != nil {
+		log.Println("Invalid JSON data")
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+
+	//Check if email exists
+	var result User
+	err := db.Collection("users").FindOne(c, bson.M{"email": forgotRequest.Email}).Decode(&result)
+
+	if err == nil {
+		//Generate magic link
+		protocol := os.Getenv("PROTOCOL")
+		host := os.Getenv("HOST")
+		token := uuid.New().String()
+		magicLink := protocol + host + "/resetPassword?token=" + token
+
+		pwdResetTokens := db.Collection("pwdResetTokens")
+
+		ttl := int32(86400) // 1 day, in seconds
+		if TEST {
+			ttl = 30 // seconds
+		}
+		indexModel := mongo.IndexModel{
+			Keys:    bson.D{{Key: "createdat", Value: 1}},
+			Options: options.Index().SetExpireAfterSeconds(ttl).SetName("ttl_index"),
+		}
+		_, err := pwdResetTokens.Indexes().CreateOne(c, indexModel)
+		if err != nil {
+			c.Status(http.StatusInternalServerError)
+			return
+		}
+
+		// Create record
+		resetToken := PwdResetToken{
+			CreatedAt: time.Now(),
+			Token:     token,
+			User:      result.Id,
+		}
+		_, err = pwdResetTokens.InsertOne(c, resetToken)
+		if err != nil {
+			c.Status(http.StatusInternalServerError)
+			return
+		}
+
+		//DEBUG
+		log.Println("Magic link: ", magicLink)
+
+		//TODO: Send email with reset link
+	}
+
+	c.Status(http.StatusOK)
+}
+
+func resetPasswordHandler(c *gin.Context) {
+	//Read token and new password
+	var resetRequest PasswordResetRequest
+	if err := c.ShouldBindJSON(&resetRequest); err != nil {
+		log.Println("Invalid JSON data")
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+
+	//Check if token is valid
+	var result PwdResetToken
+	collection := db.Collection("pwdResetTokens")
+	filter := bson.M{"token": resetRequest.Token}
+	err := collection.FindOne(c, filter).Decode(&result)
+	if err != nil {
+		log.Println(err)
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			c.AbortWithStatus(http.StatusBadRequest)
+		} else {
+			c.AbortWithStatus(http.StatusInternalServerError)
+		}
+		return
+	}
+
+	//Find user to update
+	var user User
+	err = db.Collection("users").FindOne(c, bson.M{"_id": result.User}).Decode(&user)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	//Update password
+	hashedPassword, err := encryptPassword(resetRequest.NewPassword)
+	update := bson.D{{"$set", bson.D{{"password", hashedPassword}}}}
+	userFiler := bson.M{"_id": user.Id}
+	_, err = db.Collection("users").UpdateOne(c, userFiler, update)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	//Delete token
+	_, err = collection.DeleteOne(c, filter)
+
+	c.Status(http.StatusOK)
+}
+
 // TEMPORARY
 func listUsers() {
 	collection := db.Collection("users") // Reference the "users" collection
@@ -524,8 +632,6 @@ func listUsers() {
 		log.Fatal("Cursor error:", err)
 	}
 }
-
-// TEMPORARY
 func deleteAllUsers() {
 	collection := db.Collection("users") // Reference the "users" collection
 

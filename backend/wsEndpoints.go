@@ -63,8 +63,10 @@ type WsConn struct {
 }
 
 func (self WsConn) send(data string) bool {
-	if err := self.socket.WriteMessage(websocket.TextMessage, []byte(data)); err != nil {
-		if _, ok := err.(*websocket.CloseError); ok {
+	err := self.socket.WriteMessage(websocket.TextMessage, []byte(data))
+	if err != nil {
+		if err.Error() == "websocket: close sent" {
+			log.Println("Connection closed")
 			return true
 		}
 
@@ -182,6 +184,7 @@ func handleConnection(conn Connection, userId string) {
 	for {
 		message, disconnect := conn.recv()
 		if disconnect {
+			//TODO: potential deadlock here? close() doesn't run after return
 			return
 		}
 

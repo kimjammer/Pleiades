@@ -7,6 +7,8 @@ services:
       - "8080:8080"
     environment:
       - MONGODB_URI=mongodb://database:27017
+      - HOST=localhost:5713/BASE_PATH
+      - PROTOCOL=http://
       - GIN_MODE=release
   database:
     image: mongo:latest

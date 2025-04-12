@@ -42,3 +42,12 @@ export const pollformSchema = z.object({
 
 export type PollFormSchema = typeof pollformSchema
 export type Poll = z.infer<typeof pollformSchema>
+
+export type ForgotPasswordRequest = {
+    email: string
+}
+
+export type ResetPasswordRequest = {
+    token: string
+    newPassword: string
+}

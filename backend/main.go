@@ -50,6 +50,8 @@ func defineRoutes(router *gin.Engine) {
 	router.GET("/fetchName", authRequired(), fetchName)
 	router.GET("/event", handleEvent)
 	router.GET("/stats", reportStats)
+	router.POST("/forgotPassword", forgotPasswordHandler)
+	router.POST("/resetPassword", resetPasswordHandler)
 }
 
 func defineTestRoutes(router *gin.Engine) {
