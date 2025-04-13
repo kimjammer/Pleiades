@@ -31,7 +31,7 @@
     <p class="scroll-m-20 pb-5 text-center tracking-tight">
         {#await res then stats}
             Our {stats.users ?? 0} users have logged {Math.floor((stats.seconds ?? 0) / 60 / 60)} hours
-            to {stats.tasks ?? 0} tasks over {stats.projects ?? 0} projects!
+            to {stats.tasks ?? 0} tasks across {stats.projects ?? 0} projects!
         {/await}
     </p>
     <div class="flex content-center justify-center">
