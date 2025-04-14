@@ -49,9 +49,9 @@
     function getTitleColor(column) {
         console.log(column)
         if (column == "" && progress == 0) return '#000000'
-        else if (column == "") return '#FF8C00'
-        else if (column == "progress") return '#dfff00'
-        else return '#22c55e'
+        else if (column == "") return '#cc7a00'
+        else if (column == "progress") return '#99cc00'
+        else return '#008000'
     }
 </script>
 
