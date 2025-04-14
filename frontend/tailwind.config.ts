@@ -1,6 +1,7 @@
 import { fontFamily } from "tailwindcss/defaultTheme"
 import type { Config } from "tailwindcss"
 import tailwindcssAnimate from "tailwindcss-animate"
+import plugin from "tailwindcss/plugin"
 
 const config: Config = {
     darkMode: ["class"],
@@ -90,7 +91,13 @@ const config: Config = {
             },
         },
     },
-    plugins: [tailwindcssAnimate],
+    plugins: [
+        tailwindcssAnimate,
+        plugin(function ({ addVariant }) {
+            addVariant("sctd", '&:where([data-selected="true"])')
+            addVariant("not-sctd", '&:where([data-selected="false"])')
+        }),
+    ],
 }
 
 export default config

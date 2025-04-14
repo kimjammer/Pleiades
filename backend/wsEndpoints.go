@@ -131,6 +131,8 @@ func handleConnection(conn Connection, userId string) {
 		}
 	}
 
+	conn.send("WHOAMI: " + userId)
+
 	projectId, disconnect := conn.recv()
 	if disconnect {
 		return
