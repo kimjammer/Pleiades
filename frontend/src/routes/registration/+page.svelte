@@ -5,6 +5,7 @@
     import { Button } from "$lib/components/ui/button/index"
     import { Input } from "$lib/components/ui/input/index"
     import { recordEvent, tryJoinProject } from "$lib/restApi"
+    import { GOOGLE_OAUTH_CLIENT_ID } from "$lib/utils"
 
     let email = ""
     let password = ""
@@ -90,6 +91,14 @@
     }
 </script>
 
+<svelte:head>
+    <script
+        src="https://accounts.google.com/gsi/client"
+        async
+        defer
+    ></script>
+</svelte:head>
+
 <div class="grid grid-cols-1 grid-rows-3 sm:h-dvh sm:grid-cols-3 sm:grid-rows-1">
     <div class="bg-primary dark:bg-secondary row-span-1 p-10 sm:col-span-1">
         <a href={base + "/"}>
@@ -148,6 +157,25 @@
                 bind:value={passwordConfirm}
             />
             <Button onclick={isValid}>Register</Button>
+
+            <div
+                id="g_id_onload"
+                data-client_id={GOOGLE_OAUTH_CLIENT_ID}
+                data-context="signup"
+                data-ux_mode="redirect"
+                data-login_uri={PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/googleRegistration"}
+                data-auto_prompt="false"
+            ></div>
+            <div
+                class="g_id_signin"
+                data-type="standard"
+                data-shape="rectangular"
+                data-theme="outline"
+                data-text="signup_with"
+                data-size="large"
+                data-logo_alignment="left"
+            ></div>
+
             <Button
                 variant="link"
                 onclick={() => goto(base + "/login" + location.search)}>Login</Button
