@@ -1,0 +1,14 @@
+=== Weekly Team Report (Team 5: Pleiades) ===
+
+Week 8 (Summary) (Scrum Master: Henry Rovnyak)
+
+Week 8 (Summary) (Scrum Master: Henry Rovnyak)
+[Meetings]
+4/14 Teach Henry how we're using pull requests and discuss accessibility of the UI design
+4/16 Decided on final user story
+
+[Individual goals]
+Henry: Implement notifications
+John: 
+Cate: 
+Ethan: 
