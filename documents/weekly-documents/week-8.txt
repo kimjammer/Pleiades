@@ -1,6 +1,8 @@
 === Weekly Team Report (Team 5: Pleiades) ===
 
 Week 8 (Summary) (Scrum Master: Henry Rovnyak)
+4/14 4e4208d 0.5hr Make the project page remember which tab you were on
+4/14 692637c 1.5hr Basic UI for polls
 
 Week 8 (Summary) (Scrum Master: Henry Rovnyak)
 [Meetings]

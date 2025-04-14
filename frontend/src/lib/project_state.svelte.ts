@@ -34,6 +34,7 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
 
         let state = new ProjectState(socket)
         let gotFirstProjectState = false
+        let foundUserId = false
 
         let onmessage = function (this: WebSocket, message: MessageEvent) {
             let text = message.data
@@ -57,6 +58,19 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
                 return
             }
 
+            if (text.startsWith("WHOAMI: ")) {
+                if (!gotFirstProjectState && !foundUserId) {
+                    state.userId = text.slice(8)
+                    foundUserId = true
+                } else {
+                    console.error(
+                        "Server TXed the user ID twice or before sending the project state!",
+                    )
+                }
+
+                return
+            }
+
             if (text == "UNAUTHORIZED") {
                 this.close()
                 goto(base + "/login?project=" + projectId)
@@ -66,6 +80,11 @@ export async function connectToProject(projectId: string): Promise<ProjectState>
             if (text == "PROJECT ID DNE") {
                 this.close()
                 goto(base + "/home")
+                return
+            }
+
+            if (!foundUserId) {
+                console.error("Server did not TXed the user ID!")
                 return
             }
 
@@ -306,6 +325,7 @@ export class ProjectState {
     users: UserInProject[] = $state([])
     tasks: Task[] = $state([])
     polls: Poll[] = $state([])
+    userId: string = $state("")
     error: string = $state("")
     showError: boolean = $state(false)
 

@@ -1,8 +1,34 @@
 <script lang="ts">
-    import type { ProjectState, Poll } from "$lib/project_state.svelte"
+    import type { ProjectState, Poll, Option } from "$lib/project_state.svelte"
     import { Button } from "$lib/components/ui/button"
 
     let { project, poll }: { project: ProjectState; poll: Poll } = $props()
+
+    function voteFor(option: Option, level: string) {
+        let alreadySelected = null
+        if (option.likedUsers.includes(project.userId)) {
+            alreadySelected = "LikedUsers"
+        } else if (option.neutralUsers.includes(project.userId)) {
+            alreadySelected = "NeutralUsers"
+        } else if (option.dislikedUsers.includes(project.userId)) {
+            alreadySelected = "DislikedUsers"
+        }
+
+        if (alreadySelected == level) {
+            return
+        }
+
+        if (alreadySelected != null) {
+            project.deleteInProject(
+                `Polls[Id=${poll.id}].Options[Id=${option.id}].${alreadySelected}[$IT=${project.userId}]`,
+            )
+        }
+
+        project.appendInProject(
+            `Polls[Id=${poll.id}].Options[Id=${option.id}].${level}`,
+            project.userId,
+        )
+    }
 </script>
 
 <div class="poll mt-[0.5em] border">
@@ -15,17 +41,23 @@
         {#each poll.options as option}
             <p class="option-name">{option.title}</p>
             <Button
-                class="hover:border-transparent hover:bg-green-400/40 dark:hover:bg-green-700/40"
+                class="not-sctd:hover:bg-green-400/40 not-sctd:dark:hover:bg-green-700/40 hover:border-transparent sctd:bg-green-400/80 sctd:dark:bg-green-700/80"
+                data-selected={option.likedUsers.includes(project.userId)}
+                onclick={() => voteFor(option, "LikedUsers")}
                 variant="outline"
                 size="icon">✅</Button
             >
             <Button
-                class="hover:border-transparent hover:bg-yellow-400/40 dark:hover:bg-yellow-700/40"
+                class="not-sctd:hover:bg-yellow-400/40 not-sctd:dark:hover:bg-yellow-700/40 hover:border-transparent sctd:bg-yellow-400/80 sctd:dark:bg-yellow-700/80"
+                data-selected={option.neutralUsers.includes(project.userId)}
+                onclick={() => voteFor(option, "NeutralUsers")}
                 variant="outline"
                 size="icon">🟡</Button
             >
             <Button
-                class="hover:border-transparent hover:bg-red-400/40 dark:hover:bg-red-700/40"
+                class="not-sctd:hover:bg-red-400/40 not-sctd:dark:hover:bg-red-700/40 hover:border-transparent sctd:bg-red-400/80 sctd:dark:bg-red-700/80"
+                data-selected={option.dislikedUsers.includes(project.userId)}
+                onclick={() => voteFor(option, "DislikedUsers")}
                 variant="outline"
                 size="icon">❌</Button
             >

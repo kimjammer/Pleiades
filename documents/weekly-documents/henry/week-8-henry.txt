@@ -3,6 +3,7 @@ Name: Henry
 
 Week 7 (Summary)
 4/14 4e4208d 0.5hr Make the project page remember which tab you were on
+4/14 692637c 1.5hr Basic UI for polls
 
 Week 8 (Plan)
 4/14 7hr UX for voting in a poll
