@@ -19,19 +19,13 @@ import (
 
 var db *mongo.Database
 var mailjetClient *mailjet.Client
-var allowedOrigins = []string{"http://localhost:5173", "http://localhost:4173", "https://pleiades.pages.dev", "https://ethandawes.github.io", "null"}
-
-func allowAll(origin string) bool {
-	return true
-}
+var allowedOrigins = []string{"http://localhost:5173", "http://localhost:4173", "https://pleiades.pages.dev", "https://ethandawes.github.io"}
 
 func setupRouter() *gin.Engine {
 	// Setup webserver
 	router := gin.Default()
 	config := cors.Config{
-		AllowAllOrigins:  false,
-		//AllowOrigins: allowedOrigins,
-		AllowOriginFunc: allowAll,
+		AllowAllOrigins:  true,
 		AllowMethods:     []string{"*"},
 		AllowHeaders:     []string{"*"},
 		AllowCredentials: true,
