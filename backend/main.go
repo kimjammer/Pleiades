@@ -24,10 +24,27 @@ var allowedOrigins = []string{"http://localhost:5173", "http://localhost:4173", 
 func setupRouter() *gin.Engine {
 	// Setup webserver
 	router := gin.Default()
-	config := cors.DefaultConfig()
-	config.AllowOrigins = allowedOrigins
-	config.AllowCredentials = true
+	config := cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"*"},
+		AllowHeaders:     []string{"*"},
+		AllowCredentials: true,
+	}
 	router.Use(cors.New(config))
+	router.Use(func(c *gin.Context) {
+		log.Printf("[REQUEST] %s %s from %s", c.Request.Method, c.Request.URL.Path, c.ClientIP())
+		for name, values := range c.Request.Header {
+			for _, value := range values {
+				log.Printf("[HEADER] %s: %s", name, value)
+			}
+		}
+		c.Next()
+	})
+	router.Use(func(c *gin.Context) {
+		origin := c.Request.Header.Get("Origin")
+		log.Printf("[CORS] Origin: %s", origin)
+		c.Next()
+	})
 	router.Use(loadToken())
 
 	return router
@@ -103,6 +120,7 @@ func main() {
 		log.Println("No Mailjet API keys found, email sending disabled.")
 	}
 
+	gin.SetMode(gin.DebugMode)
 	router := setupRouter()
 	defineRoutes(router)
 	if TEST {
