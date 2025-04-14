@@ -32,7 +32,7 @@ Week 7 (Summary) (Scrum Master: Henry Rovnyak)
 4/9 Decided on final user story
 
 [Individual goals]
-Henry:
+Henry: Implement all of the poll related user stories
 John: Refactor due dates and add stacked line plot to burndown chart.
 Cate: Create personal window with schedule and filtering
 Ethan: Get CI tests working, show usage stats to users

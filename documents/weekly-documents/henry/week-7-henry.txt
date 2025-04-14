@@ -1,0 +1,9 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: Henry
+
+Week 7 (Summary)
+// I was gone the whole week presenting research at a conference
+
+Week 8 (Plan)
+4/14 7hr UX for voting in a poll
+4/15 8hr Displaying the results of a poll
