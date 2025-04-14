@@ -101,6 +101,10 @@ func connect(t *testing.T, userId string, projectId string) (TestConn, ProjectAn
 
 	go handleConnection(forConnHandler, userId)
 
+	idMessage, disconnect := forReturn.recv()
+	require.False(t, disconnect)
+	require.Equal(t, idMessage, "WHOAMI: "+userId)
+
 	forReturn.send(projectId)
 
 	state, disconnect := forReturn.recvState()
