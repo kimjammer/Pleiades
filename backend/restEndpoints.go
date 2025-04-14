@@ -636,14 +636,14 @@ func resetPasswordHandler(c *gin.Context) {
 
 func googleLogin(c *gin.Context) {
 	var req struct {
-		Token string `json:"token" binding:"required"`
+		Credential string `form:"credential" binding:"required"`
 	}
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
 
-	payload, err := idtoken.Validate(context.Background(), req.Token, "")
+	payload, err := idtoken.Validate(c, req.Credential, "")
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 		return
