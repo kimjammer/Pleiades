@@ -35,7 +35,7 @@ def process_git_log():
         date, git_hash, *msg = cleaned.split()
         print(date, git_hash, time, ' '.join(msg))
 
-    print('\ntotal time:', round(total_time, 2))
+    print('\ntotal time:', round(total_time, 2), 'hr')
 
 if __name__ == "__main__":
     process_git_log()

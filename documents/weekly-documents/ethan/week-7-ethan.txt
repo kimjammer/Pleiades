@@ -21,7 +21,7 @@ Week 7 (Summary)
 2025-04-13 e5cb232 0.02hr Change wording
 2025-04-14 7911dab 0.19hr Refactor, only show last week
 
-total time: 3.49
+total time: 3.49 hr
 
 Week 8 (Plan)
 4/16 5 hr Login with google
