@@ -83,7 +83,7 @@
                 data-client_id={GOOGLE_OAUTH_CLIENT_ID}
                 data-context="signin"
                 data-ux_mode="redirect"
-                data-login_uri={PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/googleLogin"}
+                data-login_uri={PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/login/google"}
                 data-auto_prompt="false"
             ></div>
             <div

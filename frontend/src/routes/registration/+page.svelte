@@ -163,7 +163,7 @@
                 data-client_id={GOOGLE_OAUTH_CLIENT_ID}
                 data-context="signup"
                 data-ux_mode="redirect"
-                data-login_uri={PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/googleRegistration"}
+                data-login_uri={PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/register/google"}
                 data-auto_prompt="false"
             ></div>
             <div
