@@ -22,12 +22,22 @@
     let key = $state("Key")
     let value = $state("Value")
 
+    let tab = $state("tasks")
+
     onMount(() => {
         //Grab project ID from URL
         let params = new URLSearchParams(document.location.search)
         projectId = params.get("id") || ""
 
         project = connectToProject(projectId)
+
+        tab = params.get("tab") || "tasks"
+    })
+
+    $effect(() => {
+        let url = new URL(document.location.href)
+        url.searchParams.set("tab", tab)
+        window.history.pushState(null, "", url.toString())
     })
 
     type word = {
@@ -87,7 +97,7 @@
             </Dialog.Content>
         </Dialog.Root>
 
-        <Tabs.Root value="tasks">
+        <Tabs.Root bind:value={tab}>
             <Tabs.List>
                 <Tabs.Trigger value="tasks">Task Board</Tabs.Trigger>
                 <Tabs.Trigger value="calendar">Calendar</Tabs.Trigger>
