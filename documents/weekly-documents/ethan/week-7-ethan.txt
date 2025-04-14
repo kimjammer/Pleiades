@@ -1,11 +1,7 @@
-=== Weekly Team Report (Team 5: Pleiades) ===
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: Ethan Dawes
 
-Week 7 (Summary) (Scrum Master: Henry Rovnyak)
-4/9  2hr   0c46511 task title color code
-4/9  2hr   0d924d3 Color coding for progress bar
-4/11 2hr   6141044 Password Recovery (No Email)
-4/11 1hr   3f702f0 Testing for password reset
-4/11 2hr   1056a7a Attempt to make tests more consistent (Long debugging session)
+Week 7 (Summary)
 2025-04-11 775ab43 ~0.8hr Calculate stats from db
 2025-04-11 d80a63e       Revert "Calculate stats from db"
 2025-04-11 ac84e35 0.31hr Tweak actions for CI reqs
@@ -21,18 +17,16 @@ Week 7 (Summary) (Scrum Master: Henry Rovnyak)
 2025-04-11 8c7466d 0.18hr Polish stats
 2025-04-11 bfc1f01 0.16hr Add `checks_requested` trigger
 2025-04-11 f55cb93       Merge pull request #3 from EthanDawes/stats
-4/12 2hr   6d5d7f3 Send password recovery email
 2025-04-12 1c541c0 0.35hr Add feedback button
 2025-04-13 e5cb232 0.02hr Change wording
 2025-04-14 7911dab 0.19hr Refactor, only show last week
 
-Week 7 (Summary) (Scrum Master: Henry Rovnyak)
-[Meetings]
-4/7 Worked on sprint 3 planning and sprint 2 retrospective
-4/9 Decided on final user story
+total time: 3.49
 
-[Individual goals]
-Henry:
-John: Refactor due dates and add stacked line plot to burndown chart.
-Cate: Create personal window with schedule and filtering
-Ethan: Get CI tests working, show usage stats to users
+Week 8 (Plan)
+4/16 5 hr Login with google
+4/17 5 hr Invite by name
+
+Week 9 (Plan)
+4/24 5 hr Import availability from gcal
+4/21 5 hr Import availability from gcal
