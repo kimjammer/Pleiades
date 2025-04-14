@@ -48,7 +48,9 @@
 
     function getTitleColor(column) {
         console.log(column)
-        if (column == "" && progress == 0) return '#000000'
+        if (column == "" && progress == 0) {
+            return null
+        }
         else if (column == "") return '#cc7a00'
         else if (column == "progress") return '#99cc00'
         else return '#008000'
@@ -63,7 +65,7 @@
         >
             <Accordion.Header>
                 <Accordion.Trigger class="w-full">
-                    <h1 class="text-[1.2em] font-bold"
+                    <h1 class="text-[1.2em] font-bold dark:text-white"
                         style={`color: ${getTitleColor(task.kanbanColumn)}`}
                     >
                         {task.title}
