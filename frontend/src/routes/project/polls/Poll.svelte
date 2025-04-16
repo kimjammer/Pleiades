@@ -33,7 +33,7 @@
 
 <div class="poll mt-[0.5em] border">
     <h1 class="mb-[0.3em] text-xl">{poll.title}</h1>
-    {#if poll.description != ""}
+    {#if poll.description !== ""}
         <p class="mb-[0.5em] opacity-80">{poll.description}</p>
     {/if}
 

@@ -1,6 +1,6 @@
 <script lang="ts">
     import UserAvatar from "$lib/components/UserAvatar.svelte"
-    import type { UserInProject } from "$lib/project_state.svelte"
+    import { ProjectState, type UserInProject } from "$lib/project_state.svelte"
 
     let { details, project }: { details: UserInProject; project: ProjectState } = $props()
     $effect(() => console.log("DETAILS", details))

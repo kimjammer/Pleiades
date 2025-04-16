@@ -20,7 +20,7 @@
         const projectId = (await inviteInfo).id
         const resp = await joinProject(projectId)
         if (resp.status !== 200) {
-            goto(`${base}/registration${location.search}&project=${projectId}`)
+            await goto(`${base}/registration${location.search}&project=${projectId}`)
         }
     }
 </script>

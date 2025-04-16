@@ -1,34 +1,61 @@
 <script lang="ts">
+    import { Button } from "bits-ui"
     import { Badge } from "$lib/components/ui/badge"
     import { Calendar } from "$lib/components/ui/calendar"
     import * as Popover from "$lib/components/ui/popover"
     import type { ProjectState, Task } from "$lib/project_state.svelte.js"
-    import { CalendarDate, type DateValue, getLocalTimeZone } from "@internationalized/date"
-    import { Button } from "bits-ui"
+    import {
+        type DateValue,
+        fromAbsolute,
+        getLocalTimeZone,
+        now,
+        toCalendarDate,
+        toTime,
+        ZonedDateTime,
+    } from "@internationalized/date"
     import { CalendarDays, Plus, X } from "lucide-svelte"
+    import { Input } from "$lib/components/ui/input"
+    import { Separator } from "$lib/components/ui/separator"
+    import { onMount } from "svelte"
 
     let { project, task }: { project: ProjectState; task: Task } = $props()
 
-    let dueDateInit = new Date(task.dueDate)
-    console.log(task)
-    let dueDayPreComp =
-        task.dueDate === 0
-            ? undefined
-            : new CalendarDate(
-                  dueDateInit.getFullYear(),
-                  dueDateInit.getMonth() + 1,
-                  dueDateInit.getDate(),
-              )
-
-    let value = $state<DateValue | undefined>(dueDayPreComp)
+    let time = $state<string>("")
+    let date = $state<DateValue | undefined>(undefined)
     let contentRef = $state<HTMLElement | null>(null)
 
+    onMount(() => {
+        if (task.dueDate === 0) return
+
+        //Convert due date from timestamp to CalendarDate
+        let serverDueDate = fromAbsolute(task.dueDate, getLocalTimeZone())
+        date = toCalendarDate(serverDueDate)
+        let dueTime = toTime(serverDueDate)
+        time = `${dueTime.hour}:${dueTime.minute}`
+    })
+
     async function handleEdit() {
+        if (!date || time === "") return
+
         //Send to server
         //Component is updated when server updates the project state and replies
-        const timestamp = value?.toDate(getLocalTimeZone()).getTime() ?? 0
+        const today = now(getLocalTimeZone())
+        const hour = time.split(":").map(Number)[0]
+        const minute = time.split(":").map(Number)[1]
+        const dueDate = new ZonedDateTime(
+            date.year,
+            date.month,
+            date.day,
+            getLocalTimeZone(),
+            today.offset,
+            hour,
+            minute,
+        )
+
+        const timestamp = dueDate.toDate().getTime()
         project.updateInProject(`Tasks[Id=${task.id}].DueDate`, timestamp)
     }
+
     async function handleDelete(e: Event) {
         e.stopPropagation()
         project.updateInProject(`Tasks[Id=${task.id}].DueDate`, 0)
@@ -52,7 +79,7 @@
                     {new Date(task.dueDate).toLocaleString("default", { day: "numeric" })}
                     <Button.Root
                         class="
-        ring-offset-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+        inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
         disabled:pointer-events-none disabled:opacity-50"
                         onclick={handleDelete}
                     >
@@ -68,9 +95,17 @@
     >
         <Calendar
             type="single"
-            bind:value
+            bind:value={date}
             onValueChange={handleEdit}
             class="rounded-md border"
         />
+        <Separator class="my-3" />
+        <div class="m-3">
+            <Input
+                type="time"
+                bind:value={time}
+                onchange={handleEdit}
+            ></Input>
+        </div>
     </Popover.Content>
 </Popover.Root>

@@ -33,7 +33,6 @@
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        margin: 0.5em;
         border-radius: 0.5em;
     }
 </style>

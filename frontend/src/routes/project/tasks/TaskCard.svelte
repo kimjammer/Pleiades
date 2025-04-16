@@ -35,23 +35,23 @@
         }
         //update in project
         project.updateInProject(`Tasks[Id=${task.id}].Assignees`, task.assignees)
-        let assigned = task.assignees.includes(localStorage.myId)
     }
 
     //for color coding the progress bar
-    function getProgressColor(progress) {
-        if (progress < 20) return '#FF8C00'
-        if (progress < 50) return '#facc15'
-        if (progress < 70) return '#9ACD32'
-        return '#22c55e'; // green-500
+    function getProgressColor(progress: number) {
+        if (progress < 20) return "#FF8C00"
+        if (progress < 50) return "#facc15"
+        if (progress < 70) return "#9ACD32"
+        return "#22c55e" // green-500
     }
 
-    function getTitleColor(column) {
+    function getTitleColor(column: string) {
         console.log(column)
-        if (column == "" && progress == 0) return '#000000'
-        else if (column == "") return '#FF8C00'
-        else if (column == "progress") return '#dfff00'
-        else return '#22c55e'
+        if (column == "" && progress == 0) {
+            return null
+        } else if (column == "") return "#cc7a00"
+        else if (column == "progress") return "#99cc00"
+        else return "#008000"
     }
 </script>
 
@@ -63,7 +63,8 @@
         >
             <Accordion.Header>
                 <Accordion.Trigger class="w-full">
-                    <h1 class="text-[1.2em] font-bold"
+                    <h1
+                        class="text-[1.2em] font-bold dark:text-white"
                         style={`color: ${getTitleColor(task.kanbanColumn)}`}
                     >
                         {task.title}
@@ -95,7 +96,7 @@
                             <p>{assignee}</p>
                         {/each}
                     </div>
-                    <div class="col-span-1">
+                    <div class="col-span-1 flex flex-col items-end px-2">
                         <DueDate
                             {project}
                             {task}
@@ -122,8 +123,8 @@
 
     <div class="relative h-2 w-full overflow-hidden">
         <div
-                class="absolute h-full w-full transition-all"
-                style={`transform: translateX(-${100 - Math.min(progress ?? 0, 100)}%);
+            class="absolute h-full w-full transition-all"
+            style={`transform: translateX(-${100 - Math.min(progress ?? 0, 100)}%);
                                     background-color: ${getProgressColor(progress)}`}
         ></div>
     </div>
@@ -133,7 +134,7 @@
     <ContextMenu.Trigger>
         <div
             bind:this={card}
-            class="task bg- bg-muted"
+            class="task bg-muted"
             role="presentation"
             onmousedown={() => {
                 startX = mouse.x

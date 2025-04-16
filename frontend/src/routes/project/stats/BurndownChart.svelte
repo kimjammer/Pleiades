@@ -1,6 +1,12 @@
 <script lang="ts">
     import Chart, { type ChartData } from "$lib/components/Chart.svelte"
     import type { ProjectState, Session } from "$lib/project_state.svelte.js"
+    import {
+        fromAbsolute,
+        getLocalTimeZone,
+        isSameDay,
+        type ZonedDateTime,
+    } from "@internationalized/date"
 
     let { project }: { project: ProjectState } = $props()
 
@@ -20,11 +26,22 @@
         ],
     })
 
+    //Absolutely horrible slow function, but is always timezone & time weirdness safe
+    function daysBetweenDates(start: ZonedDateTime, end: ZonedDateTime): number {
+        if (start.compare(end) > 0) {
+            return 0
+        }
+
+        let counter = 0
+        let crrDate = start
+        while (!isSameDay(crrDate, end)) {
+            counter++
+            crrDate = crrDate.add({ days: 1 })
+        }
+        return counter
+    }
+
     $effect(() => {
-        console.log("Updating chart")
-
-        //TODO: Refactor this terrible code with sensible time zone handling
-
         //Get all tasks with due dates and time estimates
         let tasks = project.tasks.filter(task => task.dueDate && task.timeEstimate)
 
@@ -47,9 +64,9 @@
         })
 
         //Get range for graph
-        let start = project.created
+        let startTimestamp = project.created
         //Find last due date
-        let end = tasks.reduce((latest, task) => {
+        let endTimeStamp = tasks.reduce((latest, task) => {
             if (task.dueDate > latest) {
                 return task.dueDate
             } else {
@@ -57,25 +74,38 @@
             }
         }, tasks[0].dueDate)
 
-        end += 1000 * 60 * 60 * 24 //Add one day to end date
-
         //Loop through each day in the range
         let labels = []
         let idealLine = []
         let actualLine = []
-        let currentDate = new Date(start)
-        let endDate = new Date(end)
 
-        while (currentDate <= endDate) {
-            labels.push(currentDate.toLocaleDateString())
+        let startDate = fromAbsolute(startTimestamp, getLocalTimeZone())
+        startDate = startDate.set({
+            hour: 0,
+            minute: 0,
+            second: 0,
+        })
+        let crrDate = fromAbsolute(startTimestamp, getLocalTimeZone())
+        crrDate = crrDate.set({
+            hour: 11,
+            minute: 59,
+            second: 59,
+        })
+        let endDate = fromAbsolute(endTimeStamp, getLocalTimeZone())
+        endDate = endDate.add({ days: 1 })
 
-            //For each task not past due date, calculate idea progress towards time estimate
+        //Iterate over days from start to end date
+        while (!isSameDay(crrDate, endDate)) {
+            labels.push(crrDate.toDate().toLocaleDateString())
+
+            //For each task not past due date, calculate ideal progress towards time estimate
             let idealTime = tasks.reduce((total, task) => {
-                if (task.dueDate >= currentDate.getTime()) {
+                let taskDueDate = fromAbsolute(task.dueDate, getLocalTimeZone())
+                if (taskDueDate.compare(crrDate) > 0) {
                     return (
                         total +
-                        (task.timeEstimate / (task.dueDate - start)) *
-                            (currentDate.getTime() - start)
+                        (task.timeEstimate / daysBetweenDates(startDate, taskDueDate)) *
+                            daysBetweenDates(startDate, crrDate)
                     )
                 } else {
                     return total + task.timeEstimate
@@ -85,8 +115,9 @@
 
             //For each session, sum time spent on tasks
             let actualTime = sessions.reduce((total, session) => {
+                let sessionEndDate = fromAbsolute(session.endTime, getLocalTimeZone())
                 //If session was completed on or before current date
-                if (session.endTime <= currentDate.getTime()) {
+                if (sessionEndDate.compare(crrDate) < 0) {
                     return total + (session.endTime - session.startTime)
                 }
 
@@ -95,7 +126,7 @@
             actualLine.push(actualTime)
 
             //Increment date by 1 day
-            currentDate.setDate(currentDate.getDate() + 1)
+            crrDate = crrDate.add({ days: 1 })
         }
 
         //Transform time from millis to hours
@@ -150,8 +181,8 @@
         />
     {:else}
         <div
-            class="border-primary flex w-full flex-col items-center justify-center rounded-xl
-                    border-4 p-5"
+            class="flex w-full flex-col items-center justify-center rounded-xl border-4
+                    border-primary p-5"
         >
             <p class="leading-7 [&:not(:first-child)]:mt-6">
                 Create a task with a due date and time estimate to see the burndown chart.
