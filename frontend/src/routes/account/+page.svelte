@@ -18,7 +18,7 @@
 
         const reader = new FileReader()
         reader.onloadend = async () => {
-            var base64Image = reader.result
+            let base64Image = reader.result
             if (typeof base64Image === "string") {
                 //can only use .split on string
                 base64Image = base64Image.split(",")[1] // Extract base64 part for backend
@@ -58,8 +58,8 @@
 
 <div class="grid w-full max-w-sm items-center gap-1.5">
     <UserAvatar
-            project={null}
-            userID={localStorage.myId}
+        project={null}
+        userID={localStorage.myId}
     />
     <Label>Upload Profile Picture</Label>
     <!-- Trigger file input -->
@@ -73,7 +73,7 @@
 <div class="p-5">
     <div>
         <h2
-                class="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
+            class="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
         >
             Your Calendar
         </h2>

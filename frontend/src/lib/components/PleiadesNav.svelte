@@ -13,11 +13,7 @@
     async function verifySession() {
         const url = PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/projects"
         const res = await fetch(url, { mode: "cors", credentials: "include" })
-        if (res.ok) {
-            loggedIn = true
-        } else {
-            loggedIn = false
-        }
+        loggedIn = res.ok
     }
 
     async function logout() {

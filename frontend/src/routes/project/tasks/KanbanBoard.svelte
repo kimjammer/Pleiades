@@ -28,5 +28,7 @@
         display: flex;
         align-items: stretch;
         min-height: 80vh;
+        gap: 1em;
+        margin-top: 0.5em;
     }
 </style>

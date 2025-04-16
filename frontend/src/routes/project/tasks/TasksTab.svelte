@@ -1,18 +1,11 @@
 <script lang="ts">
-    import DueDate from "./DueDate.svelte"
-    import TimeEstimate from "./TimeEstimate.svelte"
-    import Timer from "./Timer.svelte"
     import * as Tabs from "$lib/components/ui/tabs"
-    import { type ProjectState, Task } from "$lib/project_state.svelte"
+    import { type ProjectState } from "$lib/project_state.svelte"
     import type { PageData } from "./$types"
     import CreationModal from "./CreationModal.svelte"
     import KanbanBoard from "./KanbanBoard.svelte"
 
     let { project, data }: { project: ProjectState; data: PageData } = $props()
-    console.log("data in TasksTab: " + data)
-
-    //Testing
-    const task: Task = project.tasks[0] ?? new Task()
 </script>
 
 <Tabs.Content value="tasks">

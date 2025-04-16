@@ -14,14 +14,9 @@
     import TasksTab from "./tasks/TasksTab.svelte"
 
     let { data }: { data: PageData } = $props()
-
-    let projectId = $state("")
-
     let project: Promise<ProjectState> = $state(new Promise((_a, _b) => {}))
 
-    let key = $state("Key")
-    let value = $state("Value")
-
+    let projectId = $state("")
     let tab = $state("tasks")
 
     onMount(() => {
@@ -140,8 +135,8 @@
                     name="options"
                     id="A"
                     value="A"
-                    checked={project.demoButtonState == "a"}
-                    disabled={project.demoButtonState != ""}
+                    checked={project.demoButtonState === "a"}
+                    disabled={project.demoButtonState !== ""}
                     oninput={() => project.select("a")}
                 />
                 <label for="A">A</label>
@@ -150,8 +145,8 @@
                     name="options"
                     id="B"
                     value="B"
-                    checked={project.demoButtonState == "b"}
-                    disabled={project.demoButtonState != ""}
+                    checked={project.demoButtonState === "b"}
+                    disabled={project.demoButtonState !== ""}
                     oninput={() => project.select("b")}
                 />
                 <label for="B">B</label>

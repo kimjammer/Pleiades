@@ -33,7 +33,7 @@
 
 <div class="poll mt-[0.5em] border">
     <h1 class="mb-[0.3em] text-xl">{poll.title}</h1>
-    {#if poll.description != ""}
+    {#if poll.description !== ""}
         <p class="mb-[0.5em] opacity-80">{poll.description}</p>
     {/if}
 
@@ -41,21 +41,21 @@
         {#each poll.options as option}
             <p class="option-name">{option.title}</p>
             <Button
-                class="not-sctd:hover:bg-green-400/40 not-sctd:dark:hover:bg-green-700/40 hover:border-transparent sctd:bg-green-400/80 sctd:dark:bg-green-700/80"
+                class="hover:border-transparent sctd:bg-green-400/80 not-sctd:hover:bg-green-400/40 sctd:dark:bg-green-700/80 not-sctd:dark:hover:bg-green-700/40"
                 data-selected={option.likedUsers.includes(project.userId)}
                 onclick={() => voteFor(option, "LikedUsers")}
                 variant="outline"
                 size="icon">✅</Button
             >
             <Button
-                class="not-sctd:hover:bg-yellow-400/40 not-sctd:dark:hover:bg-yellow-700/40 hover:border-transparent sctd:bg-yellow-400/80 sctd:dark:bg-yellow-700/80"
+                class="hover:border-transparent sctd:bg-yellow-400/80 not-sctd:hover:bg-yellow-400/40 sctd:dark:bg-yellow-700/80 not-sctd:dark:hover:bg-yellow-700/40"
                 data-selected={option.neutralUsers.includes(project.userId)}
                 onclick={() => voteFor(option, "NeutralUsers")}
                 variant="outline"
                 size="icon">🟡</Button
             >
             <Button
-                class="not-sctd:hover:bg-red-400/40 not-sctd:dark:hover:bg-red-700/40 hover:border-transparent sctd:bg-red-400/80 sctd:dark:bg-red-700/80"
+                class="hover:border-transparent sctd:bg-red-400/80 not-sctd:hover:bg-red-400/40 sctd:dark:bg-red-700/80 not-sctd:dark:hover:bg-red-700/40"
                 data-selected={option.dislikedUsers.includes(project.userId)}
                 onclick={() => voteFor(option, "DislikedUsers")}
                 variant="outline"
