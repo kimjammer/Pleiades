@@ -45,7 +45,7 @@ type Poll struct {
 	Title       string
 	Description string
 	Options     []Option
-	DueDate     string //num milliseconds since 1970
+	DueDate     int //num milliseconds since 1970
 }
 
 type Task struct {

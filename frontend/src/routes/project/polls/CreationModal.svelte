@@ -54,7 +54,7 @@
             id: crypto.randomUUID(),
             title: validationResult.data.title,
             description: validationResult.data.description ?? "",
-            dueDate: validationResult.data.dueDate,
+            dueDate: new Date(validationResult.data.dueDate).getTime(),
             options: validationResult.data.options.split(",").map(title => {
                 return {
                     id: crypto.randomUUID(),
