@@ -651,7 +651,7 @@ func googleLogin(c *gin.Context) {
 
 	email, _ := payload.Claims["email"].(string)
 	name, _ := payload.Claims["name"].(string)
-	c.Redirect(http.StatusSeeOther, os.Getenv("PROTOCOL") + os.Getenv("FRONTEND_URI") + "/home")
+	c.Redirect(http.StatusSeeOther, os.Getenv("PROTOCOL") + os.Getenv("HOST") + "/home")
 	return
 
 	c.JSON(http.StatusOK, gin.H{
