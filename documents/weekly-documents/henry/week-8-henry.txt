@@ -1,11 +1,12 @@
 === Weekly Individual Report (Team 5: Pleiades) ===
 Name: Henry
 
-Week 7 (Summary)
+Week 8 (Summary)
 4/14 4e4208d 0.5hr Make the project page remember which tab you were on
 4/14 692637c 1.5hr Basic UI for polls
-4/14 9dcc1e3 4hr Full UX of casting votes
+4/14 9dcc1e3 4hr   Full UX of casting votes
+4/16 45ff6f1 0.5hr Fix colors
 
-Week 8 (Plan)
+Week 9 (Plan)
 4/14 7hr UX for voting in a poll
 4/15 8hr Displaying the results of a poll

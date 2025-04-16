@@ -392,7 +392,7 @@ func TestProjectMutation(t *testing.T) {
 					"NeutralUsers": [],
 					"DislikedUsers": []
 				}],
-				"DueDate": "123"
+				"DueDate": 123
 			}
 		}
 	}`)
@@ -401,7 +401,7 @@ func TestProjectMutation(t *testing.T) {
 
 	require.Equal(t, len(proj.Project.Polls), 1)
 	require.Equal(t, proj.Project.Polls[0].Id, "poll")
-	require.Equal(t, proj.Project.Polls[0].DueDate, "123")
+	require.Equal(t, proj.Project.Polls[0].DueDate, 123)
 	require.Equal(t, len(proj.Project.Polls[0].Options), 1)
 	require.Equal(t, proj.Project.Polls[0].Options[0].Id, "option 1")
 
@@ -449,7 +449,7 @@ func TestProjectMutation(t *testing.T) {
 				"Title": "Heyo",
 				"Description": "Dank",
 				"Options": [],
-				"DueDate": "123"
+				"DueDate": 123
 			}
 		}
 	}`)
@@ -465,7 +465,7 @@ func TestProjectMutation(t *testing.T) {
 				"Title": "Heyo",
 				"Description": "Dank",
 				"Options": [],
-				"DueDate": "123"
+				"DueDate": 123
 			}
 		}
 	}`)
