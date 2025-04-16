@@ -3,11 +3,14 @@
 Week 8 (Summary) (Scrum Master: Henry Rovnyak)
 4/14 4e4208d 0.5hr Make the project page remember which tab you were on
 4/14 692637c 1.5hr Basic UI for polls
+4/14 9dcc1e3 4hr   Full UX of casting votes
+4/16 45ff6f1 0.5hr Fix colors
+4/16 0dc4ca7 1hr   Due dates on polls
 
 Week 8 (Summary) (Scrum Master: Henry Rovnyak)
 [Meetings]
 4/14 Teach Henry how we're using pull requests and discuss accessibility of the UI design
-4/16 Decided on final user story
+4/16 Review what is done and what is left to do with our TA and discuss possible future plans
 
 [Individual goals]
 Henry: Implement notifications
