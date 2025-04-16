@@ -4,13 +4,15 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/mailjet/mailjet-apiv3-go/v4"
 	"log"
 	"net/http"
 	"os"
 	"slices"
 	"strconv"
 	"time"
+
+	"github.com/mailjet/mailjet-apiv3-go/v4"
+	"google.golang.org/api/idtoken"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -630,6 +632,36 @@ func resetPasswordHandler(c *gin.Context) {
 	_, err = collection.DeleteOne(c, filter)
 
 	c.Status(http.StatusOK)
+}
+
+func googleLogin(c *gin.Context) {
+	var req struct {
+		Credential string `form:"credential" binding:"required"`
+	}
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+
+	payload, err := idtoken.Validate(c, req.Credential, "")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+		return
+	}
+
+	email, _ := payload.Claims["email"].(string)
+	name, _ := payload.Claims["name"].(string)
+	c.Redirect(http.StatusSeeOther, os.Getenv("PROTOCOL") + os.Getenv("HOST") + "/home")
+	return
+
+	c.JSON(http.StatusOK, gin.H{
+		"email": email,
+		"name":  name,
+	})
+}
+
+func googleRegistration(c *gin.Context) {
+
 }
 
 // TEMPORARY
