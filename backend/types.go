@@ -52,7 +52,7 @@ type Task struct {
 	Id           string    `json:"id"`
 	Title        string    `json:"title"`
 	Description  string    `json:"description"`
-	DueDate      int       `json:"dueDate"` // Use int64 if needed
+	DueDate      int       `json:"dueDate"`
 	KanbanColumn string    `json:"kanbanColumn"`
 	TimeEstimate int       `json:"timeEstimate"`
 	Completed    bool      `json:"completed"`

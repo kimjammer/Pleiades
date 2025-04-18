@@ -25,10 +25,12 @@
         month = parseInt(input.value) || new Date().getMonth() + 1
     }
     onMount(() => {
-        tasks = getTasks()
+        getTasks()
+        mapTasks()
     })
-    let tasks: Promise<Task[]> = $state(new Promise(() => {}))
-    async function getTasks(): Promise<Task[]> {
+    let tasks: Task[] = $state([])
+    let projectNames: string[] = []
+    async function getTasks() {
         try {
             const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/getUserTasks", {
                 method: "GET",
@@ -39,7 +41,8 @@
             const data = await res.json()
             if (data.success) {
                 toast.success("User tasks fetched")
-                return data.tasks as Task[]
+                projectNames = data.projectNames
+                tasks = data.tasks as Task[]
             } else {
                 toast.error(data.error)
             }
@@ -49,6 +52,30 @@
         }
         console.log("tasks " + tasks)
         return []
+    }
+    let projectTaskMap = new Map()
+    let projectFilter = new Map()
+    async function mapTasks() {
+        for (let i = 0; i < projectNames.length; i++) {
+            if (projectTaskMap.has(projectNames[i])) {
+                let taskList = projectTaskMap.get(projectNames[i])
+                taskList.push(tasks[i])
+                projectTaskMap.set(projectNames[i], taskList)
+            } else {
+                projectTaskMap.set(projectNames[i], [tasks[i]])
+                projectFilter.set(projectNames[i], true)
+            }
+        }
+    }
+
+    async function filterTasks() {
+        //Create function that goes through this projectFilter and uses projectTaskMap to redefine tasks
+        tasks = []
+        for (const [name, showing] of projectFilter) {
+            if (showing) {
+                tasks.push(...projectTaskMap.get(name))
+            }
+        }
     }
 
 

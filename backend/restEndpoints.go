@@ -175,7 +175,6 @@ func registerUser(c *gin.Context) {
 
 func login(c *gin.Context) {
 	listUsers()
-
 	email := c.Query("email")
 	password := c.Query("password")
 	var user User
@@ -672,6 +671,7 @@ func getUserTasks(c *gin.Context) {
 	}
 	allProjects := db.Collection("projects")
 	var userTasks []Task
+	var projectNames []string
 
 	for _, projectId := range crrUser.Projects {
 		var project Project
@@ -681,6 +681,7 @@ func getUserTasks(c *gin.Context) {
 				for _, assignee := range task.Assignees {
 					if assignee == crrUser.Id.Hex() {
 						userTasks = append(userTasks, task)
+						projectNames = append(projectNames, project.Title)
 						break // Avoid duplicate adds if userID appears more than once
 					}
 				}
@@ -688,7 +689,7 @@ func getUserTasks(c *gin.Context) {
 		}
 	}
 	log.Println(userTasks)
-	c.JSON(http.StatusOK, gin.H{"success": true, "tasks": userTasks})
+	c.JSON(http.StatusOK, gin.H{"success": true, "tasks": userTasks, "projectNames": projectNames})
 }
 
 // TEMPORARY

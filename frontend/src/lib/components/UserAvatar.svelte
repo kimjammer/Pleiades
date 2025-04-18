@@ -21,7 +21,7 @@
         if (contentType.includes("application/json")) {
             const data = await res.json()
             if (!data.found) {
-                //console.log("User has no profile picture")
+                console.log("User has no profile picture")
                 return null // Use default avatar
             }
         } else {
@@ -46,7 +46,7 @@
             const data = await res.json()
             const firstName = data.firstName || ""
             const lastName = data.lastName || ""
-            //console.log(firstName.charAt(0) + lastName.charAt(0))
+            console.log(firstName.charAt(0) + lastName.charAt(0))
             return firstName.charAt(0) + lastName.charAt(0)
         }
         let user = project.users.find(user => user.id === userID)

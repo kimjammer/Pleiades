@@ -206,12 +206,12 @@ function updateProject(serverProject: any, state: ProjectState) {
 }
 
 function updateTask(serverTask: any, task: Task) {
-    task.id = serverTask.Id
-    task.title = serverTask.Title
-    task.description = serverTask.Description
-    task.dueDate = serverTask.DueDate
-    task.kanbanColumn = serverTask.KanbanColumn
-    task.timeEstimate = serverTask.TimeEstimate
+    task.id = serverTask.id
+    task.title = serverTask.title
+    task.description = serverTask.description
+    task.dueDate = serverTask.dueDate
+    task.kanbanColumn = serverTask.kanbanColumn
+    task.timeEstimate = serverTask.timeEstimate
     task.completed = serverTask.completed
 
     while (task.sessions.length > (serverTask.Sessions?.length ?? 0)) {
@@ -226,7 +226,7 @@ function updateTask(serverTask: any, task: Task) {
         updateSession(serverTask.Sessions[i], task.sessions[i])
     }
 
-    task.assignees = serverTask.Assignees
+    task.assignees = serverTask.assignees
 }
 
 function updateSession(serverSession: any, session: Session) {
