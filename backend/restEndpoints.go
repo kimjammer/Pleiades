@@ -651,7 +651,7 @@ func googleLogin(c *gin.Context) {
 
 	email, _ := payload.Claims["email"].(string)
 	name, _ := payload.Claims["name"].(string)
-	c.Redirect(http.StatusSeeOther, os.Getenv("PROTOCOL") + os.Getenv("HOST") + "/home")
+	c.Redirect(http.StatusSeeOther, os.Getenv("PROTOCOL")+os.Getenv("HOST")+"/home")
 	return
 
 	c.JSON(http.StatusOK, gin.H{
@@ -662,6 +662,33 @@ func googleLogin(c *gin.Context) {
 
 func googleRegistration(c *gin.Context) {
 
+}
+
+func getUserTasks(c *gin.Context) {
+	crrUser, err := getUser(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+	allProjects := db.Collection("projects")
+	var userTasks []Task
+
+	for _, projectId := range crrUser.Projects {
+		var project Project
+		err := allProjects.FindOne(c, bson.M{"_id": projectId}).Decode(&project)
+		if err == nil {
+			for _, task := range project.Tasks {
+				for _, assignee := range task.Assignees {
+					if assignee == crrUser.Id.Hex() {
+						userTasks = append(userTasks, task)
+						break // Avoid duplicate adds if userID appears more than once
+					}
+				}
+			}
+		}
+	}
+	log.Println(userTasks)
+	c.JSON(http.StatusOK, gin.H{"tasks": userTasks})
 }
 
 // TEMPORARY

@@ -65,6 +65,7 @@ func defineRoutes(router *gin.Engine) {
 	router.GET("/stats", reportStats)
 	router.POST("/forgotPassword", forgotPasswordHandler)
 	router.POST("/resetPassword", resetPasswordHandler)
+	router.GET("/getUserTasks", authRequired(), getUserTasks)
 }
 
 func defineTestRoutes(router *gin.Engine) {

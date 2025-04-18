@@ -4,10 +4,52 @@
     import PleiadesNav from "$lib/components/PleiadesNav.svelte"
     import { Label } from "$lib/components/ui/label"
     import { toast } from "svelte-sonner"
+    import type { Task } from "$lib/project_state.svelte"
     // Optional: for notifications
     import UserAvatar from "$lib/components/UserAvatar.svelte"
     import type { ChangeEventHandler } from "svelte/elements"
     import Calendar from "../project/calendar/Calendar.svelte"
+    import {onMount} from "svelte";
+    import {goto} from "$app/navigation";
+    import {base} from "$app/paths";
+
+    let year = $state(new Date().getFullYear())
+    let month = $state(new Date().getMonth() + 1)
+    function handleYearChange(e: Event) {
+        const input = e.target as HTMLInputElement
+        year = parseInt(input.value) || new Date().getFullYear()
+    }
+
+    function handleMonthChange(e: Event) {
+        const input = e.target as HTMLInputElement
+        month = parseInt(input.value) || new Date().getMonth() + 1
+    }
+    onMount(() => {
+        getTasks()
+    })
+    let tasks: Task[]
+    async function getTasks() {
+        try {
+            const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/getUserTasks", {
+                method: "GET",
+                mode: "cors",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+            })
+            const data = await res.json()
+            if (data.success) {
+                toast.success("User tasks fetched")
+                tasks = data.tasks as Task[]
+            } else {
+                toast.error(data.error)
+            }
+        } catch (error) {
+            toast.error("Failed to get user tasks")
+            console.error(error)
+        }
+        console.log("tasks " + tasks)
+    }
+
 
     let selectedFile
 
@@ -77,5 +119,30 @@
         >
             Your Calendar
         </h2>
+        <div class="inputs">
+            <label>
+                Year:
+                <input
+                        type="number"
+                        value={year}
+                        oninput={handleYearChange}
+                />
+            </label>
+            <label>
+                Month:
+                <input
+                        type="number"
+                        min="1"
+                        max="12"
+                        value={month}
+                        oninput={handleMonthChange}
+                />
+            </label>
+        </div>
+        <Calendar
+                {month}
+                {year}
+                {tasks}
+        />
     </div>
 </div>
