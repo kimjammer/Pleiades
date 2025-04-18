@@ -25,10 +25,10 @@
         month = parseInt(input.value) || new Date().getMonth() + 1
     }
     onMount(() => {
-        getTasks()
+        tasks = getTasks()
     })
-    let tasks: Task[]
-    async function getTasks() {
+    let tasks: Promise<Task[]> = $state(new Promise(() => {}))
+    async function getTasks(): Promise<Task[]> {
         try {
             const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/getUserTasks", {
                 method: "GET",
@@ -39,7 +39,7 @@
             const data = await res.json()
             if (data.success) {
                 toast.success("User tasks fetched")
-                tasks = data.tasks as Task[]
+                return data.tasks as Task[]
             } else {
                 toast.error(data.error)
             }
@@ -48,6 +48,7 @@
             console.error(error)
         }
         console.log("tasks " + tasks)
+        return []
     }
 
 
@@ -139,10 +140,12 @@
                 />
             </label>
         </div>
-        <Calendar
-                {month}
-                {year}
-                {tasks}
-        />
+        {#await tasks}
+            <p>Loading calendar...</p> <!-- You can also use a Skeleton or spinner here -->
+        {:then tasks}
+            <Calendar {month} {year} {tasks} />
+        {:catch error}
+            <p class="text-red-500">Failed to load calendar.</p>
+        {/await}
     </div>
 </div>

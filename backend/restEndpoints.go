@@ -688,7 +688,7 @@ func getUserTasks(c *gin.Context) {
 		}
 	}
 	log.Println(userTasks)
-	c.JSON(http.StatusOK, gin.H{"tasks": userTasks})
+	c.JSON(http.StatusOK, gin.H{"success": true, "tasks": userTasks})
 }
 
 // TEMPORARY
