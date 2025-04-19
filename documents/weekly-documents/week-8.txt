@@ -4,8 +4,10 @@ Week 8 (Summary) (Scrum Master: Henry Rovnyak)
 4/14 4e4208d 0.5hr Make the project page remember which tab you were on
 4/14 692637c 1.5hr Basic UI for polls
 4/14 9dcc1e3 4hr   Full UX of casting votes
+4/15 0aa04da  2.6hr 0 Refactor Due Dates
 4/16 45ff6f1 0.5hr Fix colors
 4/16 0dc4ca7 1hr   Due dates on polls
+4/17 6724e5d 2hr   Implement User session stacked chart (Includes many tasks)
 
 Week 8 (Summary) (Scrum Master: Henry Rovnyak)
 [Meetings]
@@ -14,6 +16,6 @@ Week 8 (Summary) (Scrum Master: Henry Rovnyak)
 
 [Individual goals]
 Henry: Implement notifications
-John: 
+John: Wrap up burndown chart features and write end to end tests
 Cate: 
 Ethan: 
