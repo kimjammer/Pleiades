@@ -6,10 +6,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/mailjet/mailjet-apiv3-go/v4"
 	"google.golang.org/api/idtoken"
 
@@ -645,6 +648,50 @@ func sendInviteEmail(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
+}
+
+func purdueDirectory(c *gin.Context) {
+	name := c.Query("name")
+	// Make a POST request to https://www.purdue.edu/directory/ with form encoded body `SearchString: <name>`
+	form := url.Values{"SearchString": {name}}
+
+	resp, err := http.Post(
+		"https://www.purdue.edu/directory/",
+		"application/x-www-form-urlencoded",
+		strings.NewReader(form.Encode()),
+	)
+	if err != nil {
+		log.Fatal(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Load the HTML document
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+	  log.Fatal(err)
+	  c.AbortWithStatus(http.StatusInternalServerError)
+	  return
+	}
+
+	// Find the emails
+	emails := doc.Find(".icon-envelope-alt").Map(func(i int, s *goquery.Selection) string {
+		return s.Next().Text()
+	})
+
+	// Find the names
+	names := doc.Find(".cn-name").Map(func(i int, s *goquery.Selection) string {
+		return s.Text()
+	})
+
+	// Create a map of names and emails
+	nameEmailMap := make(map[string]string)
+	for i := range names {
+		nameEmailMap[names[i]] = emails[i]
+	}
+
+	c.JSON(http.StatusOK, nameEmailMap)
 }
 
 func googleLogin(c *gin.Context) {
