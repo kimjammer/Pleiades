@@ -54,6 +54,7 @@ func defineRoutes(router *gin.Engine) {
 	router.POST("/logout", logout)
 	router.GET("/verifySession", authRequired(), verifySession)
 	router.GET("/invite", authRequired(), invite)
+	router.GET("/invite/email", authRequired(), sendInviteEmail)
 	router.GET("/join", authRequired(), join)
 	router.GET("/join/info", joinInfo)
 	router.POST("/availability", authRequired(), setAvailability)
