@@ -10,5 +10,5 @@ Week 8 (Summary)
 4/16 4161f3d 3hr   Display the results of votes
 
 Week 9 (Plan)
-4/14 7hr UX for voting in a poll
-4/15 8hr Displaying the results of a poll
+4/21 6hr Implement a websockets interface for notifications
+4/22 4hr Hook various events into notifications

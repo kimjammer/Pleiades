@@ -88,14 +88,16 @@ func joinSpace(projectId string) ConnectionForSocket {
 }
 
 type ProjectAndUsers struct {
-	Project Project
-	Users   []UserInProject
+	Project      Project
+	Users        []UserInProject
+	Notification Notify
 }
 
-func encodeProject(project Project, users []UserInProject) []byte {
+func encodeProject(project Project, users []UserInProject, notif Notify) []byte {
 	encoded, err := json.Marshal(ProjectAndUsers{
-		Project: project,
-		Users:   users,
+		Project:      project,
+		Users:        users,
+		Notification: notif,
 	})
 	if err != nil {
 		panic(err)
@@ -162,11 +164,12 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 
 	for {
 		appliedChange := false
+		var notif Notify
 
 		select {
 		case newConnection := <-connectionsChannel:
 			// Guaranteed not to block since it's the first one and there's a buffer of one
-			newConnection.state_tx <- encodeProject(project, users)
+			newConnection.state_tx <- encodeProject(project, users, Notify{})
 			stateChannel := make(chan []byte, 1)
 			killedChannel := make(chan interface{})
 			go fanInCommandsFrom(newConnection, commandChannel, StateFanOutRecv{stateChannel, killedChannel}, &wg)
@@ -177,6 +180,10 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 			users = queryUsers(project.Users)
 			appliedChange = true
 		case message := <-commandChannel:
+			if notify, ok := message.command.(Notify); ok {
+				notif = notify
+			}
+
 			maybe_err := message.command.apply(&project)
 
 			var deleted bool
@@ -217,7 +224,7 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 		}
 
 		if appliedChange {
-			encoded := encodeProject(project, users)
+			encoded := encodeProject(project, users, notif)
 
 			projectStateFanOut = slices.DeleteFunc(projectStateFanOut, func(v StateFanOutTx) bool {
 				select {

@@ -133,6 +133,11 @@ function updateState(serverResponse: any, state: ProjectState) {
     console.log(serverResponse)
     updateProject(serverResponse.Project, state)
 
+    let notif = makeNotification(serverResponse.Notification, state.userId)
+    if (notif !== null) {
+        state.notifications.push(notif)
+    }
+
     while (state.users.length > serverResponse.Users.length) {
         state.users.pop()
     }
@@ -263,6 +268,23 @@ function updateOption(serverOption: any, option: Option) {
     option.dislikedUsers = serverOption.DislikedUsers
 }
 
+function makeNotification(serverNotification: any, userId: string): Notification | null {
+    if (serverNotification === undefined) {
+        return null
+    }
+
+    let notif = new Notification()
+
+    if (serverNotification.Who !== undefined && serverNotification.Who !== userId) {
+        return null
+    }
+    notif.category = serverNotification.Category
+    notif.title = serverNotification.Title
+    notif.message = serverNotification.Message
+
+    return notif
+}
+
 export class Availability {
     dayOfWeek = $state(0)
     startOffset = $state(0)
@@ -313,6 +335,12 @@ export class Poll {
     dueDate: number = $state(0)
 }
 
+export class Notification {
+    category: string = $state("")
+    title: string = $state("")
+    message: string = $state("")
+}
+
 export class ProjectState {
     demoButtonState: "" | "a" | "b" = $state("")
 
@@ -328,6 +356,7 @@ export class ProjectState {
     userId: string = $state("")
     error: string = $state("")
     showError: boolean = $state(false)
+    notifications: Notification[] = $state([])
 
     socket: WebSocket
 
@@ -372,7 +401,6 @@ export class ProjectState {
                 NewValue: value,
             },
         })
-        console.log(value, message)
         this.socket.send(message)
     }
 
@@ -384,7 +412,6 @@ export class ProjectState {
                 NewValue: value,
             },
         })
-        console.log(message)
         this.socket.send(message)
     }
 
@@ -395,7 +422,19 @@ export class ProjectState {
                 Selector: key,
             },
         })
-        console.log(message)
         this.socket.send(message)
+    }
+
+    notify(who: UserInProject | null, category: string, title: string, message: string) {
+        let command = JSON.stringify({
+            Name: "notify",
+            Args: {
+                Who: who?.id ?? "",
+                Category: category,
+                Title: title,
+                Message: message,
+            },
+        })
+        this.socket.send(command)
     }
 }
