@@ -1,0 +1,24 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: Ethan Dawes
+
+Week 8 (Plan)
+2025-04-14 c158843 0.01hr Add units
+2025-04-14 9cde776 0.07hr Upload docs
+2025-04-14 e57f999 0.36hr Play with signin
+2025-04-14 2268e39 0.4hr Upgrade to new client lib
+2025-04-14 a83a7c2 0.41hr Rename route, add endpoint
+2025-04-14 d7287b0 0.3hr Troubleshoot CORS
+2025-04-14 53073c4 0.62hr Figure out the CORS issue
+2025-04-14 a981b90       Revert "Figure out the CORS issue"
+2025-04-14 9460166       Revert "Troubleshoot CORS"
+2025-04-14 0cf66a7 0.18hr Permenantly fix Google CORS issues
+2025-04-14 613b3d5 0.2hr Figure out how to validate token
+2025-04-14 17165cb 0.21hr anger
+2025-04-16 981aadb ~0.2hr fix env and error
+2025-04-16 37b7f31       Merge pull request #11 from EthanDawes/ethan
+
+total time: 2.96 hr
+
+Week 9 (Plan)
+4/24 5 hr Import availability from gcal
+4/21 5 hr Import availability from gcal
