@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
+    import { base } from "$app/paths"
+    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
     import { buttonVariants } from "$lib/components/ui/button/index.js"
     import * as Dialog from "$lib/components/ui/dialog/index.js"
-    import { toast } from "svelte-sonner"
-    import { base } from "$app/paths"
     import { Skeleton } from "$lib/components/ui/skeleton"
+    import { toast } from "svelte-sonner"
 
     let url = $state<string>()
     let qrDialogOpen = $state(false)
@@ -36,7 +36,7 @@
 <Dialog.Root bind:open={qrDialogOpen}>
     <Dialog.Trigger
         class={buttonVariants({ variant: "outline" })}
-        onclick={showLink}>Invite</Dialog.Trigger
+        onclick={showLink}>QR/link</Dialog.Trigger
     >
     <Dialog.Content class="sm:max-w-[425px]">
         <Dialog.Header>
