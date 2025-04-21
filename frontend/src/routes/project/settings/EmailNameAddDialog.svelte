@@ -4,6 +4,7 @@
     import * as Dialog from "$lib/components/ui/dialog"
     import { Input } from "$lib/components/ui/input"
     import { debounce } from "$lib/utils"
+    import { toast } from "svelte-sonner"
     import type { ChangeEventHandler } from "svelte/elements"
 
     let { description = "" }: { description?: string } = $props()
@@ -25,7 +26,7 @@
         const res = await fetch(url, { mode: "cors", credentials: "include" })
         isLoading = false
         if (!res.ok) {
-            // TODO: toast
+            toast.error("Could not fetch suggestions.")
             return
         }
         suggestions = await res.json()
@@ -34,6 +35,24 @@
             return
         }
     }, 500)
+
+    async function goInvite(ev: MouseEvent) {
+        const elem = ev.target as HTMLButtonElement
+        const email = elem.value
+        const name = elem.innerText
+        const params = new URLSearchParams(document.location.search)
+        const projectId = params.get("id") || ""
+        const url =
+            PUBLIC_PROTOCOL +
+            PUBLIC_API_HOST +
+            `/invite/email?name=${name}&email=${email}&id=${projectId}`
+        const res = await fetch(url, { mode: "cors", credentials: "include" })
+        if (res.ok) {
+            toast.success("Invite email sent!")
+        } else {
+            toast.error("Could not invite user.")
+        }
+    }
 </script>
 
 <Dialog.Content class="sm:max-w-[425px]">
@@ -55,7 +74,11 @@
     {#if suggestions.length}
         <div class="max-h-96">
             {#each suggestions as [name, email]}
-                <Button variant="ghost">{name}</Button>
+                <Button
+                    variant="ghost"
+                    value={email}
+                    onclick={goInvite}>{name}</Button
+                >
             {/each}
         </div>
     {:else}
