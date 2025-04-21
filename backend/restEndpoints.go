@@ -676,8 +676,9 @@ func purdueDirectory(c *gin.Context) {
 	}
 
 	// Find the emails
-	emails := doc.Find(".icon-envelope-alt").Map(func(i int, s *goquery.Selection) string {
-		return s.Next().Text()
+	emails := doc.Find(".icon-key").Map(func(i int, s *goquery.Selection) string {
+		// Search for alias because not all users have public emails
+		return s.Next().Text() + "@purdue.edu"
 	})
 
 	// Find the names
