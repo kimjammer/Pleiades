@@ -1,22 +1,38 @@
 <script lang="ts">
-    import * as Command from "$lib/components/ui/command"
+    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
+    import { Button } from "$lib/components/ui/button"
     import * as Dialog from "$lib/components/ui/dialog"
+    import { Input } from "$lib/components/ui/input"
     import { debounce } from "$lib/utils"
     import type { ChangeEventHandler } from "svelte/elements"
-    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
 
     let { description = "" }: { description?: string } = $props()
 
+    // 1st is name, 2nd is email
+    type Suggestion = [string, string]
+
     let isLoading = $state(false)
-    let suggestions = $state([])
+    let suggestions = $state([] as Suggestion[])
 
     const suggestCompletions: ChangeEventHandler<HTMLInputElement> = debounce(async event => {
         const nameOrEmail = (event.target as HTMLInputElement).value
         isLoading = true
-        const url = PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/directory/purdue.edu?name=" +
+        const url =
+            PUBLIC_PROTOCOL +
+            PUBLIC_API_HOST +
+            "/directory/purdue.edu?name=" +
             encodeURIComponent(nameOrEmail)
-        const res = await (await fetch(url, { mode: "cors", credentials: "include" })).json()
+        const res = await fetch(url, { mode: "cors", credentials: "include" })
         isLoading = false
+        if (!res.ok) {
+            // TODO: toast
+            return
+        }
+        suggestions = await res.json()
+        if (suggestions.length === 0 && nameOrEmail.includes("@")) {
+            suggestions = [[nameOrEmail.split("@")[0], nameOrEmail]]
+            return
+        }
     }, 500)
 </script>
 
@@ -28,18 +44,23 @@
         </Dialog.Description>
     </Dialog.Header>
 
-    <Command.Root>
-        <Command.Input
-            placeholder="Name or email"
-            oninput={suggestCompletions}
-        />
-        <Command.List>
-            <Command.Empty>{isLoading ? "Loading..." : "No results found."}</Command.Empty>
-            <Command.Item>Calendar</Command.Item>
-            <Command.Item>Search Emoji</Command.Item>
-            <Command.Item>Calculator</Command.Item>
-        </Command.List>
-    </Command.Root>
+    <!-- Command makes sense for this, but it didn't like me dynamically changing the items -->
+    <Input
+        type="text"
+        placeholder="Name or email"
+        class="w-full"
+        oninput={suggestCompletions}
+    />
+
+    {#if suggestions.length}
+        <div class="max-h-96">
+            {#each suggestions as [name, email]}
+                <Button variant="ghost">{name}</Button>
+            {/each}
+        </div>
+    {:else}
+        {isLoading ? "Loading..." : "No results found."}
+    {/if}
 
     <Dialog.Footer>
         <!-- TODO: s<Button type="submit">Done</Button> -->

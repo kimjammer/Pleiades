@@ -686,10 +686,11 @@ func purdueDirectory(c *gin.Context) {
 		return s.Text()
 	})
 
-	// Create a map of names and emails
-	nameEmailMap := make(map[string]string)
+	// Create a 2d array of names and emails as [name, email][]
+	nameEmailMap := make([][2]string, len(names))
 	for i := range names {
-		nameEmailMap[names[i]] = emails[i]
+		nameEmailMap[i][0] = names[i]
+		nameEmailMap[i][1] = emails[i]
 	}
 
 	c.JSON(http.StatusOK, nameEmailMap)
