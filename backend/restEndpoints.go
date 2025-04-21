@@ -4,13 +4,15 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/mailjet/mailjet-apiv3-go/v4"
 	"log"
 	"net/http"
 	"os"
 	"slices"
 	"strconv"
 	"time"
+
+	"github.com/mailjet/mailjet-apiv3-go/v4"
+	"google.golang.org/api/idtoken"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -173,7 +175,6 @@ func registerUser(c *gin.Context) {
 
 func login(c *gin.Context) {
 	listUsers()
-
 	email := c.Query("email")
 	password := c.Query("password")
 	var user User
@@ -630,6 +631,65 @@ func resetPasswordHandler(c *gin.Context) {
 	_, err = collection.DeleteOne(c, filter)
 
 	c.Status(http.StatusOK)
+}
+
+func googleLogin(c *gin.Context) {
+	var req struct {
+		Credential string `form:"credential" binding:"required"`
+	}
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+
+	payload, err := idtoken.Validate(c, req.Credential, "")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+		return
+	}
+
+	email, _ := payload.Claims["email"].(string)
+	name, _ := payload.Claims["name"].(string)
+	c.Redirect(http.StatusSeeOther, os.Getenv("PROTOCOL")+os.Getenv("HOST")+"/home")
+	return
+
+	c.JSON(http.StatusOK, gin.H{
+		"email": email,
+		"name":  name,
+	})
+}
+
+func googleRegistration(c *gin.Context) {
+
+}
+
+func getUserTasks(c *gin.Context) {
+	crrUser, err := getUser(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+	allProjects := db.Collection("projects")
+	var userTasks []Task
+	var projectNames []string
+
+	for _, projectId := range crrUser.Projects {
+		var project Project
+		err := allProjects.FindOne(c, bson.M{"_id": projectId}).Decode(&project)
+		if err == nil {
+			for _, task := range project.Tasks {
+				for _, assignee := range task.Assignees {
+					if assignee == crrUser.Id.Hex() {
+						userTasks = append(userTasks, task)
+						projectNames = append(projectNames, project.Title)
+						break // Avoid duplicate adds if userID appears more than once
+					}
+				}
+			}
+		}
+	}
+	log.Println(userTasks)
+	c.JSON(http.StatusOK, gin.H{"success": true, "tasks": userTasks, "projectNames": projectNames})
 }
 
 // TEMPORARY

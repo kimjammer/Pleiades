@@ -22,7 +22,7 @@
             const data = await res.json()
             if (!data.found) {
                 console.log("User has no profile picture")
-                return null // Set to empty or default avatar
+                return null // Use default avatar
             }
         } else {
             // Response is an image, process it

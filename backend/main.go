@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"log"
+	"slices"
 
-	// "net/http"
 	_ "net/http/pprof"
 	"os"
 
@@ -21,11 +21,20 @@ var db *mongo.Database
 var mailjetClient *mailjet.Client
 var allowedOrigins = []string{"http://localhost:5173", "http://localhost:4173", "https://pleiades.pages.dev", "https://ethandawes.github.io"}
 
+func shouldAllowOrigin(c *gin.Context, origin string) bool {
+	// Must make special CORS exception for "log in with Google" because cross-origin redirects have `Origin: null`
+	// From https://stackoverflow.com/questions/76085477/oauth2-after-redirect-response-request-origin-is-null#comment134184742_76085477
+	// and my own testing
+	// I could've just used js callback, but I thought this was more elegant b/c fewer steps
+	var allowedOAuthRoutes = []string{"/login/google", "/register/google"}
+	return slices.Contains(allowedOrigins, origin) || (origin == "null" && slices.Contains(allowedOAuthRoutes, c.Request.URL.Path))
+}
+
 func setupRouter() *gin.Engine {
 	// Setup webserver
 	router := gin.Default()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = allowedOrigins
+	config.AllowOriginWithContextFunc = shouldAllowOrigin
 	config.AllowCredentials = true
 	router.Use(cors.New(config))
 	router.Use(loadToken())
@@ -39,7 +48,9 @@ func defineRoutes(router *gin.Engine) {
 	router.POST("/projects/new", authRequired(), newProjectHandler)
 	router.GET("/register/check", checkEmail)
 	router.POST("/register/new", registerUser)
+	router.POST("/register/google", googleRegistration)
 	router.GET("/login", login)
+	router.POST("/login/google", googleLogin)
 	router.POST("/logout", logout)
 	router.GET("/verifySession", authRequired(), verifySession)
 	router.GET("/invite", authRequired(), invite)
@@ -54,6 +65,7 @@ func defineRoutes(router *gin.Engine) {
 	router.GET("/stats", reportStats)
 	router.POST("/forgotPassword", forgotPasswordHandler)
 	router.POST("/resetPassword", resetPasswordHandler)
+	router.GET("/getUserTasks", authRequired(), getUserTasks)
 }
 
 func defineTestRoutes(router *gin.Engine) {

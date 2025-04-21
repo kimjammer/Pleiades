@@ -49,15 +49,15 @@ type Poll struct {
 }
 
 type Task struct {
-	Id           string
-	Title        string
-	Description  string
-	DueDate      int
-	KanbanColumn string
-	TimeEstimate int
-	Completed    bool
-	Sessions     []Session
-	Assignees    []string //user ids
+	Id           string    `json:"id"`
+	Title        string    `json:"title"`
+	Description  string    `json:"description"`
+	DueDate      int       `json:"dueDate"`
+	KanbanColumn string    `json:"kanbanColumn"`
+	TimeEstimate int       `json:"timeEstimate"`
+	Completed    bool      `json:"completed"`
+	Sessions     []Session `json:"sessions"`
+	Assignees    []string  `json:"assignees"`
 }
 
 type Option struct {

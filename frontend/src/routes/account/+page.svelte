@@ -4,10 +4,80 @@
     import PleiadesNav from "$lib/components/PleiadesNav.svelte"
     import { Label } from "$lib/components/ui/label"
     import { toast } from "svelte-sonner"
+    import type { Task } from "$lib/project_state.svelte"
     // Optional: for notifications
     import UserAvatar from "$lib/components/UserAvatar.svelte"
     import type { ChangeEventHandler } from "svelte/elements"
     import Calendar from "../project/calendar/Calendar.svelte"
+    import {onMount} from "svelte";
+    import {goto} from "$app/navigation";
+    import {base} from "$app/paths";
+
+    let year = $state(new Date().getFullYear())
+    let month = $state(new Date().getMonth() + 1)
+    function handleYearChange(e: Event) {
+        const input = e.target as HTMLInputElement
+        year = parseInt(input.value) || new Date().getFullYear()
+    }
+
+    function handleMonthChange(e: Event) {
+        const input = e.target as HTMLInputElement
+        month = parseInt(input.value) || new Date().getMonth() + 1
+    }
+    onMount(() => {
+        getTasks()
+        mapTasks()
+    })
+    let tasks: Task[] = $state([])
+    let projectNames: string[] = []
+    async function getTasks() {
+        try {
+            const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/getUserTasks", {
+                method: "GET",
+                mode: "cors",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+            })
+            const data = await res.json()
+            if (data.success) {
+                toast.success("User tasks fetched")
+                projectNames = data.projectNames
+                tasks = data.tasks as Task[]
+            } else {
+                toast.error(data.error)
+            }
+        } catch (error) {
+            toast.error("Failed to get user tasks")
+            console.error(error)
+        }
+        console.log("tasks " + tasks)
+        return []
+    }
+    let projectTaskMap = new Map()
+    let projectFilter = new Map()
+    async function mapTasks() {
+        for (let i = 0; i < projectNames.length; i++) {
+            if (projectTaskMap.has(projectNames[i])) {
+                let taskList = projectTaskMap.get(projectNames[i])
+                taskList.push(tasks[i])
+                projectTaskMap.set(projectNames[i], taskList)
+            } else {
+                projectTaskMap.set(projectNames[i], [tasks[i]])
+                projectFilter.set(projectNames[i], true)
+            }
+        }
+    }
+
+    async function filterTasks() {
+        //Create function that goes through this projectFilter and uses projectTaskMap to redefine tasks
+        tasks = []
+        for (const [name, showing] of projectFilter) {
+            if (showing) {
+                tasks.push(...projectTaskMap.get(name))
+            }
+        }
+    }
+
 
     let selectedFile
 
@@ -77,5 +147,32 @@
         >
             Your Calendar
         </h2>
+        <div class="inputs">
+            <label>
+                Year:
+                <input
+                        type="number"
+                        value={year}
+                        oninput={handleYearChange}
+                />
+            </label>
+            <label>
+                Month:
+                <input
+                        type="number"
+                        min="1"
+                        max="12"
+                        value={month}
+                        oninput={handleMonthChange}
+                />
+            </label>
+        </div>
+        {#await tasks}
+            <p>Loading calendar...</p> <!-- You can also use a Skeleton or spinner here -->
+        {:then tasks}
+            <Calendar {month} {year} {tasks} />
+        {:catch error}
+            <p class="text-red-500">Failed to load calendar.</p>
+        {/await}
     </div>
 </div>

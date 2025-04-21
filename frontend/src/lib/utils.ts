@@ -14,3 +14,5 @@ export function debounce<T extends Function>(cb: T, wait = 20) {
     }
     return <T>(<any>callable)
 }
+
+export const GOOGLE_OAUTH_CLIENT_ID = "104619113313-21gij0dmhi857nk0c4tf7gjbgfc6jg82"

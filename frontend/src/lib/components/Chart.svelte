@@ -1,4 +1,7 @@
-<script module>
+<script
+    module
+    lang="ts"
+>
     type TLabel = string
     export type DefaultChartConfig<TType extends ChartType> = ChartConfiguration<
         TType,

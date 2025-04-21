@@ -4,9 +4,30 @@ Week 8 (Summary) (Scrum Master: Henry Rovnyak)
 4/14 4e4208d 0.5hr Make the project page remember which tab you were on
 4/14 692637c 1.5hr Basic UI for polls
 4/14 9dcc1e3 4hr   Full UX of casting votes
+4/14 66a17c8 0.5hr color update
+4/14 602a79d 1hr   task title in dark mode fix
+2025-04-14 c158843 0.01hr Add units
+2025-04-14 9cde776 0.07hr Upload docs
+2025-04-14 e57f999 0.36hr Play with signin
+2025-04-14 2268e39 0.4hr Upgrade to new client lib
+2025-04-14 a83a7c2 0.41hr Rename route, add endpoint
+2025-04-14 d7287b0 0.3hr Troubleshoot CORS
+2025-04-14 53073c4 0.62hr Figure out the CORS issue
+2025-04-14 a981b90       Revert "Figure out the CORS issue"
+2025-04-14 9460166       Revert "Troubleshoot CORS"
+2025-04-14 0cf66a7 0.18hr Permenantly fix Google CORS issues
+2025-04-14 613b3d5 0.2hr Figure out how to validate token
+2025-04-14 17165cb 0.21hr anger
+4/15 0aa04da  2.6hr 0 Refactor Due Dates
 4/16 45ff6f1 0.5hr Fix colors
 4/16 0dc4ca7 1hr   Due dates on polls
 4/16 4161f3d 3hr   Display the results of votes
+2025-04-16 981aadb ~0.2hr fix env and error
+2025-04-16 37b7f31       Merge pull request #11 from EthanDawes/ethan
+4/17 6724e5d 2hr   Implement User session stacked chart (Includes many tasks)
+4/18 a4b1145 3hr   fetching user tasks (not working)
+4/18 a18ca12 2hr   personal window works! (text only)
+4/18 2be0937 2.5hr parallel projectName list
 
 Week 8 (Summary) (Scrum Master: Henry Rovnyak)
 [Meetings]
@@ -15,6 +36,6 @@ Week 8 (Summary) (Scrum Master: Henry Rovnyak)
 
 [Individual goals]
 Henry: Implement notifications
-John: 
-Cate: 
-Ethan: 
+John: Wrap up burndown chart features and write end to end tests
+Cate: Complete personal calendar UI and implement notification settings
+Ethan: Implement Google SSO and user invites
