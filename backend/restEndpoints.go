@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"slices"
 	"strconv"
 	"time"
 
@@ -204,48 +203,12 @@ func login(c *gin.Context) {
 }
 
 func invite(c *gin.Context) {
-	//Get current user
-	crrUser, err := getUser(c)
-	if err != nil {
-		// TODO: convert to middleware
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+	invitationId := createInvite(c)
+	if invitationId == "" {
 		return
 	}
 
-	// Validate permissions (is project member)
-	projectId := c.Query("id")
-	isMember := slices.Contains(crrUser.Projects, projectId)
-	if !isMember {
-		// TODO: convert to middleware
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Not a project member"})
-		return
-	}
-
-	invitations := db.Collection("invitations")
-
-	// Create 1 week ttl TODO: is this ok to do every time or is there a better init location?
-	ttl := int32(604800) // 1 week, in seconds
-	if TEST {
-		ttl = 20 // seconds
-	}
-	indexModel := mongo.IndexModel{
-		Keys:    bson.D{{Key: "createdat", Value: 1}},
-		Options: options.Index().SetExpireAfterSeconds(ttl).SetName("ttl_index"),
-	}
-	invitations.Indexes().CreateOne(c, indexModel)
-
-	// Create record
-	invitation := Invitation{
-		Id:        uuid.New().String(),
-		CreatedAt: time.Now(),
-		ProjectId: projectId,
-	}
-	_, err = invitations.InsertOne(c, invitation)
-	if err != nil {
-		panic(err)
-	}
-
-	c.String(http.StatusOK, invitation.Id)
+	c.String(http.StatusOK, invitationId)
 }
 
 func join(c *gin.Context) {
@@ -629,6 +592,57 @@ func resetPasswordHandler(c *gin.Context) {
 
 	//Delete token
 	_, err = collection.DeleteOne(c, filter)
+
+	c.Status(http.StatusOK)
+}
+
+func sendInviteEmail(c *gin.Context) {
+	// Get name and email from query parameters
+	name := c.Query("name")
+	email := c.Query("email")
+	if name == "" || email == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing name or email"})
+		return
+	}
+
+	// Generate magic link
+	protocol := os.Getenv("PROTOCOL")
+	host := os.Getenv("HOST")
+	inviteId := createInvite(c)
+	if inviteId == "" {
+		return
+	}
+	magicLink := protocol + host + "/join?id=" + inviteId
+
+	messagesInfo := []mailjet.InfoMessagesV31{
+		{
+			From: &mailjet.RecipientV31{
+				Email: "support@kimjammer.com",
+				Name:  "Pleiades Support",
+			},
+			To: &mailjet.RecipientsV31{
+				mailjet.RecipientV31{
+					Email: email,
+					Name:  name,
+				},
+			},
+			Subject:  "Pleiades Invitaiton",
+			TextPart: "Your teammates are inviting you to join their Pleaides project:" + magicLink,
+		},
+	}
+	messages := mailjet.MessagesV31{Info: messagesInfo}
+	if mailjetClient != nil {
+		_, err := mailjetClient.SendMailV31(&messages)
+		if err != nil {
+			log.Println(err)
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+	} else {
+		log.Println("No Mailjet client, email not sent!")
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
 
 	c.Status(http.StatusOK)
 }
