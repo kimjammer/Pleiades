@@ -6,6 +6,8 @@ Week 8 (Summary)
 4/14 692637c 1.5hr Basic UI for polls
 4/14 9dcc1e3 4hr   Full UX of casting votes
 4/16 45ff6f1 0.5hr Fix colors
+4/16 0dc4ca7 1hr   Due dates on polls
+4/16 4161f3d 3hr   Display the results of votes
 
 Week 9 (Plan)
 4/14 7hr UX for voting in a poll
