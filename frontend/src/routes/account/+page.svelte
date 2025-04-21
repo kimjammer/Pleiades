@@ -3,6 +3,8 @@
     import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
     import PleiadesNav from "$lib/components/PleiadesNav.svelte"
     import { Label } from "$lib/components/ui/label"
+    import { Switch } from "$lib/components/ui/switch"
+    import * as Card from "$lib/components/ui/card"
     import { toast } from "svelte-sonner"
     import type { Task } from "$lib/project_state.svelte"
     // Optional: for notifications
@@ -12,6 +14,21 @@
     import {onMount} from "svelte";
     import {goto} from "$app/navigation";
     import {base} from "$app/paths";
+    import Teammate from "../project/settings/Teammate.svelte";
+
+
+    /*TODO: Create boolean array in users
+            update user websocket
+            bind boolean values to switches
+            create function to switch booleans
+    */
+
+    /*
+        TODO: Create hovercard for each task
+              Create filtering UI for personal calendar
+              Bind UI to functions updating tasks[]
+     */
+
 
     let year = $state(new Date().getFullYear())
     let month = $state(new Date().getMonth() + 1)
@@ -140,6 +157,27 @@
         onchange={handleFileSelect}
     />
 </div>
+
+<Card.Root class="mt-2 w-fit">
+    <Card.Header>
+        <Card.Title>Notification Settings</Card.Title>
+    </Card.Header>
+    <Card.Content class="grid gap-6">
+        <div class="flex items-center space-x-2">
+            <Switch className="user joining" />
+            <Label className="user joining">New users joining projects</Label>
+        </div>
+        <div class="flex items-center space-x-2">
+            <Switch className="ending polls" />
+            <Label className="ending polls">Polls ending soon</Label>
+        </div>
+        <div class="flex items-center space-x-2">
+            <Switch className="task assignments" />
+            <Label className="task assignments">New task assignments</Label>
+        </div>
+    </Card.Content>
+</Card.Root>
+
 <div class="p-5">
     <div>
         <h2
