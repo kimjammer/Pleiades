@@ -6,10 +6,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/mailjet/mailjet-apiv3-go/v4"
 	"google.golang.org/api/idtoken"
 
@@ -645,6 +648,53 @@ func sendInviteEmail(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
+}
+
+func purdueDirectory(c *gin.Context) {
+	name := c.Query("name")
+	// Make a POST request to https://www.purdue.edu/directory/ with form encoded body `SearchString: <name>`
+	form := url.Values{"SearchString": {name}}
+
+	resp, err := http.Post(
+		"https://www.purdue.edu/directory/",
+		"application/x-www-form-urlencoded",
+		strings.NewReader(form.Encode()),
+	)
+	if err != nil {
+		log.Fatal(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Load the HTML document
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+	  log.Fatal(err)
+	  c.AbortWithStatus(http.StatusInternalServerError)
+	  return
+	}
+
+	// Find the emails
+	emails := doc.Find(".icon-key").Map(func(i int, s *goquery.Selection) string {
+		// Search for alias because not all users have public emails
+		// TODO: some users have a different email from their alias.
+		return s.Next().Text() + "@purdue.edu"
+	})
+
+	// Find the names
+	names := doc.Find(".cn-name").Map(func(i int, s *goquery.Selection) string {
+		return s.Text()
+	})
+
+	// Create a 2d array of names and emails as [name, email][]
+	nameEmailMap := make([][2]string, len(names))
+	for i := range names {
+		nameEmailMap[i][0] = names[i]
+		nameEmailMap[i][1] = emails[i]
+	}
+
+	c.JSON(http.StatusOK, nameEmailMap)
 }
 
 func googleLogin(c *gin.Context) {

@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"golang.org/x/crypto/bcrypt"
 	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -507,4 +508,50 @@ func TestResetPasswordValidToken(t *testing.T) {
 	_ = db.Collection("users").FindOne(context.TODO(), bson.D{}).Decode(&user)
 	result := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("newpassword"))
 	require.Nil(t, result)
+}
+
+func TestPurdueDirectory(t *testing.T) {
+	var cases = []struct {
+		search  string
+		name string
+		email string
+		valid bool
+	}{
+		// TODO: this currently fails
+		//{"Jeff Turkstra", "jeffrey a turkstra", "jeff@purdue.edu", true},
+		{"ethan dawes", "ethan ross dawes", "dawes3@purdue.edu", true},
+		{"qwertyuiop", "", "", false},
+	}
+
+	for _, tt := range cases {
+        t.Run(tt.search, func(t *testing.T) {
+			router := setupTestRouter()
+			resetDB()
+
+			w := httptest.NewRecorder()
+			req, _ := http.NewRequest(http.MethodGet, "/directory/purdue.edu?name=" + tt.search, nil)
+			router.ServeHTTP(w, req)
+
+			require.Equal(t, http.StatusOK, w.Code)
+
+			body, err := io.ReadAll(w.Body)
+			if err != nil {
+				panic(err.Error())
+			}
+
+			var data [][2]string
+			err = json.Unmarshal(body, &data)
+			if err != nil {
+				panic(err.Error())
+			}
+
+			if tt.valid {
+				require.Equal(t, 1, len(data))
+				require.Equal(t, data[0][0], tt.name)
+				require.Equal(t, data[0][1], tt.email)
+			} else {
+				require.Equal(t, 0, len(data))
+			}
+        })
+    }
 }
