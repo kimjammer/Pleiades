@@ -6,10 +6,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/mailjet/mailjet-apiv3-go/v4"
 	"google.golang.org/api/idtoken"
 
@@ -142,7 +145,8 @@ func registerUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-
+	newUser.NotifSettings = []bool{true, true, true}
+	log.Println("Registering User, NotifSettings: ", newUser.NotifSettings)
 	hashedPassword, err := encryptPassword(newUser.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
@@ -613,6 +617,7 @@ func sendInviteEmail(c *gin.Context) {
 		return
 	}
 	magicLink := protocol + host + "/join?id=" + inviteId
+	message := "Your teammates are inviting you to join their Pleaides project: "
 
 	messagesInfo := []mailjet.InfoMessagesV31{
 		{
@@ -627,7 +632,8 @@ func sendInviteEmail(c *gin.Context) {
 				},
 			},
 			Subject:  "Pleiades Invitaiton",
-			TextPart: "Your teammates are inviting you to join their Pleaides project:" + magicLink,
+			TextPart: message + magicLink,
+			HTMLPart: fmt.Sprintf("%s <a href=\"%s\">%s</a>", message, magicLink, magicLink),
 		},
 	}
 	messages := mailjet.MessagesV31{Info: messagesInfo}
@@ -645,6 +651,53 @@ func sendInviteEmail(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
+}
+
+func purdueDirectory(c *gin.Context) {
+	name := c.Query("name")
+	// Make a POST request to https://www.purdue.edu/directory/ with form encoded body `SearchString: <name>`
+	form := url.Values{"SearchString": {name}}
+
+	resp, err := http.Post(
+		"https://www.purdue.edu/directory/",
+		"application/x-www-form-urlencoded",
+		strings.NewReader(form.Encode()),
+	)
+	if err != nil {
+		log.Fatal(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Load the HTML document
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+	  log.Fatal(err)
+	  c.AbortWithStatus(http.StatusInternalServerError)
+	  return
+	}
+
+	// Find the emails
+	emails := doc.Find(".icon-key").Map(func(i int, s *goquery.Selection) string {
+		// Search for alias because not all users have public emails
+		// TODO: some users have a different email from their alias.
+		return s.Next().Text() + "@purdue.edu"
+	})
+
+	// Find the names
+	names := doc.Find(".cn-name").Map(func(i int, s *goquery.Selection) string {
+		return s.Text()
+	})
+
+	// Create a 2d array of names and emails as [name, email][]
+	nameEmailMap := make([][2]string, len(names))
+	for i := range names {
+		nameEmailMap[i][0] = names[i]
+		nameEmailMap[i][1] = emails[i]
+	}
+
+	c.JSON(http.StatusOK, nameEmailMap)
 }
 
 func googleLogin(c *gin.Context) {
@@ -704,6 +757,50 @@ func getUserTasks(c *gin.Context) {
 	}
 	log.Println(userTasks)
 	c.JSON(http.StatusOK, gin.H{"success": true, "tasks": userTasks, "projectNames": projectNames})
+}
+
+func flipNotif(c *gin.Context) {
+	crrUser, err := getUser(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
+	}
+
+	var req FlipRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
+	}
+
+	log.Println("before flip: ", crrUser.NotifSettings)
+
+	//flip
+	crrUser.NotifSettings[req.NotifIndex] = !crrUser.NotifSettings[req.NotifIndex]
+	log.Println("after flip: ", crrUser.NotifSettings)
+
+	//update in database
+	_, err = db.Collection("users").UpdateByID(c, crrUser.Id,
+		bson.M{"$set": bson.M{"notifSettings": crrUser.NotifSettings}})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	log.Println("after flip: ", crrUser.NotifSettings)
+
+	c.JSON(http.StatusOK, gin.H{"success": true})
+
+}
+
+func getNotifSettings(c *gin.Context) {
+	crrUser, err := getUser(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
+	}
+
+	//TODO: make sure backend sends back correct boolean array
+	log.Println("NotifSettings: ", crrUser.NotifSettings)
+	c.JSON(http.StatusOK, gin.H{"success": true, "notifSettings": crrUser.NotifSettings})
 }
 
 // TEMPORARY

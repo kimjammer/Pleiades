@@ -55,6 +55,7 @@ func defineRoutes(router *gin.Engine) {
 	router.GET("/verifySession", authRequired(), verifySession)
 	router.GET("/invite", authRequired(), invite)
 	router.GET("/invite/email", authRequired(), sendInviteEmail)
+	router.GET("/directory/purdue.edu", authRequired(), purdueDirectory)
 	router.GET("/join", authRequired(), join)
 	router.GET("/join/info", joinInfo)
 	router.POST("/availability", authRequired(), setAvailability)
@@ -67,6 +68,8 @@ func defineRoutes(router *gin.Engine) {
 	router.POST("/forgotPassword", forgotPasswordHandler)
 	router.POST("/resetPassword", resetPasswordHandler)
 	router.GET("/getUserTasks", authRequired(), getUserTasks)
+	router.POST("/flipNotif", authRequired(), flipNotif)
+	router.GET("/notifSettings", authRequired(), getNotifSettings)
 }
 
 func defineTestRoutes(router *gin.Engine) {

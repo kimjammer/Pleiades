@@ -3,7 +3,6 @@
     import * as Dialog from "$lib/components/ui/dialog"
     import * as Tabs from "$lib/components/ui/tabs/index.js"
     import type { ProjectState } from "$lib/project_state.svelte"
-    import QrAlert from "./QrAlert.svelte"
     import Teammates from "./Teammates.svelte"
 
     let { project }: { project: ProjectState } = $props()
@@ -13,7 +12,6 @@
 </script>
 
 <Tabs.Content value="settings">
-    <QrAlert />
     <Dialog.Root bind:open={leaveDialogOpen}>
         <Dialog.Trigger>
             <Button variant="destructive">Leave Project</Button>

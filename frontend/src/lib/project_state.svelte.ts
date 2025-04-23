@@ -157,6 +157,7 @@ function updateUser(serverUser: any, user: UserInProject) {
     user.firstName = serverUser.FirstName
     user.lastName = serverUser.LastName
     user.email = serverUser.Email
+    user.notifSettings = serverUser.NotifSettings
 
     while (user.availability.length > serverUser.Availability.length) {
         user.availability.pop()
@@ -218,16 +219,16 @@ function updateTask(serverTask: any, task: Task) {
     task.timeEstimate = serverTask.timeEstimate
     task.completed = serverTask.completed
 
-    while (task.sessions.length > (serverTask.Sessions?.length ?? 0)) {
+    while (task.sessions.length > (serverTask.sessions?.length ?? 0)) {
         task.sessions.pop()
     }
 
-    while (task.sessions.length < (serverTask.Sessions?.length ?? 0)) {
+    while (task.sessions.length < (serverTask.sessions?.length ?? 0)) {
         task.sessions.push(new Session())
     }
 
     for (let i = 0; i < task.sessions.length; i++) {
-        updateSession(serverTask.Sessions[i], task.sessions[i])
+        updateSession(serverTask.sessions[i], task.sessions[i])
     }
 
     task.assignees = serverTask.assignees
@@ -297,6 +298,7 @@ export class UserInProject {
     lastName: string = $state("")
     email: string = $state("")
     availability: Availability[] = $state([])
+    notifSettings: boolean[3] = $state([])
 }
 
 export class Session {

@@ -1,0 +1,93 @@
+name: Test Project
+
+on:
+  pull_request:
+    branches: ["main"]
+  merge_group:
+    types: [checks_requested]
+  workflow_dispatch:
+
+env:
+  MONGODB_URI: mongodb://localhost:27017
+  HOST: localhost:4173/BASE_PATH
+  PROTOCOL: http://
+  PUBLIC_API_HOST: localhost:8080
+  PUBLIC_PROTOCOL: http://
+  PUBLIC_WS_PROTOCOL: ws://
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: read
+
+    outputs:
+      backend-changed: ${{ steps.filter.outputs.backend-changed }}
+      frontend-changed: ${{ steps.filter.outputs.frontend-changed }}
+
+    steps:
+      - name: Check for changes in PRs
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend-changed:
+              - 'backend/**'
+            frontend-changed:
+              - 'frontend/**'
+
+  # Job to test backend
+  test-backend:
+    needs: check-changes
+    runs-on: ubuntu-latest
+    if: ${{ needs.check-changes.outputs.backend-changed == 'true' }}
+
+    steps:
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: "8.0"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Go 1.24.x
+        uses: actions/setup-go@v5
+        with:
+          # Semantic version range syntax or exact version of Go
+          go-version: "1.24.x"
+      - name: Run tests
+        run: |
+          cd backend
+          go test .
+
+  # Job to test End to End
+  test-e2e:
+    needs: check-changes
+    runs-on: ubuntu-latest
+    if: ${{ needs.check-changes.outputs.frontend-changed == 'true' }}
+
+    steps:
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: "8.0"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Go 1.24.x
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.x"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install
+          npx playwright install
+          npm run build
+      - name: Run tests
+        run: |
+          cd frontend
+          npm run test

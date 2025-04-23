@@ -23,15 +23,16 @@ type Project struct {
 }
 
 type User struct {
-	Id           primitive.ObjectID `bson:"_id,omitempty"`
-	FirstName    string
-	LastName     string
-	Email        string
-	Password     string //stored as bcrypt hash (string)
-	PhoneNumber  string
-	UserPhoto    []byte
-	Availability []Availability
-	Projects     []string
+	Id            primitive.ObjectID `bson:"_id,omitempty"`
+	FirstName     string
+	LastName      string
+	Email         string
+	Password      string //stored as bcrypt hash (string)
+	PhoneNumber   string
+	UserPhoto     []byte
+	Availability  []Availability
+	Projects      []string
+	NotifSettings []bool
 }
 
 type Availability struct {

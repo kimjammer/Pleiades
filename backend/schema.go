@@ -42,3 +42,7 @@ type PasswordResetRequest struct {
 	Token       string
 	NewPassword string
 }
+
+type FlipRequest struct {
+	NotifIndex int `json:"notifIndex"`
+}
