@@ -1,4 +1,4 @@
-name: Test Backend
+name: Test Project
 
 on:
   pull_request:
@@ -82,4 +82,5 @@ jobs:
           npm install
       - name: Run tests
         run: |
+          cd frontend
           npm run test
