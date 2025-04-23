@@ -9,6 +9,11 @@ on:
 
 env:
   MONGODB_URI: mongodb://localhost:27017
+  HOST: localhost:4173/BASE_PATH
+  PROTOCOL: http://
+  PUBLIC_API_HOST: localhost:8080
+  PUBLIC_PROTOCOL: http://
+  PUBLIC_WS_PROTOCOL: ws://
 
 jobs:
   check-changes:
