@@ -673,9 +673,9 @@ func purdueDirectory(c *gin.Context) {
 	// Load the HTML document
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-	  log.Fatal(err)
-	  c.AbortWithStatus(http.StatusInternalServerError)
-	  return
+		log.Fatal(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
 	// Find the emails
@@ -756,6 +756,7 @@ func getUserTasks(c *gin.Context) {
 		}
 	}
 	log.Println(userTasks)
+	log.Println(projectNames)
 	c.JSON(http.StatusOK, gin.H{"success": true, "tasks": userTasks, "projectNames": projectNames})
 }
 

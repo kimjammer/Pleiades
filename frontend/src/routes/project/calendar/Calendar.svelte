@@ -2,7 +2,6 @@
     import type { Task } from "$lib/project_state.svelte"
 
     let { year, month, tasks = [] }: { year: number; month: number; tasks?: Task[] } = $props()
-    console.log("In calendar component" + tasks)
     let calendar = $state<string[][]>([])
 
     const daysOfWeek = [
@@ -49,10 +48,6 @@
                 currentRow.push("")
             }
             calendarGrid.push(currentRow)
-        }
-
-        for (let i = 0; i < tasks.length; i++) {
-            console.log("duedate: " + tasks[i].dueDate)
         }
 
         return calendarGrid
