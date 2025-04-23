@@ -617,6 +617,7 @@ func sendInviteEmail(c *gin.Context) {
 		return
 	}
 	magicLink := protocol + host + "/join?id=" + inviteId
+	message := "Your teammates are inviting you to join their Pleaides project: "
 
 	messagesInfo := []mailjet.InfoMessagesV31{
 		{
@@ -631,7 +632,8 @@ func sendInviteEmail(c *gin.Context) {
 				},
 			},
 			Subject:  "Pleiades Invitaiton",
-			TextPart: "Your teammates are inviting you to join their Pleaides project:" + magicLink,
+			TextPart: message + magicLink,
+			HTMLPart: fmt.Sprintf("%s <a href=\"%s\">%s</a>", message, magicLink, magicLink),
 		},
 	}
 	messages := mailjet.MessagesV31{Info: messagesInfo}
