@@ -22,6 +22,9 @@
 
         for (const task of project.tasks) {
             for (const session of task.sessions) {
+                //Ignore sessions currently in progress
+                if (session.endTime === 0) continue
+
                 accumulatedUserTime[session.user] +=
                     (session.endTime - session.startTime) / 1000 / 60 / 60
             }
@@ -54,8 +57,8 @@
         />
     {:else}
         <div
-            class="border-primary flex w-full flex-col items-center justify-center rounded-xl
-                    border-4 p-5"
+            class="flex w-full flex-col items-center justify-center rounded-xl border-4
+                    border-primary p-5"
         >
             <p class="leading-7 [&:not(:first-child)]:mt-6">
                 Record sessions to see the time breakdown pie chart.
