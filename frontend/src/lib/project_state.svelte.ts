@@ -215,16 +215,16 @@ function updateTask(serverTask: any, task: Task) {
     task.timeEstimate = serverTask.timeEstimate
     task.completed = serverTask.completed
 
-    while (task.sessions.length > (serverTask.Sessions?.length ?? 0)) {
+    while (task.sessions.length > (serverTask.sessions?.length ?? 0)) {
         task.sessions.pop()
     }
 
-    while (task.sessions.length < (serverTask.Sessions?.length ?? 0)) {
+    while (task.sessions.length < (serverTask.sessions?.length ?? 0)) {
         task.sessions.push(new Session())
     }
 
     for (let i = 0; i < task.sessions.length; i++) {
-        updateSession(serverTask.Sessions[i], task.sessions[i])
+        updateSession(serverTask.sessions[i], task.sessions[i])
     }
 
     task.assignees = serverTask.assignees

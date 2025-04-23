@@ -75,6 +75,38 @@
         }
     }
 
+    function aggregateTaskIdealTime(
+        task: Task,
+        startDate: ZonedDateTime,
+        crrDate: ZonedDateTime,
+        endDate: ZonedDateTime,
+    ) {
+        let taskLine: number[] = []
+        while (!isSameDay(crrDate, endDate)) {
+            //For each task not past due date, calculate ideal progress towards time estimate
+            let taskDueDate = fromAbsolute(task.dueDate, getLocalTimeZone())
+            let taskTime = 0
+            if (taskDueDate.compare(crrDate) > 0) {
+                taskTime =
+                    (task.timeEstimate / daysBetweenDates(startDate, taskDueDate)) *
+                    daysBetweenDates(startDate, crrDate)
+            } else {
+                taskTime = task.timeEstimate
+            }
+            taskLine.push(taskTime)
+
+            //Increment date by 1 day
+            crrDate = crrDate.add({ days: 1 })
+        }
+        taskLine = taskLine.map(time => time / (1000 * 60 * 60))
+
+        return {
+            label: task.title,
+            stack: "tasks",
+            data: taskLine,
+        }
+    }
+
     function aggregateTotalActualTime(
         sessions: Session[],
         startDate: ZonedDateTime,
@@ -191,7 +223,9 @@
         let datasets = []
 
         if (taskBreakout) {
-            //TODO
+            for (let task of tasks) {
+                datasets.push(aggregateTaskIdealTime(task, startDate, crrDate, endDate))
+            }
         } else {
             datasets.push(aggregateTotalIdealTime(tasks, startDate, crrDate, endDate))
         }
@@ -243,39 +277,37 @@
     }
 </script>
 
-{#if dataAvailable}
-    <div class="flex gap-3">
-        <div class="max-w-lg flex-grow">
-            <Chart
-                type="line"
-                data={$state.snapshot(data) as any}
-                {options}
-            />
-        </div>
-        <div class="flex flex-col justify-center gap-2">
-            <div class="flex items-center gap-1">
-                <Switch
-                    id="user-breakout"
-                    bind:checked={userBreakout}
-                />
-                <Label for="user-breakout">Breakout Users</Label>
-            </div>
-            <div class="flex items-center gap-1">
-                <Switch
-                    id="task-breakout"
-                    bind:checked={taskBreakout}
-                />
-                <Label for="task-breakout">Breakout Tasks</Label>
-            </div>
-        </div>
-    </div>
-{:else}
-    <div
-        class="flex w-full flex-col items-center justify-center rounded-xl border-4
+<div class="flex aspect-video max-w-[500px]">
+    {#if dataAvailable}
+        <Chart
+            type="line"
+            data={$state.snapshot(data) as any}
+            {options}
+        />
+    {:else}
+        <div
+            class="flex w-full flex-col items-center justify-center rounded-xl border-4
                     border-primary p-5"
-    >
-        <p class="leading-7 [&:not(:first-child)]:mt-6">
-            Create a task with a due date and time estimate to see the burndown chart.
-        </p>
+        >
+            <p class="leading-7 [&:not(:first-child)]:mt-6">
+                Create a task with a due date and time estimate to see the burndown chart.
+            </p>
+        </div>
+    {/if}
+    <div class="flex flex-col justify-center gap-2">
+        <div class="flex items-center gap-1">
+            <Switch
+                id="user-breakout"
+                bind:checked={userBreakout}
+            />
+            <Label for="user-breakout">Breakout Users</Label>
+        </div>
+        <div class="flex items-center gap-1">
+            <Switch
+                id="task-breakout"
+                bind:checked={taskBreakout}
+            />
+            <Label for="task-breakout">Breakout Tasks</Label>
+        </div>
     </div>
-{/if}
+</div>
