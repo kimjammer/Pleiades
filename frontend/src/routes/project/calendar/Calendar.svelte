@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Task } from "$lib/project_state.svelte"
-
+    import {HoverCard, HoverCardTrigger, HoverCardContent} from "$lib/components/ui/hover-card";
     let { year, month, tasks = [] }: { year: number; month: number; tasks?: Task[] } = $props()
     let calendar = $state<string[][]>([])
 
@@ -56,6 +56,14 @@
     $effect(() => {
         calendar = generateCalendar(year, month)
     })
+
+    function getTitleColor(column: string) {
+        console.log(column)
+        if (column == "") return "#cc7a00"
+        else if (column == "progress") return "#99cc00"
+        else if (column == "done") return "#008000"
+        else return null
+    }
 </script>
 
 <table>
@@ -76,7 +84,21 @@
                         {#each tasks.filter(task => new Date(task.dueDate)
                                     .toISOString()
                                     .slice(0, 10) === date) as task}
-                            <div>{task.title}</div>
+                            <HoverCard>
+                                <HoverCardTrigger
+                                        class="text-blue-600 underline cursor-pointer"
+                                        style="color: {getTitleColor(task.kanbanColumn)}"
+                                >
+                                    {task.title}
+                                </HoverCardTrigger>
+                                <HoverCardContent class="w-64">
+                                    <div class="font-semibold">{task.title}</div>
+                                    <div class="text-sm text-gray-600">{task.description}</div>
+                                    <div class="text-xs text-muted-foreground mt-2">
+                                        Due: {new Date(task.dueDate).toLocaleDateString()}
+                                    </div>
+                                </HoverCardContent>
+                            </HoverCard>
                         {/each}
                     </td>
                 {/each}
