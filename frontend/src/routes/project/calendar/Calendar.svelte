@@ -70,15 +70,15 @@
         else return null
     }
 
-    let currentProject: ProjectState = $state();
-    let currentTask: Task = $state();
+    let project: ProjectState = $state();
+    let task: Task = $state();
     let showTaskCard = $state(false)
-    async function openTaskCard(task: Task) {
+    async function openTaskCard(currTask: Task) {
         console.log(task)
         try {
-            currentTask = { ...task }
-            currentProject = await connectToProject(task.projectId)
-            console.log(currentTask)
+            task = { ...currTask }
+            project = await connectToProject(task.projectId)
+            console.log(task)
         } catch (error) {
             console.error("Error connecting to the project:", error);
         }
@@ -86,20 +86,21 @@
         console.log(showTaskCard)
     }
     function printDetails() {
-        console.log(currentTask)
-        console.log(currentProject)
+        console.log(task)
+        console.log(project)
     }
 </script>
 
 {#if showTaskCard}
-    <HoverCard>
-        <HoverCardTrigger class="text-blue-600 underline cursor-pointer">
-            <Button onclick={printDetails}>Click to view task details</Button>
-        </HoverCardTrigger>
-        <HoverCardContent class="w-96 p-4">
-            <TaskCard {currentTask} {currentProject} />
-        </HoverCardContent>
-    </HoverCard>
+    <Dialog open={showTaskCard}>
+        <DialogContent>
+            <TaskCard {task} {project} />
+        </DialogContent>
+        <DialogClose on:click={() => {
+            task = null;
+            showTaskCard = false;
+        }} />
+    </Dialog>
 {/if}
 
 <table>
