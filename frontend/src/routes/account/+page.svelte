@@ -2,12 +2,9 @@
     import { Input } from "$lib/components/ui/input" // shadcn-svelte Input
     import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
     import PleiadesNav from "$lib/components/PleiadesNav.svelte"
+    import PersonalCalendar from "./PersonalCalendar.svelte"
     import { Label } from "$lib/components/ui/label"
     import { Button } from "$lib/components/ui/button/index.js";
-    import { Checkbox } from "$lib/components/ui/checkbox/index.js";
-    import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js"
-    import { Switch } from "$lib/components/ui/switch"
-    import * as Card from "$lib/components/ui/card"
     import NotificationSettings from "./NotificationSettings.svelte"
     import { toast } from "svelte-sonner"
     import type { Task } from "$lib/project_state.svelte"
@@ -20,9 +17,6 @@
     import {base} from "$app/paths";
     import Teammate from "../project/settings/Teammate.svelte";
 
-    let notifUserJoin = $state(false)
-    let notifPollEnd = $state(false)
-    let notifTaskAssign = $state(false)
     /*
         TODO: Create hovercard for each task
               Create filtering UI for personal calendar
@@ -75,8 +69,8 @@
             toast.error("Failed to get user tasks")
             console.error(error)
         }
-        console.log("tasks " + tasks)
-        console.log("projectNames " + projectNames)
+        //console.log("tasks " + tasks)
+        //console.log("projectNames " + projectNames)
         return []
     }
 
@@ -93,8 +87,8 @@
                 projectFilter.set(projectNames[i], true)
             }
         }
-        console.log(projectNames)
-        console.log(projectFilter)
+        //console.log(projectNames)
+        //console.log(projectFilter)
     }
 
     async function filterTasks() {
@@ -173,60 +167,4 @@
 
 <NotificationSettings></NotificationSettings>
 
-<div class="p-5">
-    <div>
-        <h2
-            class="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
-        >
-            Your Calendar
-        </h2>
-        <div>
-            <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                    <Button variant="outline">Filter</Button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content class="w-56">
-                    <DropdownMenu.Label>My Projects</DropdownMenu.Label>
-                    <DropdownMenu.Separator />
-                    <DropdownMenu.Group>
-                        {#each Array.from(projectFilter.entries()) as [name, selected]}
-                            <DropdownMenu.Item>
-                                <Checkbox.Root
-                                    value={name}
-                                    checked={selected}
-                                    onCheckedChange={projectFilter.set(name, !selected)}/>
-                            </DropdownMenu.Item>
-                        {/each}
-                    </DropdownMenu.Group>
-                </DropdownMenu.Content>
-            </DropdownMenu.Root>
-        </div>
-        <div class="inputs">
-            <label>
-                Year:
-                <input
-                        type="number"
-                        value={year}
-                        oninput={handleYearChange}
-                />
-            </label>
-            <label>
-                Month:
-                <input
-                        type="number"
-                        min="1"
-                        max="12"
-                        value={month}
-                        oninput={handleMonthChange}
-                />
-            </label>
-        </div>
-        {#await tasks}
-            <p>Loading calendar...</p>
-        {:then tasks}
-            <Calendar {month} {year} {tasks} />
-        {:catch error}
-            <p class="text-red-500">Failed to load calendar.</p>
-        {/await}
-    </div>
-</div>
+<PersonalCalendar></PersonalCalendar>
