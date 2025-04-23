@@ -68,6 +68,8 @@ func defineRoutes(router *gin.Engine) {
 	router.POST("/forgotPassword", forgotPasswordHandler)
 	router.POST("/resetPassword", resetPasswordHandler)
 	router.GET("/getUserTasks", authRequired(), getUserTasks)
+	router.POST("/flipNotif", authRequired(), flipNotif)
+	router.GET("/notifSettings", authRequired(), getNotifSettings)
 }
 
 func defineTestRoutes(router *gin.Engine) {

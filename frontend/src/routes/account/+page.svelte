@@ -22,7 +22,9 @@
             bind boolean values to switches
             create function to switch booleans
     */
-
+    let notifUserJoin = $state(false)
+    let notifPollEnd = $state(false)
+    let notifTaskAssign = $state(false)
     /*
         TODO: Create hovercard for each task
               Create filtering UI for personal calendar
@@ -41,9 +43,10 @@
         const input = e.target as HTMLInputElement
         month = parseInt(input.value) || new Date().getMonth() + 1
     }
-    onMount(() => {
+    onMount(async () => {
         getTasks()
         mapTasks()
+        await getNotifSettings()
     })
     let tasks: Task[] = $state([])
     let projectNames: string[] = []
@@ -134,6 +137,42 @@
         }
         reader.readAsDataURL(file)
     }
+
+    async function flipNotifSetting(index: number) {
+        console.log("Flipping notification setting")
+        const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/flipNotif", {
+            method: "POST",
+            mode: "cors",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ notifIndex: index }),
+        })
+        const data = await res.json()
+        if (data.success) {
+            toast.success("Changed notification preference")
+            getNotifSettings()
+        } else {
+            toast.error("Error changing notification preference")
+        }
+    }
+
+    async function getNotifSettings() {
+        const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/notifSettings", {
+            method: "GET",
+            mode: "cors",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+        })
+        const data = await res.json()
+        if (data.success) {
+            [notifUserJoin, notifPollEnd, notifTaskAssign] = data.notifSettings
+            console.log(notifUserJoin, notifPollEnd, notifTaskAssign)
+        } else {
+            toast.error("Failed to load notification settings")
+        }
+    }
+
+
 </script>
 
 <PleiadesNav></PleiadesNav>
@@ -164,15 +203,27 @@
     </Card.Header>
     <Card.Content class="grid gap-6">
         <div class="flex items-center space-x-2">
-            <Switch className="user joining" />
+            <Switch
+                    className="user joining"
+                    bind:checked={notifUserJoin}
+                    onCheckedChange={() => flipNotifSetting(0)}
+            />
             <Label className="user joining">New users joining projects</Label>
         </div>
         <div class="flex items-center space-x-2">
-            <Switch className="ending polls" />
+            <Switch
+                    className="ending polls"
+                    bind:checked={notifPollEnd}
+                    onCheckedChange={() => flipNotifSetting(1)}
+            />
             <Label className="ending polls">Polls ending soon</Label>
         </div>
         <div class="flex items-center space-x-2">
-            <Switch className="task assignments" />
+            <Switch
+                    className="task assignments"
+                    bind:checked={notifTaskAssign}
+                    onCheckedChange={() => flipNotifSetting(2)}
+            />
             <Label className="task assignments">New task assignments</Label>
         </div>
     </Card.Content>

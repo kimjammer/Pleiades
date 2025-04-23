@@ -152,6 +152,7 @@ function updateUser(serverUser: any, user: UserInProject) {
     user.firstName = serverUser.FirstName
     user.lastName = serverUser.LastName
     user.email = serverUser.Email
+    user.notifSettings = serverUser.NotifSettings
 
     while (user.availability.length > serverUser.Availability.length) {
         user.availability.pop()
@@ -276,6 +277,7 @@ export class UserInProject {
     lastName: string = $state("")
     email: string = $state("")
     availability: Availability[] = $state([])
+    notifSettings: boolean[3] = $state([])
 }
 
 export class Session {

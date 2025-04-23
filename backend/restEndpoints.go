@@ -145,7 +145,8 @@ func registerUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-
+	newUser.NotifSettings = []bool{true, true, true}
+	log.Println("Registering User, NotifSettings: ", newUser.NotifSettings)
 	hashedPassword, err := encryptPassword(newUser.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
@@ -754,6 +755,50 @@ func getUserTasks(c *gin.Context) {
 	}
 	log.Println(userTasks)
 	c.JSON(http.StatusOK, gin.H{"success": true, "tasks": userTasks, "projectNames": projectNames})
+}
+
+func flipNotif(c *gin.Context) {
+	crrUser, err := getUser(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
+	}
+
+	var req FlipRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
+	}
+
+	log.Println("before flip: ", crrUser.NotifSettings)
+
+	//flip
+	crrUser.NotifSettings[req.NotifIndex] = !crrUser.NotifSettings[req.NotifIndex]
+	log.Println("after flip: ", crrUser.NotifSettings)
+
+	//update in database
+	_, err = db.Collection("users").UpdateByID(c, crrUser.Id,
+		bson.M{"$set": bson.M{"notifSettings": crrUser.NotifSettings}})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	log.Println("after flip: ", crrUser.NotifSettings)
+
+	c.JSON(http.StatusOK, gin.H{"success": true})
+
+}
+
+func getNotifSettings(c *gin.Context) {
+	crrUser, err := getUser(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
+	}
+
+	//TODO: make sure backend sends back correct boolean array
+	log.Println("NotifSettings: ", crrUser.NotifSettings)
+	c.JSON(http.StatusOK, gin.H{"success": true, "notifSettings": crrUser.NotifSettings})
 }
 
 // TEMPORARY
