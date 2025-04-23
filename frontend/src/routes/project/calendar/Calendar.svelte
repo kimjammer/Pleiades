@@ -1,8 +1,13 @@
 <script lang="ts">
     import type { Task } from "$lib/project_state.svelte"
     import {HoverCard, HoverCardTrigger, HoverCardContent} from "$lib/components/ui/hover-card";
-    let { year, month, tasks = [] }: { year: number; month: number; tasks?: Task[] } = $props()
+    let { year, month, tasks = [] }: { year: number; month: number; tasks?: Task[];} = $props()
     let calendar = $state<string[][]>([])
+    import { connectToProject } from "$lib/project_state.svelte";
+    import { type ProjectState } from "$lib/project_state.svelte"
+    import TaskCard from "../tasks/TaskCard.svelte"
+    import { Button } from "$lib/components/ui/button"
+    import { Dialog, DialogTrigger, DialogContent, DialogClose } from "$lib/components/ui/dialog"; // Import Dialog components
 
     const daysOfWeek = [
         "Sunday",
@@ -64,7 +69,38 @@
         else if (column == "done") return "#008000"
         else return null
     }
+
+    let currentProject: ProjectState = $state();
+    let currentTask: Task = $state();
+    let showTaskCard = $state(false)
+    async function openTaskCard(task: Task) {
+        console.log(task)
+        try {
+            currentTask = { ...task }
+            currentProject = await connectToProject(task.projectId)
+            console.log(currentTask)
+        } catch (error) {
+            console.error("Error connecting to the project:", error);
+        }
+        showTaskCard = true
+        console.log(showTaskCard)
+    }
+    function printDetails() {
+        console.log(currentTask)
+        console.log(currentProject)
+    }
 </script>
+
+{#if showTaskCard}
+    <HoverCard>
+        <HoverCardTrigger class="text-blue-600 underline cursor-pointer">
+            <Button onclick={printDetails}>Click to view task details</Button>
+        </HoverCardTrigger>
+        <HoverCardContent class="w-96 p-4">
+            <TaskCard {currentTask} {currentProject} />
+        </HoverCardContent>
+    </HoverCard>
+{/if}
 
 <table>
     <thead>
@@ -88,6 +124,7 @@
                                 <HoverCardTrigger
                                         class="text-blue-600 underline cursor-pointer"
                                         style="color: {getTitleColor(task.kanbanColumn)}"
+                                        onclick={() => openTaskCard(task)}
                                 >
                                     {task.title}
                                 </HoverCardTrigger>

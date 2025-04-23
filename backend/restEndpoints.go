@@ -739,6 +739,7 @@ func getUserTasks(c *gin.Context) {
 	allProjects := db.Collection("projects")
 	var userTasks []Task
 	var projectNames []string
+	//var projectIDs []string
 
 	for _, projectId := range crrUser.Projects {
 		var project Project
@@ -749,7 +750,8 @@ func getUserTasks(c *gin.Context) {
 					if assignee == crrUser.Id.Hex() {
 						userTasks = append(userTasks, task)
 						projectNames = append(projectNames, project.Title)
-						break // Avoid duplicate adds if userID appears more than once
+						//projectIDs = append(projectIDs, project.Id)
+						break
 					}
 				}
 			}
@@ -757,7 +759,8 @@ func getUserTasks(c *gin.Context) {
 	}
 	log.Println(userTasks)
 	log.Println(projectNames)
-	c.JSON(http.StatusOK, gin.H{"success": true, "tasks": userTasks, "projectNames": projectNames})
+	c.JSON(http.StatusOK, gin.H{"success": true, "tasks": userTasks,
+		"projectNames": projectNames})
 }
 
 func flipNotif(c *gin.Context) {

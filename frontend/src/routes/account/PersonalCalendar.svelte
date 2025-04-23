@@ -28,7 +28,7 @@
     })
     let tasks: Task[] = $state([])
     let projectNames: string[] = $state([])
-
+    let projectIds: string[] = $state([])
     async function getTasks() {
         try {
             const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/getUserTasks", {
@@ -41,13 +41,13 @@
                 success: boolean;
                 tasks: Task[];
                 projectNames: string[];
+                //projectIds: string[]
             }
             //console.log("Fetched data:", data)
             if (data.success) {
                 toast.success("User tasks fetched")
                 projectNames = [...data.projectNames]
-
-
+                //projectIds = [...data.projectIds]
                 tasks = data.tasks as Task[]
             } else {
                 toast.error("Failed to load user tasks")
@@ -63,6 +63,7 @@
 
     let projectTaskMap = new Map()
     let projectFilter = new Map()
+    //let projectNameIds = new Map()
     async function mapTasks() {
         for (let i = 0; i < projectNames.length; i++) {
             if (projectTaskMap.has(projectNames[i])) {
@@ -72,6 +73,7 @@
             } else {
                 projectTaskMap.set(projectNames[i], [tasks[i]])
                 projectFilter.set(projectNames[i], true)
+                //projectNameIds.set(projectNames[i], projectIds[i])
             }
         }
         //console.log(projectNames)

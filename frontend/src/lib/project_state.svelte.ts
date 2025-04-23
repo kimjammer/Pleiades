@@ -212,6 +212,7 @@ function updateProject(serverProject: any, state: ProjectState) {
 
 function updateTask(serverTask: any, task: Task) {
     task.id = serverTask.id
+    task.projectId = serverTask.projectId
     task.title = serverTask.title
     task.description = serverTask.description
     task.dueDate = serverTask.dueDate
@@ -310,6 +311,7 @@ export class Session {
 
 export class Task {
     id: string = $state("")
+    projectId: string = $state("")
     title: string = $state("")
     description: string = $state("")
     dueDate: number = $state(0)
