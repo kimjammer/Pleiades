@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"log"
 	"net/http"
 	"slices"
 	"time"
@@ -32,6 +33,18 @@ func getUserById(c context.Context, userId string) (crrUser User, err error) {
 func getUser(c *gin.Context) (crrUser User, err error) {
 	userId := c.GetString("userId")
 	crrUser, err = getUserById(c, userId)
+	return
+}
+
+func findUserByEmail(c *gin.Context, email string) (user User, err error) {
+	log.Println("fetching from database")
+	err = db.Collection("users").FindOne(c, bson.M{"email": email}).Decode(&user)
+
+	if err == mongo.ErrNoDocuments {
+		c.JSON(http.StatusOK, gin.H{"exists": false})
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+	}
 	return
 }
 
