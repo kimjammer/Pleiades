@@ -183,7 +183,6 @@ function updateProject(serverProject: any, state: ProjectState) {
     state.description = serverProject.Description
     state.created = serverProject.Created
     state.demoButtonState = serverProject.DemoButtonState
-    // TODO: Make the server send more comprehensive user info
 
     while (state.tasks.length > serverProject.Tasks.length) {
         state.tasks.pop()
@@ -269,13 +268,13 @@ function updateOption(serverOption: any, option: Option) {
 }
 
 function makeNotification(serverNotification: any, userId: string): Notification | null {
-    if (serverNotification === undefined) {
+    if (serverNotification === null) {
         return null
     }
 
     let notif = new Notification()
 
-    if (serverNotification.Who !== undefined && serverNotification.Who !== userId) {
+    if (serverNotification.Who !== "" && serverNotification.Who !== userId) {
         return null
     }
     notif.category = serverNotification.Category
@@ -339,6 +338,7 @@ export class Notification {
     category: string = $state("")
     title: string = $state("")
     message: string = $state("")
+    id: string = crypto.randomUUID()
 }
 
 export class ProjectState {
