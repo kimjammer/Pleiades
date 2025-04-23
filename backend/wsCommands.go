@@ -94,6 +94,17 @@ func decodeCommand(command CommandMessage, userId string) (Command, error) {
 		return parsedCommand, nil
 	}
 
+	if command.Name == "notify" {
+		var parsedCommand Notify
+
+		err := json.Unmarshal(command.Args, &parsedCommand)
+		if err != nil {
+			return nil, err
+		}
+
+		return parsedCommand, nil
+	}
+
 	return nil, errors.New("Unknown command: " + command.Name)
 }
 
@@ -416,4 +427,15 @@ func (self DeleteInProject) apply(state *Project) error {
 	log.Println("Unable to find the element to delete. Was it already deleted?")
 
 	return nil
+}
+
+type Notify struct {
+	Who      string
+	Category string
+	Title    string
+	Message  string
+}
+
+func (self Notify) apply(state *Project) error {
+	return errors.New("Should not call Apply on a notify command")
 }
