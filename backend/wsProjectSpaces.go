@@ -171,7 +171,7 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 		case newConnection := <-connectionsChannel:
 			// Guaranteed not to block since it's the first one and there's a buffer of one
 			newConnection.state_tx <- encodeProject(project, users, nil)
-			stateChannel := make(chan []byte, 1)
+			stateChannel := make(chan []byte, 16)
 			killedChannel := make(chan interface{})
 			go fanInCommandsFrom(newConnection, commandChannel, StateFanOutRecv{stateChannel, killedChannel}, &wg)
 			projectStateFanOut = append(projectStateFanOut, StateFanOutTx{stateChannel, killedChannel})
@@ -301,7 +301,8 @@ func fanInCommandsFrom(connection ConnectionForSpace, sendTo chan<- FanInMessage
 			case connection.state_tx <- recvState:
 			default:
 				// Flush the channel to remove the un-received state
-				<-connection.state_tx
+				// (actually this makes the tests flaky)
+				// <-connection.state_tx
 				connection.state_tx <- recvState
 			}
 

@@ -207,6 +207,10 @@ func TestLeavingInviteAroundAndUserAround(t *testing.T) {
 	require.Equal(t, len(project.Users), 2)
 	require.False(t, project.Users[0].LeftProject)
 	require.False(t, project.Users[1].LeftProject)
+	require.Nil(t, project.Notification)
+
+	// Third for the notification
+	project, disconnect = conn.recvState()
 	require.Equal(t, "users", project.Notification.Category)
 	require.Equal(t, "", project.Notification.Who)
 
@@ -336,6 +340,13 @@ func TestDeletingUserAround(t *testing.T) {
 	require.Equal(t, len(project.Users), 2)
 	require.False(t, project.Users[0].LeftProject)
 	require.False(t, project.Users[1].LeftProject)
+	require.Nil(t, project.Notification)
+
+	// Third from notification
+	project, disconnect = conn.recvState()
+	require.False(t, disconnect)
+	require.Equal(t, project.Notification.Category, "users")
+	require.Equal(t, project.Notification.Who, "")
 
 	conn.send(`{
 		"Name": "delete",

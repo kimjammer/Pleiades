@@ -5,6 +5,7 @@ Week 9 (Summary) (Scrum Master: Henry Rovnyak)
 4/23 98b411f 1hr Basic notifications
 4/23 26fef42 1hr Perform notifications at the right times
 4/23 e893a2d 0.5hr Notification settings
+4/23 46fa4f8 1hr Fix bugs
 
 Week 9 (Summary) (Scrum Master: Henry Rovnyak)
 [Meetings]
