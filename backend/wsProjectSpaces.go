@@ -33,12 +33,13 @@ type ProjectSpaceContactPoint struct {
 }
 
 type UserInProject struct {
-	Id           string
-	LeftProject  bool
-	FirstName    string
-	LastName     string
-	Email        string
-	Availability []Availability
+	Id            string
+	LeftProject   bool
+	FirstName     string
+	LastName      string
+	Email         string
+	Availability  []Availability
+	NotifSettings []bool
 }
 
 var projectSpacesMutex sync.Mutex
@@ -324,13 +325,18 @@ func queryUsers(users []UserAndLeft) []UserInProject {
 			panic(err)
 		}
 
+		if userInDB.NotifSettings == nil {
+			userInDB.NotifSettings = []bool{false, false, false}
+		}
+
 		userInProject := UserInProject{
-			Id:           user.User,
-			LeftProject:  user.LeftProject,
-			FirstName:    userInDB.FirstName,
-			LastName:     userInDB.LastName,
-			Email:        userInDB.Email,
-			Availability: userInDB.Availability,
+			Id:            user.User,
+			LeftProject:   user.LeftProject,
+			FirstName:     userInDB.FirstName,
+			LastName:      userInDB.LastName,
+			Email:         userInDB.Email,
+			Availability:  userInDB.Availability,
+			NotifSettings: userInDB.NotifSettings,
 		}
 
 		out = append(out, userInProject)
