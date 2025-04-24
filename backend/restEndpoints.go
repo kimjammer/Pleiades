@@ -696,9 +696,9 @@ func purdueDirectory(c *gin.Context) {
 	// Load the HTML document
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-	  log.Fatal(err)
-	  c.AbortWithStatus(http.StatusInternalServerError)
-	  return
+		log.Fatal(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
 	// Find the emails
@@ -732,6 +732,7 @@ func getUserTasks(c *gin.Context) {
 	allProjects := db.Collection("projects")
 	var userTasks []Task
 	var projectNames []string
+	//var projectIDs []string
 
 	for _, projectId := range crrUser.Projects {
 		var project Project
@@ -742,14 +743,17 @@ func getUserTasks(c *gin.Context) {
 					if assignee == crrUser.Id.Hex() {
 						userTasks = append(userTasks, task)
 						projectNames = append(projectNames, project.Title)
-						break // Avoid duplicate adds if userID appears more than once
+						//projectIDs = append(projectIDs, project.Id)
+						break
 					}
 				}
 			}
 		}
 	}
 	log.Println(userTasks)
-	c.JSON(http.StatusOK, gin.H{"success": true, "tasks": userTasks, "projectNames": projectNames})
+	log.Println(projectNames)
+	c.JSON(http.StatusOK, gin.H{"success": true, "tasks": userTasks,
+		"projectNames": projectNames})
 }
 
 func flipNotif(c *gin.Context) {

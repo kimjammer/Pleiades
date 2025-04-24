@@ -85,6 +85,8 @@ jobs:
         run: |
           cd frontend
           npm install
+          npx playwright install
+          npm run build
       - name: Run tests
         run: |
           cd frontend

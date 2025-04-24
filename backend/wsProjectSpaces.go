@@ -88,14 +88,16 @@ func joinSpace(projectId string) ConnectionForSocket {
 }
 
 type ProjectAndUsers struct {
-	Project Project
-	Users   []UserInProject
+	Project      Project
+	Users        []UserInProject
+	Notification *Notify
 }
 
-func encodeProject(project Project, users []UserInProject) []byte {
+func encodeProject(project Project, users []UserInProject, notif *Notify) []byte {
 	encoded, err := json.Marshal(ProjectAndUsers{
-		Project: project,
-		Users:   users,
+		Project:      project,
+		Users:        users,
+		Notification: notif,
 	})
 	if err != nil {
 		panic(err)
@@ -162,11 +164,12 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 
 	for {
 		appliedChange := false
+		var notif *Notify = nil
 
 		select {
 		case newConnection := <-connectionsChannel:
 			// Guaranteed not to block since it's the first one and there's a buffer of one
-			newConnection.state_tx <- encodeProject(project, users)
+			newConnection.state_tx <- encodeProject(project, users, nil)
 			stateChannel := make(chan []byte, 1)
 			killedChannel := make(chan interface{})
 			go fanInCommandsFrom(newConnection, commandChannel, StateFanOutRecv{stateChannel, killedChannel}, &wg)
@@ -177,47 +180,52 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 			users = queryUsers(project.Users)
 			appliedChange = true
 		case message := <-commandChannel:
-			maybe_err := message.command.apply(&project)
+			if notify, ok := message.command.(Notify); ok {
+				notif = &notify
+				appliedChange = true
+			} else {
+				maybe_err := message.command.apply(&project)
 
-			var deleted bool
-			appliedChange, deleted = (func() (bool, bool) {
-				defer (func() {
-					// Send the error even if it's nil, to allow `applyCommandToProject` to possibly return an error
-					// Also this needs to be done after project deletion so that tests see an updated database
-					message.connection.error_tx <- maybe_err
+				var deleted bool
+				appliedChange, deleted = (func() (bool, bool) {
+					defer (func() {
+						// Send the error even if it's nil, to allow `applyCommandToProject` to possibly return an error
+						// Also this needs to be done after project deletion so that tests see an updated database
+						message.connection.error_tx <- maybe_err
+					})()
+
+					if maybe_err != nil {
+						return false, false
+					}
+
+					if _, is := message.command.(UserLeave); is {
+						users = queryUsers(project.Users)
+						hasInviteLinks := existingInviteLinks(project)
+						if !hasInviteLinks && maybeDeleteProject(project) {
+							return true, true
+						}
+					}
+
+					if _, is := message.command.(Delete); is {
+						users = queryUsers(project.Users)
+						if maybeDeleteProject(project) {
+							return true, true
+						} else {
+							maybe_err = errors.New("Cannot delete when there are other users in the project")
+						}
+					}
+
+					return true, false
 				})()
 
-				if maybe_err != nil {
-					return false, false
+				if deleted {
+					return
 				}
-
-				if _, is := message.command.(UserLeave); is {
-					users = queryUsers(project.Users)
-					hasInviteLinks := existingInviteLinks(project)
-					if !hasInviteLinks && maybeDeleteProject(project) {
-						return true, true
-					}
-				}
-
-				if _, is := message.command.(Delete); is {
-					users = queryUsers(project.Users)
-					if maybeDeleteProject(project) {
-						return true, true
-					} else {
-						maybe_err = errors.New("Cannot delete when there are other users in the project")
-					}
-				}
-
-				return true, false
-			})()
-
-			if deleted {
-				return
 			}
 		}
 
 		if appliedChange {
-			encoded := encodeProject(project, users)
+			encoded := encodeProject(project, users, notif)
 
 			projectStateFanOut = slices.DeleteFunc(projectStateFanOut, func(v StateFanOutTx) bool {
 				select {

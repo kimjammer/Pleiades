@@ -12,6 +12,7 @@
     import SettingsTab from "./settings/SettingsTab.svelte"
     import StatsTab from "./stats/StatsTab.svelte"
     import TasksTab from "./tasks/TasksTab.svelte"
+    import Notifications from "./Notifications.svelte"
 
     let { data }: { data: PageData } = $props()
     let project: Promise<ProjectState> = $state(new Promise((_a, _b) => {}))
@@ -54,6 +55,7 @@
 {#await project}
     <p>Loading project</p>
 {:then project}
+    <Notifications {project} />
     <div class="p-5">
         <h2
             class="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
@@ -150,6 +152,11 @@
                     oninput={() => project.select("b")}
                 />
                 <label for="B">B</label>
+                <button
+                    onclick={() => {
+                        project.notify(null, "Debug", "Hello", "world!")
+                    }}>Notify!</button
+                >
             </Tabs.Content>
         </Tabs.Root>
     </div>
