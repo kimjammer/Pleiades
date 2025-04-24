@@ -93,6 +93,10 @@
 
         const offset = new Date().getTimezoneOffset()
 
+        let assignedTo = Array.from(toggledUsers.entries())
+            .filter(([_, value]) => value)
+            .map(([userID]) => userID)
+
         project.appendInProject("Tasks", {
             ...validationResult.data,
             id: crypto.randomUUID(),
@@ -104,19 +108,23 @@
             kanbanColumn: "",
             completed: false,
             sessions: [],
-            assignees: Array.from(toggledUsers.entries())
-                .filter(([_, value]) => value)
-                .map(([userID]) => userID),
+            assignees: assignedTo,
         } satisfies Task)
         console.log("assigned users:")
-        console.log(
-            Array.from(toggledUsers.entries())
-                .filter(([_, value]) => value)
-                .map(([userID]) => userID),
-        )
+        console.log(assignedTo)
         recordEvent("tasks")
         createDialogOpen = false
         form.reset()
+
+        for (const user of assignedTo) {
+            toggleUser(user)
+            project.notify(
+                user,
+                "assigned",
+                "You were assigned to a task!",
+                `The task is to ${validationResult.data.title}`,
+            )
+        }
     }
 </script>
 

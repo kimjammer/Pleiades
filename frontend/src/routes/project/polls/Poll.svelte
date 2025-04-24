@@ -1,5 +1,10 @@
 <script lang="ts">
-    import type { ProjectState, Poll, Option } from "$lib/project_state.svelte"
+    import {
+        type ProjectState,
+        type Poll,
+        type Option,
+        Notification,
+    } from "$lib/project_state.svelte"
     import PollVoting from "./PollVoting.svelte"
     import PollResults from "./PollResults.svelte"
     import * as ContextMenu from "$lib/components/ui/context-menu"
@@ -9,6 +14,22 @@
     let date = $derived(new Date(poll.dueDate).toLocaleDateString())
 
     let done = $derived(now > poll.dueDate)
+
+    let prevDone = done
+
+    // The poll component exists globally so this runs no matter the tab
+    $effect(() => {
+        if (done && !prevDone) {
+            prevDone = true
+            // Sending to just the current user is OK because this will happen for all users
+            project.notify(
+                project.userId,
+                "poll",
+                `Poll ${poll.title} finished!`,
+                "Go check it out!",
+            )
+        }
+    })
 
     function countVotes(option: Option): number {
         return option.likedUsers.length + option.neutralUsers.length + option.dislikedUsers.length

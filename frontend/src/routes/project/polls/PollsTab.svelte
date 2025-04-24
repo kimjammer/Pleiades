@@ -1,25 +1,14 @@
 <script lang="ts">
     import * as Tabs from "$lib/components/ui/tabs"
     import type { ProjectState } from "$lib/project_state.svelte"
-    import { onMount } from "svelte"
     import type { PageData } from "./$types"
     import CreationModal from "./CreationModal.svelte"
     import PollComponent from "./Poll.svelte"
 
-    let { project, data }: { project: ProjectState; data: PageData } = $props()
+    let { project, data, now }: { project: ProjectState; data: PageData; now: number } = $props()
     console.log("data in PollsTab: " + data)
 
     let polls = project.polls //string of poll titles
-
-    let now = $state(Date.now())
-
-    onMount(() => {
-        const id = setInterval(() => {
-            now = Date.now()
-        }, 500)
-
-        return () => clearInterval(id)
-    })
 </script>
 
 <Tabs.Content value="polls">
