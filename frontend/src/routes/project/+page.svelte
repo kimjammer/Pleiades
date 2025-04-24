@@ -20,6 +20,8 @@
     let projectId = $state("")
     let tab = $state("tasks")
 
+    let now = $state(Date.now())
+
     onMount(() => {
         //Grab project ID from URL
         let params = new URLSearchParams(document.location.search)
@@ -28,6 +30,12 @@
         project = connectToProject(projectId)
 
         tab = params.get("tab") || "tasks"
+
+        const id = setInterval(() => {
+            now = Date.now()
+        }, 500)
+
+        return () => clearInterval(id)
     })
 
     $effect(() => {
@@ -117,6 +125,7 @@
             <PollsTab
                 {project}
                 {data}
+                {now}
             />
 
             <SettingsTab {project} />

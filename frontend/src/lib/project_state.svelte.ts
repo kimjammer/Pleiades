@@ -427,11 +427,20 @@ export class ProjectState {
         this.socket.send(message)
     }
 
-    notify(who: UserInProject | null, category: string, title: string, message: string) {
+    notify(who: string | null, category: string, title: string, message: string) {
+        if (who === this.userId) {
+            let notif = new Notification()
+            notif.category = category
+            notif.title = title
+            notif.message = message
+            this.notifications.push(notif)
+            return
+        }
+
         let command = JSON.stringify({
             Name: "notify",
             Args: {
-                Who: who?.id ?? "",
+                Who: who ?? "",
                 Category: category,
                 Title: title,
                 Message: message,

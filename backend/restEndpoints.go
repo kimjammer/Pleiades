@@ -254,6 +254,18 @@ func join(c *gin.Context) {
 		return
 	}
 
+	user, err := getUserById(c, userId)
+	if err != nil {
+		panic(err)
+	}
+
+	err = applyCommandToProject(invitation.ProjectId, Notify{
+		Who:      "",
+		Category: "users",
+		Title:    user.FirstName + " joined the project!",
+		Message:  "Go say hi!",
+	})
+
 	c.String(http.StatusOK, "success")
 }
 
@@ -673,9 +685,9 @@ func purdueDirectory(c *gin.Context) {
 	// Load the HTML document
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-	  log.Fatal(err)
-	  c.AbortWithStatus(http.StatusInternalServerError)
-	  return
+		log.Fatal(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
 	// Find the emails
