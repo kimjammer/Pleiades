@@ -58,7 +58,9 @@ test("Create Task with all fields", async ({ page }) => {
     await page.getByRole("button", { name: "JS" }).click()
     await page.getByRole("button", { name: "Create!" }).click()
     await page.getByRole("button", { name: "Write Speech Use the template" }).click()
-    await expect(page.getByText("Write Speech")).toBeVisible()
+    await expect(
+        page.getByText("Write Speech").filter({ hasNotText: "The task is to" }),
+    ).toBeVisible()
     await expect(page.getByText("Use the template")).toBeVisible()
     await expect(page.getByText("May 1")).toBeVisible()
     await expect(page.getByText("2 Hrs")).toBeVisible()

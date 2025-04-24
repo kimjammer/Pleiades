@@ -29,6 +29,7 @@
     .notif {
         padding: 0.5em;
         border-radius: 0.5em;
+        width: 20em;
     }
 
     .container {
