@@ -20,7 +20,7 @@
             />
         {/each}
         <div>
-            <h4 class="scroll-m-20 text-xl font-semibold tracking-tight">Invite</h4>
+            <h4 class="mb-2 scroll-m-20 text-xl font-semibold tracking-tight">Invite</h4>
             <QrAlert />
             <EmailNameAdd />
         </div>
