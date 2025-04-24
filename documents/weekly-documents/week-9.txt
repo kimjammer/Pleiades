@@ -3,6 +3,7 @@
 Week 9 (Summary) (Scrum Master: Henry Rovnyak)
 4/21 9365ac6 1hr Implement infrastructure for notifications
 4/23 98b411f 1hr Basic notifications
+4/23 26fef42 1hr Perform notifications at the right times
 
 Week 9 (Summary) (Scrum Master: Henry Rovnyak)
 [Meetings]
