@@ -46,7 +46,6 @@
     }
 
     function getTitleColor(column: string) {
-        console.log(column)
         if (column == "" && progress == 0) {
             return null
         } else if (column == "") return "#cc7a00"
