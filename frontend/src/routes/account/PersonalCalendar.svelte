@@ -8,6 +8,7 @@
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js"
     import { Label } from "$lib/components/ui/label"
     import { Switch } from "$lib/components/ui/switch"
+    import { Skeleton } from "$lib/components/ui/skeleton"
 
     let year = $state(new Date().getFullYear())
     let month = $state(new Date().getMonth() + 1)
@@ -145,7 +146,7 @@
         </label>
     </div>
     {#await tasks}
-        <p>Loading calendar...</p>
+        <Skeleton class="h-lvh w-full" />
     {:then tasks}
         <Calendar
             {month}

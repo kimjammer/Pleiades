@@ -1,83 +1,19 @@
 <script lang="ts">
-    import { Input } from "$lib/components/ui/input"
-    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
     import PleiadesNav from "$lib/components/PleiadesNav.svelte"
     import PersonalCalendar from "./PersonalCalendar.svelte"
-    import { Label } from "$lib/components/ui/label"
     import NotificationSettings from "./NotificationSettings.svelte"
-    import { toast } from "svelte-sonner"
-    // Optional: for notifications
-    import UserAvatar from "$lib/components/UserAvatar.svelte"
-    import type { ChangeEventHandler } from "svelte/elements"
-
-    /*
-        TODO: Create hovercard for each task
-              Create filtering UI for personal calendar
-              Bind UI to functions updating tasks[]
-     */
-
-    let selectedFile
-
-    // Handle file selection and upload
-    async function handleFileSelect(event: Parameters<ChangeEventHandler<HTMLInputElement>>[0]) {
-        const file = event.currentTarget.files![0]
-        if (!file) return
-
-        const reader = new FileReader()
-        reader.onloadend = async () => {
-            let base64Image = reader.result
-            if (typeof base64Image === "string") {
-                //can only use .split on string
-                base64Image = base64Image.split(",")[1] // Extract base64 part for backend
-            }
-            selectedFile = base64Image //change to int64
-
-            //Send image to the backend
-            try {
-                const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/profilepic", {
-                    method: "POST",
-                    mode: "cors",
-                    credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ image: selectedFile }),
-                })
-                const data = await res.json()
-                if (data.success) {
-                    toast.success("Profile picture uploaded successfully!")
-                } else {
-                    toast.error(data.error)
-                }
-            } catch (error) {
-                toast.error("Upload failed. Please try again.")
-                console.error(error)
-            }
-        }
-        reader.readAsDataURL(file)
-    }
+    import ProfilePictureSettings from "./ProfilePictureSettings.svelte"
 </script>
 
 <PleiadesNav></PleiadesNav>
-<div>
+<div class="p-5">
     <h2 class="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
-        Hello
+        Settings
     </h2>
+
+    <div class="mb-10 flex gap-5">
+        <ProfilePictureSettings />
+        <NotificationSettings />
+    </div>
+    <PersonalCalendar />
 </div>
-
-<div class="grid w-full max-w-sm items-center gap-1.5">
-    <UserAvatar
-        project={null}
-        userID={localStorage.myId}
-    />
-    <Label>Upload Profile Picture</Label>
-    <!-- Trigger file input -->
-    <Input
-        id="fileInput"
-        type="file"
-        accept="image/png, image/jpeg"
-        onchange={handleFileSelect}
-    />
-</div>
-
-<NotificationSettings></NotificationSettings>
-
-<PersonalCalendar></PersonalCalendar>
