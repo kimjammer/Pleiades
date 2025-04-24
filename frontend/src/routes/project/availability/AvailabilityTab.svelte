@@ -87,6 +87,18 @@
             )
         ).json()
         console.log("events", data)
+
+        const availability = structuredClone($state.snapshot(myAvailability))
+        console.log("db availability", availability)
+        debugger
+        return
+
+        await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/availability", {
+            method: "POST",
+            mode: "cors",
+            credentials: "include",
+            body: JSON.stringify(availability),
+        })
     }
 </script>
 
