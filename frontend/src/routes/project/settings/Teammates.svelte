@@ -20,7 +20,9 @@
             />
         {/each}
         <div>
-            Invite by <QrAlert /><EmailNameAdd />
+            <h4 class="scroll-m-20 text-xl font-semibold tracking-tight">Invite</h4>
+            <QrAlert />
+            <EmailNameAdd />
         </div>
     </Card.Content>
 </Card.Root>

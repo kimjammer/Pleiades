@@ -284,6 +284,22 @@
             data={$state.snapshot(data) as any}
             {options}
         />
+        <div class="flex flex-col justify-center gap-2">
+            <div class="flex items-center gap-1">
+                <Switch
+                    id="user-breakout"
+                    bind:checked={userBreakout}
+                />
+                <Label for="user-breakout">Breakout Users</Label>
+            </div>
+            <div class="flex items-center gap-1">
+                <Switch
+                    id="task-breakout"
+                    bind:checked={taskBreakout}
+                />
+                <Label for="task-breakout">Breakout Tasks</Label>
+            </div>
+        </div>
     {:else}
         <div
             class="flex w-full flex-col items-center justify-center rounded-xl border-4
@@ -294,20 +310,4 @@
             </p>
         </div>
     {/if}
-    <div class="flex flex-col justify-center gap-2">
-        <div class="flex items-center gap-1">
-            <Switch
-                id="user-breakout"
-                bind:checked={userBreakout}
-            />
-            <Label for="user-breakout">Breakout Users</Label>
-        </div>
-        <div class="flex items-center gap-1">
-            <Switch
-                id="task-breakout"
-                bind:checked={taskBreakout}
-            />
-            <Label for="task-breakout">Breakout Tasks</Label>
-        </div>
-    </div>
 </div>
