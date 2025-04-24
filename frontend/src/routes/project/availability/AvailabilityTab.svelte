@@ -1,5 +1,6 @@
 <script lang="ts">
     import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
+    import { DAY, TIME_STEP } from "$lib/components/availability"
     import {
         loadAvailability,
         loadAvailabilityOne,
@@ -89,18 +90,33 @@
         console.log("events", data)
 
         const availability = structuredClone($state.snapshot(myAvailability))
-        console.log("db availability", availability)
+        for (let date in availability) {
+            availability[date] = []
+            for (let blockIdx = 0; blockIdx < DAY / TIME_STEP; blockIdx++) {
+                availability[date].push(blockIdx)
+            }
+        }
+        // Iterating through all possible blocks. If this causes issues
+        // 1: rewrite the entire availability component (it needs it)
+        // 2: only start within range. I believe ((24804660 * MILLISECOND) % DAY / TIME_STEP) should work. Runs from 7am to 10pm
         debugger
-        return
 
         await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/availability", {
             method: "POST",
             mode: "cors",
             credentials: "include",
-            body: JSON.stringify(availability),
+            body: JSON.stringify(dateMapToAvailability(availability)),
         })
     }
 </script>
+
+<svelte:head>
+    <script
+        src="https://accounts.google.com/gsi/client"
+        async
+        defer
+    ></script>
+</svelte:head>
 
 <Tabs.Content value="availability">
     <TzPicker bind:selectedValue={tzOffset} />
