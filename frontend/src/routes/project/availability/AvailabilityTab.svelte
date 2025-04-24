@@ -22,7 +22,7 @@
     const myAvailability = $derived(
         availabilityToDateMap(
             project.users.find(user => user.id === localStorage.myId)?.availability ?? [],
-            "2017-02-27T00:00:00.000Z",
+            getTodayWeek()[0].toISOString(),
             8,
         ),
     )
@@ -89,6 +89,14 @@
         console.log("events", data)
     }
 </script>
+
+<svelte:head>
+    <script
+        src="https://accounts.google.com/gsi/client"
+        async
+        defer
+    ></script>
+</svelte:head>
 
 <Tabs.Content value="availability">
     <TzPicker bind:selectedValue={tzOffset} />

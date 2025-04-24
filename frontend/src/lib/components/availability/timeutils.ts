@@ -141,8 +141,8 @@ export const weekdayDates = (tzOffset = new Date().getTimezoneOffset()) =>
     ].map(date => offsetDate(date, tzOffset))
 
 // Uses reasonable default for college students: 7am-10pm
-export const weekdayDateRanges = (tzOffset = new Date().getTimezoneOffset()) =>
-    weekdayDates(tzOffset).map(
+export const weekdayDateRanges = () =>
+    getTodayWeek().map(
         weekdayDate =>
             [
                 weekdayDate.getTime() * MILLISECOND + 7 * HOUR,
