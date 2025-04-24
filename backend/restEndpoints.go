@@ -144,13 +144,11 @@ func mintToken(c *gin.Context, user *User) {
 
 func registerUser(c *gin.Context) {
 	var newUser User
-	log.Println("registering new user")
 	if err := c.ShouldBindJSON(&newUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	newUser.NotifSettings = []bool{true, true, true}
-	log.Println("Registering User, NotifSettings: ", newUser.NotifSettings)
+
 	hashedPassword, err := encryptPassword(newUser.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
@@ -159,25 +157,7 @@ func registerUser(c *gin.Context) {
 		newUser.Password = hashedPassword
 	}
 
-	newUser.Id = primitive.NewObjectID()
-	newUser.Availability = []Availability{}
-	newUser.Projects = []string{}
-	//Insert new user into db
-	collection := db.Collection("users")
-	_, err = collection.InsertOne(c, newUser)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert user"})
-		return
-	}
-
-	log.Println("Created user with ID: ", newUser.Id)
-	//set cookie upon successful registration (cookie is user id)
-	token := makeToken(newUser.Id.Hex())
-	c.SetSameSite(http.SameSiteNoneMode)
-	c.SetCookie("token", token, 3600, "/", "", true, true)
-	log.Println("Created User with Id: ", newUser.Id)
-	c.JSON(http.StatusCreated, gin.H{"success": true, "userId": newUser.Id})
+	createUser(c, &newUser)
 }
 
 func login(c *gin.Context) {
@@ -197,18 +177,25 @@ func login(c *gin.Context) {
 	}
 }
 
-func googleLogin(c *gin.Context) {
+func verifyGoogle(c *gin.Context) (payload *idtoken.Payload, err error) {
 	var req struct {
 		Credential string `form:"credential" binding:"required"`
 	}
-	if err := c.ShouldBind(&req); err != nil {
+	if err = c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
 
-	payload, err := idtoken.Validate(c, req.Credential, "")
+	payload, err = idtoken.Validate(c, req.Credential, "")
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+	}
+	return
+}
+
+func googleLogin(c *gin.Context) {
+	payload, err := verifyGoogle(c)
+	if err != nil {
 		return
 	}
 
@@ -217,13 +204,29 @@ func googleLogin(c *gin.Context) {
 	user, err := findUserByEmail(c, email)
 	if err == nil {
 		mintToken(c, &user)
+	} else {
+		// TODO: autocreate?
+		return
 	}
 
 	c.Redirect(http.StatusSeeOther, os.Getenv("PROTOCOL") + os.Getenv("HOST") + "/home")
 }
 
 func googleRegistration(c *gin.Context) {
-	// name, _ := payload.Claims["name"].(string)
+	payload, err := verifyGoogle(c)
+	if err != nil {
+		return
+	}
+
+	email, _ := payload.Claims["email"].(string)
+	name, _ := payload.Claims["name"].(string)
+
+	newUser := User{
+		FirstName: name,
+		Email: email,
+		LastName: "",
+	}
+	createUser(c, &newUser)
 }
 
 func invite(c *gin.Context) {

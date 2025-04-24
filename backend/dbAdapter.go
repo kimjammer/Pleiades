@@ -109,3 +109,29 @@ func createInvite(c *gin.Context) string {
 
 	return invitation.Id
 }
+
+func createUser(c *gin.Context, newUser *User) {
+	log.Println("registering new user")
+	newUser.NotifSettings = []bool{true, true, true}
+	log.Println("Registering User, NotifSettings: ", newUser.NotifSettings)
+
+	newUser.Id = primitive.NewObjectID()
+	newUser.Availability = []Availability{}
+	newUser.Projects = []string{}
+	//Insert new user into db
+	collection := db.Collection("users")
+	_, err := collection.InsertOne(c, newUser)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert user"})
+		return
+	}
+
+	log.Println("Created user with ID: ", newUser.Id)
+	//set cookie upon successful registration (cookie is user id)
+	token := makeToken(newUser.Id.Hex())
+	c.SetSameSite(http.SameSiteNoneMode)
+	c.SetCookie("token", token, 3600, "/", "", true, true)
+	log.Println("Created User with Id: ", newUser.Id)
+	c.JSON(http.StatusCreated, gin.H{"success": true, "userId": newUser.Id})
+}
