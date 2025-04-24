@@ -183,6 +183,7 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 		case message := <-commandChannel:
 			if notify, ok := message.command.(Notify); ok {
 				notif = &notify
+				message.connection.error_tx <- nil
 				appliedChange = true
 			} else {
 				maybe_err := message.command.apply(&project)
