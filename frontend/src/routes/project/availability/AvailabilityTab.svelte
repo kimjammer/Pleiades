@@ -1,19 +1,18 @@
 <script lang="ts">
-    import ManualInput from "$lib/components/availability/ManualInput.svelte"
-    import { weekdayDateRanges } from "$lib/components/availability/timeutils"
-    import TzPicker from "$lib/components/TzPicker.svelte"
-    import { writable } from "svelte/store"
+    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
     import {
         loadAvailability,
         loadAvailabilityOne,
         type Availability,
-        type UserAvailability,
     } from "$lib/components/availability/Availability"
+    import ManualInput from "$lib/components/availability/ManualInput.svelte"
+    import { weekdayDateRanges } from "$lib/components/availability/timeutils"
+    import TzPicker from "$lib/components/TzPicker.svelte"
     import * as Tabs from "$lib/components/ui/tabs"
     import type { ProjectState } from "$lib/project_state.svelte"
-    import { Availability as DbAvailability } from "$lib/project_state.svelte.js"
+    import { GOOGLE_OAUTH_CLIENT_ID } from "$lib/utils"
+    import { writable } from "svelte/store"
     import { availabilityToDateMap, dateMapToAvailability } from "./adapter"
-    import { PUBLIC_PROTOCOL, PUBLIC_API_HOST } from "$env/static/public"
 
     let { project }: { project: ProjectState } = $props()
 
@@ -51,6 +50,28 @@
     $effect(() => {
         console.log("my avail", $state.snapshot(myAvailability))
     })
+
+    function googleImport() {
+        const tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: GOOGLE_OAUTH_CLIENT_ID,
+            scope: "https://www.googleapis.com/auth/calendar.events.freebusy",
+            callback: fetchEvents,
+        })
+        tokenClient.requestAccessToken() // no popup if already authorized
+    }
+
+    async function fetchEvents(tokenResponse: any) {
+        const { accessToken } = tokenResponse
+        const res = await (
+            await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
+                mode: "cors",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            })
+        ).json()
+    }
 </script>
 
 <Tabs.Content value="availability">

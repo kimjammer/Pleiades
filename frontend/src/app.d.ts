@@ -8,6 +8,8 @@ declare global {
         // interface PageState {}
         // interface Platform {}
     }
+    const google: any
 }
 
-export {}
+export { }
+
