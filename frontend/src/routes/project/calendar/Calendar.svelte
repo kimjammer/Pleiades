@@ -6,6 +6,7 @@
     import { connectToProject } from "$lib/project_state.svelte";
     import { type ProjectState } from "$lib/project_state.svelte"
     import TaskCard from "../tasks/TaskCard.svelte"
+    import { base } from "$app/paths"
     import { Button } from "$lib/components/ui/button"
     import { Dialog, DialogTrigger, DialogContent, DialogClose } from "$lib/components/ui/dialog"; // Import Dialog components
 
@@ -70,38 +71,7 @@
         else return null
     }
 
-    let project: ProjectState = $state();
-    let task: Task = $state();
-    let showTaskCard = $state(false)
-    async function openTaskCard(currTask: Task) {
-        console.log(task)
-        try {
-            task = { ...currTask }
-            project = await connectToProject(task.projectId)
-            console.log(task)
-        } catch (error) {
-            console.error("Error connecting to the project:", error);
-        }
-        showTaskCard = true
-        console.log(showTaskCard)
-    }
-    function printDetails() {
-        console.log(task)
-        console.log(project)
-    }
 </script>
-
-{#if showTaskCard}
-    <Dialog open={showTaskCard}>
-        <DialogContent>
-            <TaskCard {task} {project} />
-        </DialogContent>
-        <DialogClose on:click={() => {
-            task = null;
-            showTaskCard = false;
-        }} />
-    </Dialog>
-{/if}
 
 <table>
     <thead>
@@ -121,22 +91,24 @@
                         {#each tasks.filter(task => new Date(task.dueDate)
                                     .toISOString()
                                     .slice(0, 10) === date) as task}
-                            <HoverCard>
-                                <HoverCardTrigger
-                                        class="text-blue-600 underline cursor-pointer"
-                                        style="color: {getTitleColor(task.kanbanColumn)}"
-                                        onclick={() => openTaskCard(task)}
-                                >
-                                    {task.title}
-                                </HoverCardTrigger>
-                                <HoverCardContent class="w-64">
-                                    <div class="font-semibold">{task.title}</div>
-                                    <div class="text-sm text-gray-600">{task.description}</div>
-                                    <div class="text-xs text-muted-foreground mt-2">
-                                        Due: {new Date(task.dueDate).toLocaleDateString()}
-                                    </div>
-                                </HoverCardContent>
-                            </HoverCard>
+                            <div>
+                                <HoverCard>
+                                    <HoverCardTrigger
+                                            class="text-blue-600 underline cursor-pointer"
+                                            style="color: {getTitleColor(task.kanbanColumn)}"
+                                            href="{base}/project?id={task.projectId}"
+                                    >
+                                        {task.title}
+                                    </HoverCardTrigger>
+                                    <HoverCardContent class="w-64">
+                                        <div class="font-semibold">{task.title}</div>
+                                        <div class="text-sm text-gray-600">{task.description}</div>
+                                        <div class="text-xs text-muted-foreground mt-2">
+                                            Due: {new Date(task.dueDate).toLocaleDateString()}
+                                        </div>
+                                    </HoverCardContent>
+                                </HoverCard>
+                            </div>
                         {/each}
                     </td>
                 {/each}
