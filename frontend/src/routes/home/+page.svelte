@@ -23,16 +23,21 @@
     })
 
     async function loadProjects() {
-        return new Promise<ProjectsResponse>(async (resolve, reject) => {
+        return new Promise<ProjectsResponse>((resolve, reject) => {
             const url = PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/projects"
-            const res = await fetch(url, { mode: "cors", credentials: "include" })
-            if (res.status === 401) {
-                await goto(base + "/login")
-            } else if (!res.ok) {
-                toast.error("Failed to load projects")
-                reject()
-            }
-            resolve((await res.json()) as ProjectsResponse)
+            fetch(url, { mode: "cors", credentials: "include" })
+                .then(res => {
+                    if (res.status === 401) {
+                        goto(base + "/login")
+                    } else if (!res.ok) {
+                        toast.error("Failed to load projects")
+                        reject()
+                    }
+                    return res.json()
+                })
+                .then(data => {
+                    resolve(data as ProjectsResponse)
+                })
         })
     }
 
