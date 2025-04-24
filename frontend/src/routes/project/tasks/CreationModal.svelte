@@ -100,6 +100,7 @@
         project.appendInProject("Tasks", {
             ...validationResult.data,
             id: crypto.randomUUID(),
+            projectId: project.id,
             dueDate: validationResult.data.dueDate
                 ? new Date(validationResult.data.dueDate).getTime() + offset * 60 * 1000
                 : 0,

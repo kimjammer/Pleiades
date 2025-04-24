@@ -51,6 +51,7 @@ type Poll struct {
 
 type Task struct {
 	Id           string    `json:"id"`
+	ProjectId    string    `json:"projectId"`
 	Title        string    `json:"title"`
 	Description  string    `json:"description"`
 	DueDate      int       `json:"dueDate"`
