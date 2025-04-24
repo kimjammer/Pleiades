@@ -6,8 +6,9 @@
         type Availability,
     } from "$lib/components/availability/Availability"
     import ManualInput from "$lib/components/availability/ManualInput.svelte"
-    import { weekdayDateRanges } from "$lib/components/availability/timeutils"
+    import { getTodayWeek, weekdayDateRanges } from "$lib/components/availability/timeutils"
     import TzPicker from "$lib/components/TzPicker.svelte"
+    import { Button } from "$lib/components/ui/button"
     import * as Tabs from "$lib/components/ui/tabs"
     import type { ProjectState } from "$lib/project_state.svelte"
     import { GOOGLE_OAUTH_CLIENT_ID } from "$lib/utils"
@@ -52,6 +53,10 @@
     })
 
     function googleImport() {
+        if (!confirm("This will overwrite your availability. Do you want to continue?")) {
+            return
+        }
+
         const tokenClient = google.accounts.oauth2.initTokenClient({
             client_id: GOOGLE_OAUTH_CLIENT_ID,
             scope: "https://www.googleapis.com/auth/calendar.events.freebusy",
@@ -61,21 +66,36 @@
     }
 
     async function fetchEvents(tokenResponse: any) {
-        const { accessToken } = tokenResponse
-        const res = await (
-            await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
-                mode: "cors",
-                headers: {
-                    "Authorization": `Bearer ${accessToken}`,
-                    "Content-Type": "application/json",
+        const { access_token } = tokenResponse
+        const thisWeek = getTodayWeek()
+        const query = new URLSearchParams({
+            singleEvents: "true",
+            timeMin: thisWeek[0].toISOString(),
+            timeMax: thisWeek[6].toISOString(),
+        })
+        const data = await (
+            await fetch(
+                "https://www.googleapis.com/calendar/v3/calendars/primary/events?" +
+                    query.toString(),
+                {
+                    mode: "cors",
+                    headers: {
+                        "Authorization": "Bearer " + access_token,
+                        "Content-Type": "application/json",
+                    },
                 },
-            })
+            )
         ).json()
+        console.log("events", data)
     }
 </script>
 
 <Tabs.Content value="availability">
     <TzPicker bind:selectedValue={tzOffset} />
+    <Button
+        variant="outline"
+        onclick={googleImport}>Import from Google Calendar</Button
+    >
 
     <div class="flex justify-around">
         <!-- TODO: make tzOffset=-tzOffset consistent -->
