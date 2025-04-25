@@ -29,9 +29,13 @@
 
         //Convert due date from timestamp to CalendarDate
         let serverDueDate = fromAbsolute(task.dueDate, getLocalTimeZone())
+        console.log("Server timestamp", task.dueDate)
+        console.log("Server due date", serverDueDate)
         date = toCalendarDate(serverDueDate)
         let dueTime = toTime(serverDueDate)
-        time = `${dueTime.hour}:${dueTime.minute}`
+        console.log("Server due time", dueTime)
+        time = `${dueTime.hour.toString().padStart(2, "0")}:${dueTime.minute.toString().padStart(2, "0")}`
+        console.log(time)
     })
 
     async function handleEdit() {
@@ -53,6 +57,7 @@
         )
 
         const timestamp = dueDate.toDate().getTime()
+        console.log("New timestamp ", timestamp)
         project.updateInProject(`Tasks[Id=${task.id}].DueDate`, timestamp)
     }
 

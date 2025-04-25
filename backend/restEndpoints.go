@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -212,6 +213,30 @@ func googleLogin(c *gin.Context) {
 	c.Redirect(http.StatusSeeOther, os.Getenv("PROTOCOL") + os.Getenv("HOST") + "/home")
 }
 
+func downloadGoogleProfile(url string) (imgData []byte, err error) {
+	// Fetch the image from the URL
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Println("Error fetching image:", err)
+		return
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		log.Println("Error fetching image:", resp.Status)
+		return
+	}
+
+	// Read the image data
+	imgData, err = io.ReadAll(resp.Body)
+	if err != nil {
+		log.Println("Error reading image data:", err)
+		return
+	}
+
+	// Return the image data
+	return
+}
+
 func googleRegistration(c *gin.Context) {
 	payload, err := verifyGoogle(c)
 	if err != nil {
@@ -220,11 +245,14 @@ func googleRegistration(c *gin.Context) {
 
 	email, _ := payload.Claims["email"].(string)
 	name, _ := payload.Claims["name"].(string)
+	profileUrl, _ := payload.Claims["picture"].(string)
+	photoBytes, _ := downloadGoogleProfile(profileUrl)
 
 	newUser := User{
 		FirstName: name,
 		Email: email,
 		LastName: "",
+		UserPhoto: photoBytes,
 	}
 	createUser(c, &newUser)
 }
