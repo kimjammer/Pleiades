@@ -1,4 +1,4 @@
-import { DAY, HOUR, MILLISECOND, TIME_STEP } from "./units.js"
+import { DAY, HOUR, MILLISECOND, SECOND, TIME_STEP } from "./units.js"
 
 /** Date formatted in en-US locale, m/dd/yy. TODO: tighten this type */
 export type DateStr = `${number}/${number}/${number}` | string
@@ -162,4 +162,10 @@ export function getTodayWeek(current?: Date) {
         current.setDate(current.getDate() + 1)
     }
     return week
+}
+
+export function minutesSinceUTCMidnight(date: Date) {
+    return Math.floor(
+        date.getUTCHours() * HOUR + date.getUTCMinutes() + date.getUTCSeconds() * SECOND,
+    )
 }
