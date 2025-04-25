@@ -81,7 +81,8 @@
             day <= endDate.getUTCDay() &&
             day >= startDate.getUTCDay() &&
             block < endBlock &&
-            block >= startBlock
+            block >= startBlock &&
+            event.transparency !== "transparent"
         )
     }
 
