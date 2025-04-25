@@ -207,6 +207,12 @@ func TestLeavingInviteAroundAndUserAround(t *testing.T) {
 	require.Equal(t, len(project.Users), 2)
 	require.False(t, project.Users[0].LeftProject)
 	require.False(t, project.Users[1].LeftProject)
+	require.Nil(t, project.Notification)
+
+	// Third for the notification
+	project, disconnect = conn.recvState()
+	require.Equal(t, "users", project.Notification.Category)
+	require.Equal(t, "", project.Notification.Who)
 
 	// Get rid of the invite to test that having another user around doesn't delete
 	_, err = db.Collection("invitations").DeleteOne(context.TODO(), bson.D{{Key: "projectid", Value: "53ed4d28-9279-4b4e-9256-b1e693332625"}})
@@ -334,6 +340,13 @@ func TestDeletingUserAround(t *testing.T) {
 	require.Equal(t, len(project.Users), 2)
 	require.False(t, project.Users[0].LeftProject)
 	require.False(t, project.Users[1].LeftProject)
+	require.Nil(t, project.Notification)
+
+	// Third from notification
+	project, disconnect = conn.recvState()
+	require.False(t, disconnect)
+	require.Equal(t, project.Notification.Category, "users")
+	require.Equal(t, project.Notification.Who, "")
 
 	conn.send(`{
 		"Name": "delete",

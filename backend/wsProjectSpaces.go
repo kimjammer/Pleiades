@@ -33,12 +33,13 @@ type ProjectSpaceContactPoint struct {
 }
 
 type UserInProject struct {
-	Id           string
-	LeftProject  bool
-	FirstName    string
-	LastName     string
-	Email        string
-	Availability []Availability
+	Id            string
+	LeftProject   bool
+	FirstName     string
+	LastName      string
+	Email         string
+	Availability  []Availability
+	NotifSettings []bool
 }
 
 var projectSpacesMutex sync.Mutex
@@ -170,7 +171,7 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 		case newConnection := <-connectionsChannel:
 			// Guaranteed not to block since it's the first one and there's a buffer of one
 			newConnection.state_tx <- encodeProject(project, users, nil)
-			stateChannel := make(chan []byte, 1)
+			stateChannel := make(chan []byte, 16)
 			killedChannel := make(chan interface{})
 			go fanInCommandsFrom(newConnection, commandChannel, StateFanOutRecv{stateChannel, killedChannel}, &wg)
 			projectStateFanOut = append(projectStateFanOut, StateFanOutTx{stateChannel, killedChannel})
@@ -182,6 +183,7 @@ func projectSpace(contactPoint ProjectSpaceContactPoint, projectId string) {
 		case message := <-commandChannel:
 			if notify, ok := message.command.(Notify); ok {
 				notif = &notify
+				message.connection.error_tx <- nil
 				appliedChange = true
 			} else {
 				maybe_err := message.command.apply(&project)
@@ -299,7 +301,8 @@ func fanInCommandsFrom(connection ConnectionForSpace, sendTo chan<- FanInMessage
 			case connection.state_tx <- recvState:
 			default:
 				// Flush the channel to remove the un-received state
-				<-connection.state_tx
+				// (actually this makes the tests flaky)
+				// <-connection.state_tx
 				connection.state_tx <- recvState
 			}
 
@@ -324,13 +327,18 @@ func queryUsers(users []UserAndLeft) []UserInProject {
 			panic(err)
 		}
 
+		if userInDB.NotifSettings == nil {
+			userInDB.NotifSettings = []bool{false, false, false}
+		}
+
 		userInProject := UserInProject{
-			Id:           user.User,
-			LeftProject:  user.LeftProject,
-			FirstName:    userInDB.FirstName,
-			LastName:     userInDB.LastName,
-			Email:        userInDB.Email,
-			Availability: userInDB.Availability,
+			Id:            user.User,
+			LeftProject:   user.LeftProject,
+			FirstName:     userInDB.FirstName,
+			LastName:      userInDB.LastName,
+			Email:         userInDB.Email,
+			Availability:  userInDB.Availability,
+			NotifSettings: userInDB.NotifSettings,
 		}
 
 		out = append(out, userInProject)

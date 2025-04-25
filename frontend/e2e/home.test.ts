@@ -43,3 +43,40 @@ test("Create Project and open Project Page", async ({ page }) => {
     await expect(page.locator("h2")).toContainText("Test Project")
     await expect(page.getByRole("paragraph")).toContainText("Test Description")
 })
+
+test("Create Task with all fields", async ({ page }) => {
+    await resetDB()
+
+    await page.goto(
+        "http://localhost:4173/project?id=53ed4d28-9279-4b4e-9256-b1e693332625&tab=tasks",
+    )
+    await page.getByRole("button", { name: "Create a new task" }).click()
+    await page.getByLabel("Title").fill("Write Speech")
+    await page.getByLabel("Description").fill("Use the template")
+    await page.getByLabel("Due date").fill("2025-05-01")
+    await page.getByLabel("Time Estimate").fill("2")
+    await page.getByRole("button", { name: "JS" }).click()
+    await page.getByRole("button", { name: "Create!" }).click()
+    await page.getByRole("button", { name: "Write Speech Use the template" }).click()
+    await expect(
+        page.getByText("Write Speech").filter({ hasNotText: "The task is to" }),
+    ).toBeVisible()
+    await expect(page.getByText("Use the template")).toBeVisible()
+    await expect(page.getByText("May 1")).toBeVisible()
+    await expect(page.getByText("2 Hrs")).toBeVisible()
+})
+
+test("Create Task with NLP Time Estimate", async ({ page }) => {
+    await resetDB()
+
+    await page.goto(
+        "http://localhost:4173/project?id=53ed4d28-9279-4b4e-9256-b1e693332625&tab=tasks",
+    )
+    await page.getByRole("button", { name: "Create a new task" }).click()
+    await page.getByLabel("Title").fill("A Long Task 5 hours")
+    await new Promise(r => setTimeout(r, 1000))
+    await page.getByLabel("Description").fill("A long task description")
+    await page.getByRole("button", { name: "Create!" }).click()
+    await page.getByRole("button", { name: "A Long Task A long task description" }).click()
+    await expect(page.getByText("5 Hrs")).toBeVisible()
+})
