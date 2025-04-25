@@ -89,7 +89,7 @@
                                     <HoverCardTrigger
                                             class="text-blue-600 underline cursor-pointer"
                                             style="color: {getTitleColor(task.kanbanColumn)}"
-                                            href="{base}/project?id={task.projectId}" <!-- Make sure this is project id! -->
+                                            href="{base}/project?id={task.projectId}"
                                     >
                                         {task.title}
                                     </HoverCardTrigger>
