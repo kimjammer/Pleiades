@@ -24,7 +24,10 @@
             },
         )
 
-        const data = await res.json()
+        postLogin(await res.json())
+    }
+
+    async function postLogin(data: any) {
         if (data.exists) {
             recordEvent("login")
             error = ""
@@ -35,8 +38,19 @@
         }
     }
 
-    window.googleSignin = (ev: any) => {
-        debugger
+    window.googleSignin = async ({ credential }: any) => {
+        const data = await (
+            await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/login/google", {
+                method: "POST",
+                mode: "cors",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({ credential }).toString(),
+            })
+        ).json()
+        postLogin(data)
     }
 </script>
 
