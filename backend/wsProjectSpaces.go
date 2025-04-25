@@ -68,16 +68,16 @@ func joinSpace(projectId string) ConnectionForSocket {
 
 	if _, ok := projectSpaces[projectId]; !ok {
 		contactPoint := ProjectSpaceContactPoint{
-			sendNewConnection: make(chan ConnectionForSpace, 1),
-			requeryRequest:    make(chan struct{}, 1),
+			sendNewConnection: make(chan ConnectionForSpace, 16),
+			requeryRequest:    make(chan struct{}, 16),
 		}
 		go projectSpace(contactPoint, projectId)
 		projectSpaces[projectId] = contactPoint
 	}
 
-	state_chan := make(chan []byte, 1)
-	command_chan := make(chan Command, 1)
-	error_chan := make(chan error, 1)
+	state_chan := make(chan []byte, 16)
+	command_chan := make(chan Command, 16)
+	error_chan := make(chan error, 16)
 
 	projectSpaces[projectId].sendNewConnection <- ConnectionForSpace{state_tx: state_chan, command_rx: command_chan, error_tx: error_chan}
 
