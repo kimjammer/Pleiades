@@ -7,7 +7,11 @@
         type Availability,
     } from "$lib/components/availability/Availability"
     import ManualInput from "$lib/components/availability/ManualInput.svelte"
-    import { getTodayWeek, weekdayDateRanges } from "$lib/components/availability/timeutils"
+    import {
+        getTodayWeek,
+        minutesSinceUTCMidnight,
+        weekdayDateRanges,
+    } from "$lib/components/availability/timeutils"
     import TzPicker from "$lib/components/TzPicker.svelte"
     import { Button } from "$lib/components/ui/button"
     import * as Tabs from "$lib/components/ui/tabs"
@@ -66,6 +70,19 @@
         tokenClient.requestAccessToken() // no popup if already authorized
     }
 
+    function blockWithinEvent(day: number, block: number, event: any) {
+        const startDate = new Date(event.start.dateTime)
+        const endDate = new Date(event.end.dateTime)
+        const startBlock = minutesSinceUTCMidnight(startDate) / TIME_STEP
+        const endBlock = minutesSinceUTCMidnight(endDate) / TIME_STEP
+        return (
+            day <= endDate.getUTCDay() &&
+            day >= startDate.getUTCDay() &&
+            block <= endBlock &&
+            block >= startBlock
+        )
+    }
+
     async function fetchEvents(tokenResponse: any) {
         const { access_token } = tokenResponse
         const thisWeek = getTodayWeek()
@@ -87,13 +104,15 @@
                 },
             )
         ).json()
-        console.log("events", data)
+        const { items: events }: { items: any[] } = data
 
         const availability = structuredClone($state.snapshot(myAvailability))
         for (let date in availability) {
             availability[date] = []
+            const targetDayOfWeek = new Date(date).getUTCDay()
             for (let blockIdx = 0; blockIdx < DAY / TIME_STEP; blockIdx++) {
-                availability[date].push(blockIdx)
+                if (!events.some(event => blockWithinEvent(targetDayOfWeek, blockIdx, event)))
+                    availability[date].push(blockIdx)
             }
         }
         // Iterating through all possible blocks. If this causes issues
