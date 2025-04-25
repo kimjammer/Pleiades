@@ -277,6 +277,18 @@ func join(c *gin.Context) {
 		return
 	}
 
+	user, err := getUserById(c, userId)
+	if err != nil {
+		panic(err)
+	}
+
+	err = applyCommandToProject(invitation.ProjectId, Notify{
+		Who:      "",
+		Category: "users",
+		Title:    user.FirstName + " joined the project!",
+		Message:  "Go say hi!",
+	})
+
 	c.String(http.StatusOK, "success")
 }
 
@@ -758,6 +770,11 @@ func getUserTasks(c *gin.Context) {
 
 func flipNotif(c *gin.Context) {
 	crrUser, err := getUser(c)
+
+	if crrUser.NotifSettings == nil {
+		crrUser.NotifSettings = []bool{false, false, false}
+	}
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false})
 		return
@@ -784,8 +801,9 @@ func flipNotif(c *gin.Context) {
 	}
 	log.Println("after flip: ", crrUser.NotifSettings)
 
-	c.JSON(http.StatusOK, gin.H{"success": true})
+	requeryUser(crrUser)
 
+	c.JSON(http.StatusOK, gin.H{"success": true})
 }
 
 func getNotifSettings(c *gin.Context) {

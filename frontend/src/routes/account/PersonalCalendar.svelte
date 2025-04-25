@@ -1,15 +1,14 @@
 <script lang="ts">
-    import {onMount} from "svelte";
-    import {Task} from "$lib/project_state.svelte";
-    import {PUBLIC_API_HOST, PUBLIC_PROTOCOL} from "$env/static/public";
-    import {toast} from "svelte-sonner";
-    import {Button} from "$lib/components/ui/button";
-    import Calendar from "../project/calendar/Calendar.svelte";
-    import * as Checkbox from "$lib/components/ui/checkbox/index.js";
+    import { onMount } from "svelte"
+    import { Task } from "$lib/project_state.svelte"
+    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
+    import { toast } from "svelte-sonner"
+    import { Button } from "$lib/components/ui/button"
+    import Calendar from "../project/calendar/Calendar.svelte"
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js"
-    import {Label} from "$lib/components/ui/label";
-    import {Switch} from "$lib/components/ui/switch";
-
+    import { Label } from "$lib/components/ui/label"
+    import { Switch } from "$lib/components/ui/switch"
+    import { Skeleton } from "$lib/components/ui/skeleton"
 
     let year = $state(new Date().getFullYear())
     let month = $state(new Date().getMonth() + 1)
@@ -23,84 +22,81 @@
         month = parseInt(input.value) || new Date().getMonth() + 1
     }
     onMount(async () => {
-        await getTasks()
+        tasks = getTasks()
+        await tasks
         await mapTasks()
     })
-    let tasks: Task[] = $state([])
+
+    let tasks: Promise<Task[]> = $state(new Promise(() => {}))
     let projectNames: string[] = $state([])
-    let projectIds: string[] = $state([])
+
     async function getTasks() {
-        try {
-            const res = await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/getUserTasks", {
+        return new Promise<Task[]>((resolve, reject) => {
+            fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/getUserTasks", {
                 method: "GET",
                 mode: "cors",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
             })
-            const data = await res.json() as {
-                success: boolean;
-                tasks: Task[];
-                projectNames: string[];
-                //projectIds: string[]
-            }
-            //console.log("Fetched data:", data)
-            if (data.success) {
-                toast.success("User tasks fetched")
-                projectNames = [...data.projectNames]
-                //projectIds = [...data.projectIds]
-                tasks = data.tasks as Task[]
-            } else {
-                toast.error("Failed to load user tasks")
-            }
-        } catch (error) {
-            toast.error("Failed to get user tasks")
-            console.error(error)
-        }
-        //console.log("tasks " + tasks)
-        //console.log("projectNames " + projectNames)
-        return []
+                .then(res => {
+                    return res.json()
+                })
+                .then(data => {
+                    data = data as {
+                        success: boolean
+                        tasks: Task[]
+                        projectNames: string[]
+                    }
+                    if (data.success) {
+                        toast.success("User tasks fetched")
+                        projectNames = [...data.projectNames]
+
+                        resolve(data.tasks as Task[])
+                    } else {
+                        toast.error("Failed to load user tasks")
+                        reject()
+                    }
+                })
+        })
     }
 
     let projectTaskMap = new Map()
     let projectFilter = new Map()
-    //let projectNameIds = new Map()
     async function mapTasks() {
         for (let i = 0; i < projectNames.length; i++) {
             if (projectTaskMap.has(projectNames[i])) {
                 let taskList = projectTaskMap.get(projectNames[i])
-                taskList.push(tasks[i])
+                taskList.push((await tasks)[i])
                 projectTaskMap.set(projectNames[i], taskList)
             } else {
-                projectTaskMap.set(projectNames[i], [tasks[i]])
+                projectTaskMap.set(projectNames[i], [(await tasks)[i]])
                 projectFilter.set(projectNames[i], true)
-                //projectNameIds.set(projectNames[i], projectIds[i])
             }
         }
-        //console.log(projectNames)
-        //console.log(projectFilter)
     }
 
     async function filterTasks() {
-        let newTasks: Task[] = [];
+        let newTasks: Task[] = []
         for (const [name, showing] of projectFilter.entries()) {
             if (showing && projectTaskMap.has(name)) {
-                newTasks.push(...projectTaskMap.get(name));
+                newTasks.push(...projectTaskMap.get(name))
             }
         }
-        tasks = [...newTasks]; // reassign to trigger reactivity
+        // reassign to trigger reactivity
+        tasks = new Promise(resolve => {
+            resolve([...newTasks])
+        })
         console.log(tasks)
     }
 </script>
 
 <div>
-    <h2
-            class="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
-    >
+    <h2 class="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
         Your Calendar
     </h2>
     <div>
         <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
+            <DropdownMenu.Trigger>
                 <Button variant="outline">Filter</Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content class="w-56">
@@ -110,17 +106,21 @@
                     {#each Array.from(projectFilter.entries()) as [name, selected]}
                         <div>
                             <Switch
-                                    className="project"
-                                    checked={selected}
-                                    onCheckedChange={() => projectFilter.set(name, !projectFilter.get(name))}
+                                id="project"
+                                checked={selected}
+                                onCheckedChange={() =>
+                                    projectFilter.set(name, !projectFilter.get(name))}
                             />
-                            <Label className="project">{name}</Label>
+                            <Label for="project">{name}</Label>
                         </div>
                     {/each}
                 </DropdownMenu.Group>
-                <DropdownMenu.Separator/>
+                <DropdownMenu.Separator />
                 <DropdownMenu.Item>
-                    <Button onclick={filterTasks} class="mt-2 w-full">Apply Filter</Button>
+                    <Button
+                        onclick={filterTasks}
+                        class="mt-2 w-full">Apply Filter</Button
+                    >
                 </DropdownMenu.Item>
             </DropdownMenu.Content>
         </DropdownMenu.Root>
@@ -129,26 +129,30 @@
         <label>
             Year:
             <input
-                    type="number"
-                    value={year}
-                    oninput={handleYearChange}
+                type="number"
+                value={year}
+                oninput={handleYearChange}
             />
         </label>
         <label>
             Month:
             <input
-                    type="number"
-                    min="1"
-                    max="12"
-                    value={month}
-                    oninput={handleMonthChange}
+                type="number"
+                min="1"
+                max="12"
+                value={month}
+                oninput={handleMonthChange}
             />
         </label>
     </div>
     {#await tasks}
-        <p>Loading calendar...</p>
+        <Skeleton class="h-lvh w-full" />
     {:then tasks}
-        <Calendar {month} {year} {tasks} />
+        <Calendar
+            {month}
+            {year}
+            {tasks}
+        />
     {:catch error}
         <p class="text-red-500">Failed to load calendar.</p>
     {/await}
