@@ -23,7 +23,7 @@
 
     let { project }: { project: ProjectState } = $props()
 
-    let tzOffset = $state(0)
+    let tzOffset = $state(-new Date().getTimezoneOffset())
     const ranges = weekdayDateRanges()
     const myAvailability = $derived(
         availabilityToDateMap(
