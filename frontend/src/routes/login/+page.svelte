@@ -88,6 +88,7 @@
                 data-context="signin"
                 data-ux_mode="popup"
                 data-callback="googleSignin"
+                data-error_callback="console.error"
                 data-auto_prompt="false"
             ></div>
             <div

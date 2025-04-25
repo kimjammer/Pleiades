@@ -66,6 +66,7 @@
             client_id: GOOGLE_OAUTH_CLIENT_ID,
             scope: "https://www.googleapis.com/auth/calendar.events.freebusy",
             callback: fetchEvents,
+            error_callback: console.error,
         })
         tokenClient.requestAccessToken() // no popup if already authorized
     }
