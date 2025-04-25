@@ -31,7 +31,16 @@
     <p class="scroll-m-20 pb-5 text-center tracking-tight">
         {#await res then stats}
             Our {stats.users ?? 0} users have logged {Math.floor((stats.seconds ?? 0) / 60 / 60)} hours
-            to {stats.tasks ?? 0} tasks across {stats.projects ?? 0} projects!
+            to {stats.tasks ?? 0} tasks across {stats.projects ?? 0} projects! You are the {stats.visit}{stats.visit %
+                10 ===
+            1
+                ? "st"
+                : stats.visit % 10 === 2
+                  ? "nd"
+                  : stats.visit % 10 === 3
+                    ? "rd"
+                    : "th"}
+            visitor!
         {/await}
     </p>
     <div class="flex content-center justify-center">
