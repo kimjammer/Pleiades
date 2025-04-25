@@ -87,9 +87,9 @@
                             <div>
                                 <HoverCard>
                                     <HoverCardTrigger
-                                            class="text-blue-600 underline cursor-pointer"
-                                            style="color: {getTitleColor(task.kanbanColumn)}"
-                                            href="{base}/project?id={task.projectId}"
+                                        class="cursor-pointer text-blue-600 underline"
+                                        style="color: {getTitleColor(task.kanbanColumn)}"
+                                        href="{base}/project?id={task.id}"
                                     >
                                         {task.title}
                                     </HoverCardTrigger>

@@ -17,6 +17,7 @@
     import * as Tabs from "$lib/components/ui/tabs"
     import type { ProjectState } from "$lib/project_state.svelte"
     import { GOOGLE_OAUTH_CLIENT_ID } from "$lib/utils"
+    import { toast } from "svelte-sonner"
     import { writable } from "svelte/store"
     import { availabilityToDateMap, dateMapToAvailability } from "./adapter"
 
@@ -66,6 +67,7 @@
             client_id: GOOGLE_OAUTH_CLIENT_ID,
             scope: "https://www.googleapis.com/auth/calendar.events.freebusy",
             callback: fetchEvents,
+            error_callback: () => toast.error("Permission denied"),
         })
         tokenClient.requestAccessToken() // no popup if already authorized
     }
