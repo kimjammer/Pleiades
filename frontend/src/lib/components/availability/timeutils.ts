@@ -1,4 +1,4 @@
-import { DAY, HOUR, MILLISECOND, MINUTE, TIME_STEP } from "./units.js"
+import { DAY, HOUR, MILLISECOND, SECOND, TIME_STEP } from "./units.js"
 
 /** Date formatted in en-US locale, m/dd/yy. TODO: tighten this type */
 export type DateStr = `${number}/${number}/${number}` | string
@@ -126,8 +126,8 @@ export const getAllTzNames = () => Intl.supportedValuesOf("timeZone")
 
 /**
  * Arbitrary dates within one week, one for each day from Monday to Sunday in that order
- * Generated from https://stackoverflow.com/a/43008875 (exact day doesn't matter)
  * @param tzOffset offset in minutes from UTC. Defaults to local time
+ * @see getTodayWeek for dates within this week and timezone
  */
 export const weekdayDates = (tzOffset = new Date().getTimezoneOffset()) =>
     [
@@ -149,3 +149,23 @@ export const weekdayDateRanges = (tzOffset = new Date().getTimezoneOffset()) =>
                 weekdayDate.getTime() * MILLISECOND + (12 + 10) * HOUR,
             ] as DatetimeRange,
     )
+
+/* Adapted from https://stackoverflow.com/a/43008875 */
+export function getTodayWeek(current?: Date) {
+    current = current ?? new Date()
+    current.setHours(0, 0, 0, 0)
+    var week: Date[] = []
+    // Starting Monday not Sunday
+    current.setDate(current.getDate() - current.getDay() + 1)
+    for (var i = 0; i < 7; i++) {
+        week.push(new Date(current))
+        current.setDate(current.getDate() + 1)
+    }
+    return week
+}
+
+export function minutesSinceUTCMidnight(date: Date) {
+    return Math.floor(
+        date.getUTCHours() * HOUR + date.getUTCMinutes() + date.getUTCSeconds() * SECOND,
+    )
+}

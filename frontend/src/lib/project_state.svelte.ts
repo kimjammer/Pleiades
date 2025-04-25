@@ -1,6 +1,7 @@
 import { goto } from "$app/navigation"
 import { base } from "$app/paths"
 import { PUBLIC_API_HOST, PUBLIC_WS_PROTOCOL } from "$env/static/public"
+import type { boolean } from "zod"
 import type { UserId } from "./schema"
 
 class Mouse {
@@ -133,7 +134,7 @@ function updateState(serverResponse: any, state: ProjectState) {
     console.log(serverResponse)
     updateProject(serverResponse.Project, state)
 
-    let notif = makeNotification(serverResponse.Notification, state.userId)
+    let notif = makeNotification(serverResponse.Notification, state)
     if (notif !== null) {
         state.notifications.push(notif)
     }
@@ -269,21 +270,42 @@ function updateOption(serverOption: any, option: Option) {
     option.dislikedUsers = serverOption.DislikedUsers
 }
 
-function makeNotification(serverNotification: any, userId: string): Notification | null {
+let notifMap = new Map<string, number>()
+notifMap.set("users", 0)
+notifMap.set("poll", 1)
+notifMap.set("assigned", 2)
+
+function checkOk(notif: Notification, project: ProjectState): Notification | null {
+    for (const user of project.users) {
+        if (user.id == project.userId) {
+            let idx = notifMap.get(notif.category)
+
+            if (idx !== undefined && !user.notifSettings[idx]) {
+                return null
+            }
+
+            break
+        }
+    }
+
+    return notif
+}
+
+function makeNotification(serverNotification: any, project: ProjectState): Notification | null {
     if (serverNotification === null) {
         return null
     }
 
     let notif = new Notification()
 
-    if (serverNotification.Who !== "" && serverNotification.Who !== userId) {
+    if (serverNotification.Who !== "" && serverNotification.Who !== project.userId) {
         return null
     }
     notif.category = serverNotification.Category
     notif.title = serverNotification.Title
     notif.message = serverNotification.Message
 
-    return notif
+    return checkOk(notif, project)
 }
 
 export class Availability {
@@ -299,7 +321,7 @@ export class UserInProject {
     lastName: string = $state("")
     email: string = $state("")
     availability: Availability[] = $state([])
-    notifSettings: boolean[3] = $state([])
+    notifSettings: [boolean, boolean, boolean] = $state([false, false, false])
 }
 
 export class Session {
@@ -429,11 +451,22 @@ export class ProjectState {
         this.socket.send(message)
     }
 
-    notify(who: UserInProject | null, category: string, title: string, message: string) {
+    notify(who: string | null, category: string, title: string, message: string) {
+        if (who === this.userId) {
+            let notif = new Notification()
+            notif.category = category
+            notif.title = title
+            notif.message = message
+            if (checkOk(notif, this) != null) {
+                this.notifications.push(notif)
+            }
+            return
+        }
+
         let command = JSON.stringify({
             Name: "notify",
             Args: {
-                Who: who?.id ?? "",
+                Who: who ?? "",
                 Category: category,
                 Title: title,
                 Message: message,

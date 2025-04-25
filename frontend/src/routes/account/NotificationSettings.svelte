@@ -1,10 +1,10 @@
 <script lang="ts">
     import { Switch } from "$lib/components/ui/switch"
     import * as Card from "$lib/components/ui/card"
-    import {PUBLIC_API_HOST, PUBLIC_PROTOCOL} from "$env/static/public";
-    import {toast} from "svelte-sonner";
-    import {Label} from "$lib/components/ui/label";
-    import {onMount} from "svelte";
+    import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
+    import { toast } from "svelte-sonner"
+    import { Label } from "$lib/components/ui/label"
+    import { onMount } from "svelte"
 
     let notifUserJoin = $state(false)
     let notifPollEnd = $state(false)
@@ -26,7 +26,7 @@
         const data = await res.json()
         if (data.success) {
             toast.success("Changed notification preference")
-            getNotifSettings()
+            await getNotifSettings()
         } else {
             toast.error("Error changing notification preference")
         }
@@ -41,7 +41,7 @@
         })
         const data = await res.json()
         if (data.success) {
-            [notifUserJoin, notifPollEnd, notifTaskAssign] = data.notifSettings
+            ;[notifUserJoin, notifPollEnd, notifTaskAssign] = data.notifSettings
             console.log(notifUserJoin, notifPollEnd, notifTaskAssign)
         } else {
             toast.error("Failed to load notification settings")
@@ -56,27 +56,27 @@
     <Card.Content class="grid gap-6">
         <div class="flex items-center space-x-2">
             <Switch
-                    className="user joining"
-                    bind:checked={notifUserJoin}
-                    onCheckedChange={() => flipNotifSetting(0)}
+                id="user-joining"
+                bind:checked={notifUserJoin}
+                onCheckedChange={() => flipNotifSetting(0)}
             />
-            <Label className="user joining">New users joining projects</Label>
+            <Label for="user-joining">New users joining projects</Label>
         </div>
         <div class="flex items-center space-x-2">
             <Switch
-                    className="ending polls"
-                    bind:checked={notifPollEnd}
-                    onCheckedChange={() => flipNotifSetting(1)}
+                id="ending-polls"
+                bind:checked={notifPollEnd}
+                onCheckedChange={() => flipNotifSetting(1)}
             />
-            <Label className="ending polls">Polls ending soon</Label>
+            <Label for="ending-polls">Polls ending soon</Label>
         </div>
         <div class="flex items-center space-x-2">
             <Switch
-                    className="task assignments"
-                    bind:checked={notifTaskAssign}
-                    onCheckedChange={() => flipNotifSetting(2)}
+                id="task-assignments"
+                bind:checked={notifTaskAssign}
+                onCheckedChange={() => flipNotifSetting(2)}
             />
-            <Label className="task assignments">New task assignments</Label>
+            <Label for="task-assignments">New task assignments</Label>
         </div>
     </Card.Content>
 </Card.Root>

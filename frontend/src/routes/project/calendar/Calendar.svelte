@@ -1,14 +1,9 @@
 <script lang="ts">
     import type { Task } from "$lib/project_state.svelte"
-    import {HoverCard, HoverCardTrigger, HoverCardContent} from "$lib/components/ui/hover-card";
-    let { year, month, tasks = [] }: { year: number; month: number; tasks?: Task[];} = $props()
+    import { HoverCard, HoverCardTrigger, HoverCardContent } from "$lib/components/ui/hover-card"
+    let { year, month, tasks = [] }: { year: number; month: number; tasks?: Task[] } = $props()
     let calendar = $state<string[][]>([])
-    import { connectToProject } from "$lib/project_state.svelte";
-    import { type ProjectState } from "$lib/project_state.svelte"
-    import TaskCard from "../tasks/TaskCard.svelte"
     import { base } from "$app/paths"
-    import { Button } from "$lib/components/ui/button"
-    import { Dialog, DialogTrigger, DialogContent, DialogClose } from "$lib/components/ui/dialog"; // Import Dialog components
 
     const daysOfWeek = [
         "Sunday",
@@ -64,13 +59,11 @@
     })
 
     function getTitleColor(column: string) {
-        console.log(column)
         if (column == "") return "#cc7a00"
         else if (column == "progress") return "#99cc00"
         else if (column == "done") return "#008000"
         else return null
     }
-
 </script>
 
 <table>
@@ -103,7 +96,7 @@
                                     <HoverCardContent class="w-64">
                                         <div class="font-semibold">{task.title}</div>
                                         <div class="text-sm text-gray-600">{task.description}</div>
-                                        <div class="text-xs text-muted-foreground mt-2">
+                                        <div class="mt-2 text-xs text-muted-foreground">
                                             Due: {new Date(task.dueDate).toLocaleDateString()}
                                         </div>
                                     </HoverCardContent>

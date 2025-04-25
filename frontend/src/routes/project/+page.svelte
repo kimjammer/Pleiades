@@ -13,12 +13,15 @@
     import StatsTab from "./stats/StatsTab.svelte"
     import TasksTab from "./tasks/TasksTab.svelte"
     import Notifications from "./Notifications.svelte"
+    import { Skeleton } from "$lib/components/ui/skeleton"
 
     let { data }: { data: PageData } = $props()
     let project: Promise<ProjectState> = $state(new Promise((_a, _b) => {}))
 
     let projectId = $state("")
     let tab = $state("tasks")
+
+    let now = $state(Date.now())
 
     onMount(() => {
         //Grab project ID from URL
@@ -28,6 +31,12 @@
         project = connectToProject(projectId)
 
         tab = params.get("tab") || "tasks"
+
+        const id = setInterval(() => {
+            now = Date.now()
+        }, 500)
+
+        return () => clearInterval(id)
     })
 
     $effect(() => {
@@ -53,7 +62,15 @@
 
 <PleiadesNav></PleiadesNav>
 {#await project}
-    <p>Loading project</p>
+    <div class="flex flex-col gap-5 p-5">
+        <Skeleton class="h-9 w-full" />
+        <Skeleton class="h-7 w-full" />
+        <div class="flex h-[80vh] w-full gap-5">
+            <Skeleton class="h-full w-full" />
+            <Skeleton class="h-full w-full" />
+            <Skeleton class="h-full w-full" />
+        </div>
+    </div>
 {:then project}
     <Notifications {project} />
     <div class="p-5">
@@ -117,6 +134,7 @@
             <PollsTab
                 {project}
                 {data}
+                {now}
             />
 
             <SettingsTab {project} />

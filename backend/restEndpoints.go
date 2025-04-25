@@ -123,30 +123,32 @@ func newProjectHandler(c *gin.Context) {
 func checkEmail(c *gin.Context) {
 	log.Println("checking email")
 	email := c.Query("email")
-	collection := db.Collection("users")
-	var result bson.M
+	
+	_, err := findUserByEmail(c, email)
 
-	err := collection.FindOne(c, bson.M{"email": email}).Decode(&result)
-
-	if err == mongo.ErrNoDocuments {
-		c.JSON(http.StatusOK, gin.H{"exists": false})
-	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-	} else {
+	if err == nil {
 		c.JSON(http.StatusOK, gin.H{"exists": true})
 	}
 	//c is sent at end of function
 }
 
+func mintToken(c *gin.Context, user *User) {
+	//set cookie upon successful login (cookie is user id)
+	log.Println("User id: ", user.Id, user.Id.Hex())
+	token := makeToken(user.Id.Hex())
+	c.SetSameSite(http.SameSiteNoneMode)
+	log.Println("Token:", token)
+	c.SetCookie("token", token, 3600, "/", "", true, true)
+	c.JSON(http.StatusOK, gin.H{"exists": true, "userId": user.Id})
+}
+
 func registerUser(c *gin.Context) {
 	var newUser User
-	log.Println("registering new user")
 	if err := c.ShouldBindJSON(&newUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	newUser.NotifSettings = []bool{true, true, true}
-	log.Println("Registering User, NotifSettings: ", newUser.NotifSettings)
+
 	hashedPassword, err := encryptPassword(newUser.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
@@ -155,55 +157,76 @@ func registerUser(c *gin.Context) {
 		newUser.Password = hashedPassword
 	}
 
-	newUser.Id = primitive.NewObjectID()
-	newUser.Availability = []Availability{}
-	newUser.Projects = []string{}
-	//Insert new user into db
-	collection := db.Collection("users")
-	_, err = collection.InsertOne(c, newUser)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert user"})
-		return
-	}
-
-	log.Println("Created user with ID: ", newUser.Id)
-	//set cookie upon successful registration (cookie is user id)
-	token := makeToken(newUser.Id.Hex())
-	c.SetSameSite(http.SameSiteNoneMode)
-	c.SetCookie("token", token, 3600, "/", "", true, true)
-	log.Println("Created User with Id: ", newUser.Id)
-	c.JSON(http.StatusCreated, gin.H{"success": true, "userId": newUser.Id})
+	createUser(c, &newUser)
 }
 
 func login(c *gin.Context) {
 	listUsers()
 	email := c.Query("email")
 	password := c.Query("password")
-	var user User
 
-	log.Println("fetching from database")
-	err := db.Collection("users").FindOne(c, bson.M{"email": email}).Decode(&user)
+	user, err := findUserByEmail(c, email)
 
-	if err == mongo.ErrNoDocuments {
-		c.JSON(http.StatusOK, gin.H{"exists": false})
-	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-	} else {
+	if err == nil {
 		//check if passwords match
 		if checkPassword(user.Password, password) {
-			//set cookie upon successful login (cookie is user id)
-			log.Println("User id: ", user.Id, user.Id.Hex())
-			token := makeToken(user.Id.Hex())
-			c.SetSameSite(http.SameSiteNoneMode)
-			log.Println("Token:", token)
-			c.SetCookie("token", token, 3600, "/", "", true, true)
-			c.JSON(http.StatusOK, gin.H{"exists": true, "userId": user.Id})
+			mintToken(c, &user)
 		} else {
 			c.JSON(http.StatusOK, gin.H{"exists": false})
 		}
 	}
+}
 
+func verifyGoogle(c *gin.Context) (payload *idtoken.Payload, err error) {
+	var req struct {
+		Credential string `form:"credential" binding:"required"`
+	}
+	if err = c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+
+	payload, err = idtoken.Validate(c, req.Credential, "")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+	}
+	return
+}
+
+func googleLogin(c *gin.Context) {
+	payload, err := verifyGoogle(c)
+	if err != nil {
+		return
+	}
+
+	email, _ := payload.Claims["email"].(string)
+
+	user, err := findUserByEmail(c, email)
+	if err == nil {
+		mintToken(c, &user)
+	} else {
+		// TODO: autocreate?
+		return
+	}
+
+	c.Redirect(http.StatusSeeOther, os.Getenv("PROTOCOL") + os.Getenv("HOST") + "/home")
+}
+
+func googleRegistration(c *gin.Context) {
+	payload, err := verifyGoogle(c)
+	if err != nil {
+		return
+	}
+
+	email, _ := payload.Claims["email"].(string)
+	name, _ := payload.Claims["name"].(string)
+
+	newUser := User{
+		FirstName: name,
+		Email: email,
+		LastName: "",
+	}
+	createUser(c, &newUser)
 }
 
 func invite(c *gin.Context) {
@@ -253,6 +276,18 @@ func join(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
 	}
+
+	user, err := getUserById(c, userId)
+	if err != nil {
+		panic(err)
+	}
+
+	err = applyCommandToProject(invitation.ProjectId, Notify{
+		Who:      "",
+		Category: "users",
+		Title:    user.FirstName + " joined the project!",
+		Message:  "Go say hi!",
+	})
 
 	c.String(http.StatusOK, "success")
 }
@@ -700,36 +735,6 @@ func purdueDirectory(c *gin.Context) {
 	c.JSON(http.StatusOK, nameEmailMap)
 }
 
-func googleLogin(c *gin.Context) {
-	var req struct {
-		Credential string `form:"credential" binding:"required"`
-	}
-	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
-		return
-	}
-
-	payload, err := idtoken.Validate(c, req.Credential, "")
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
-		return
-	}
-
-	email, _ := payload.Claims["email"].(string)
-	name, _ := payload.Claims["name"].(string)
-	c.Redirect(http.StatusSeeOther, os.Getenv("PROTOCOL")+os.Getenv("HOST")+"/home")
-	return
-
-	c.JSON(http.StatusOK, gin.H{
-		"email": email,
-		"name":  name,
-	})
-}
-
-func googleRegistration(c *gin.Context) {
-
-}
-
 func getUserTasks(c *gin.Context) {
 	crrUser, err := getUser(c)
 	if err != nil {
@@ -765,6 +770,11 @@ func getUserTasks(c *gin.Context) {
 
 func flipNotif(c *gin.Context) {
 	crrUser, err := getUser(c)
+
+	if crrUser.NotifSettings == nil {
+		crrUser.NotifSettings = []bool{false, false, false}
+	}
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false})
 		return
@@ -791,8 +801,9 @@ func flipNotif(c *gin.Context) {
 	}
 	log.Println("after flip: ", crrUser.NotifSettings)
 
-	c.JSON(http.StatusOK, gin.H{"success": true})
+	requeryUser(crrUser)
 
+	c.JSON(http.StatusOK, gin.H{"success": true})
 }
 
 func getNotifSettings(c *gin.Context) {
