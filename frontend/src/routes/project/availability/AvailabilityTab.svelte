@@ -78,7 +78,7 @@
         return (
             day <= endDate.getUTCDay() &&
             day >= startDate.getUTCDay() &&
-            block <= endBlock &&
+            block < endBlock &&
             block >= startBlock
         )
     }
