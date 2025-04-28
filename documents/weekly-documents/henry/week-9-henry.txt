@@ -1,0 +1,10 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: Henry
+
+Week 9 (Summary)
+4/21 9365ac6 1hr Implement infrastructure for notifications
+4/23 98b411f 1hr Basic notifications
+4/23 26fef42 1hr Perform notifications at the right times
+4/23 46fa4f8 1hr Fix bugs
+4/23 52ad5282 8c3a660 0.5hr Fix MORE bugs
+
