@@ -1,7 +1,12 @@
 === Weekly Team Report (Team 5: Pleiades) ===
 
 Week 9 (Summary) (Scrum Master: Henry Rovnyak)
+4/21 1hr           Figured out branch protection rules and required checks (No commit, github settings changes)
 4/21 9365ac6 1hr Implement infrastructure for notifications
+4/22 0.1hr fb10f01 Fix decoding sessions
+4/22 1.5hr 5f68922 Burndown chart task breakout
+4/22 0.1hr 05f0d55 Pie chart ignore in progress sessions
+4/22 1hr   0746e44 Create e2e-test.yml
 4/23 98b411f 1hr Basic notifications
 4/23 26fef42 1hr Perform notifications at the right times
 4/23 e893a2d 0.5hr Notification settings
@@ -9,6 +14,10 @@ Week 9 (Summary) (Scrum Master: Henry Rovnyak)
 4/23 52ad5282 8c3a660 0.5hr Fix MORE bugs
 2025-04-23 ed71e33 0.21hr Send html emails
 2025-04-23 25d966f 0.43hr Refactor, google login
+4/23 1hr   564f57e Fixing e2e tests and cicd pipeline
+4/23 1hr   3bd42bd More e2e tests
+4/23 0.1hr c4ba4da Correctly load due date time
+4/23 1.5hr 4ea854f More UI tweaks
 2025-04-24 0cd640a 0.69hr Google account registration
 2025-04-24 ececbc5 0.9hr Learn Google API
 2025-04-24 cb54613 0.74hr Limit date range
@@ -36,6 +45,7 @@ Week 9 (Summary) (Scrum Master: Henry Rovnyak)
 2025-04-25 56c2eb2 0.1hr Ignore free events
 2025-04-25 fdf1ed1 0.29hr Greet user on settings
 2025-04-25 b25240f 0.38hr Count visits
+4/25 0.1hr 8d24429 fix calendar link
 
 Week 9 (Summary) (Scrum Master: Henry Rovnyak)
 [Meetings]
