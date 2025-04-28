@@ -1,0 +1,24 @@
+=== Weekly Individual Report (Team 5: Pleiades) ===
+Name: John Kim
+
+Week 7 (Summary)
+4/11 2hr   6141044 Password Recovery (No Email)
+4/11 1hr   3f702f0 Testing for password reset
+4/11 2hr   1056a7a Attempt to make tests more consistent (Long debugging session)
+4/12 2hr   6d5d7f3 Send password recovery email
+
+Week 8 (Summary)
+4/15 2.6hr 0aa04da Refactor Due Dates
+4/17 2hr   6724e5d Implement User session stacked chart (Includes many tasks)
+
+Week 9 (Summary)
+4/21 1hr           Figured out branch protection rules and required checks (No commit, github settings changes)
+4/22 0.1hr fb10f01 Fix decoding sessions
+4/22 1.5hr 5f68922 Burndown chart task breakout
+4/22 0.1hr 05f0d55 Pie chart ignore in progress sessions
+4/22 1hr   0746e44 Create e2e-test.yml
+4/23 1hr   564f57e Fixing e2e tests and cicd pipeline
+4/23 1hr   3bd42bd More e2e tests
+4/23 0.1hr c4ba4da Correctly load due date time
+4/23 1.5hr 4ea854f More UI tweaks
+4/25 0.1hr 8d24429 fix calendar link

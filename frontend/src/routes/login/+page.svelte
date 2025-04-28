@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { goto } from "$app/navigation"
     import { base } from "$app/paths"
     import { PUBLIC_API_HOST, PUBLIC_PROTOCOL } from "$env/static/public"
@@ -24,7 +24,10 @@
             },
         )
 
-        const data = await res.json()
+        postLogin(await res.json())
+    }
+
+    async function postLogin(data: any) {
         if (data.exists) {
             recordEvent("login")
             error = ""
@@ -33,6 +36,21 @@
         } else {
             error = "Invalid Login"
         }
+    }
+
+    window.googleSignin = async ({ credential }: any) => {
+        const data = await (
+            await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/login/google", {
+                method: "POST",
+                mode: "cors",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({ credential }).toString(),
+            })
+        ).json()
+        postLogin(data)
     }
 </script>
 
@@ -82,8 +100,8 @@
                 id="g_id_onload"
                 data-client_id={GOOGLE_OAUTH_CLIENT_ID}
                 data-context="signin"
-                data-ux_mode="redirect"
-                data-login_uri={PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/login/google"}
+                data-ux_mode="popup"
+                data-callback="googleSignin"
                 data-auto_prompt="false"
             ></div>
             <div

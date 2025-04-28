@@ -33,6 +33,10 @@
 
         const data = await res.json()
         console.log(data) // Handle success or error messages
+        postRegister(data)
+    }
+
+    async function postRegister(data: any) {
         if (data.success) {
             recordEvent("users")
             localStorage.myId = data.userId
@@ -44,16 +48,8 @@
         return /[A-Z]/.test(password) && /[a-z]/.test(password)
     }
 
-    //This func is activated on submit, confirms validity of input to send to server
-    //if input invalid, pops up error
-    //NOTE: isValid() does NOT handle already existing accounts.
-    async function isValid(ev: MouseEvent) {
-        ev.preventDefault()
-        if (!email.includes("@")) {
-            error = "Invalid Email"
-            return
-        }
-        //FIRST: Check for if account exists
+    async function checkAccountExists(email: string) {
+        // TODO: this check only occurs on client, thus duplicate accounts can be made. It should happen on server
         console.log("account Exists checking")
 
         const res = await fetch(
@@ -70,7 +66,20 @@
             },
         )
         console.log("awaiting")
-        const data = await res.json()
+        return await res.json()
+    }
+
+    //This func is activated on submit, confirms validity of input to send to server
+    //if input invalid, pops up error
+    //NOTE: isValid() does NOT handle already existing accounts.
+    async function isValid(ev: MouseEvent) {
+        ev.preventDefault()
+        if (!email.includes("@")) {
+            error = "Invalid Email"
+            return
+        }
+        //FIRST: Check for if account exists
+        const data = await checkAccountExists(email)
         console.log(data)
         if (data.exists) {
             error = "There is already an account registered with this email!"
@@ -88,6 +97,21 @@
             error = ""
             await register()
         }
+    }
+
+    window.googleRegister = async ({ credential }: any) => {
+        const data = await (
+            await fetch(PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/register/google", {
+                method: "POST",
+                mode: "cors",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({ credential }).toString(),
+            })
+        ).json()
+        postRegister(data)
     }
 </script>
 
@@ -162,8 +186,8 @@
                 id="g_id_onload"
                 data-client_id={GOOGLE_OAUTH_CLIENT_ID}
                 data-context="signup"
-                data-ux_mode="redirect"
-                data-login_uri={PUBLIC_PROTOCOL + PUBLIC_API_HOST + "/register/google"}
+                data-ux_mode="popup"
+                data-callback="googleRegister"
                 data-auto_prompt="false"
             ></div>
             <div
