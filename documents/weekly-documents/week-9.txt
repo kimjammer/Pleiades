@@ -1,11 +1,58 @@
 === Weekly Team Report (Team 5: Pleiades) ===
 
 Week 9 (Summary) (Scrum Master: Henry Rovnyak)
+4/20 1hr f934106 Notifications setting UI
+4/21 1hr           Figured out branch protection rules and required checks (No commit, github settings changes)
 4/21 9365ac6 1hr Implement infrastructure for notifications
+4/22 0.1hr fb10f01 Fix decoding sessions
+4/22 1.5hr 5f68922 Burndown chart task breakout
+4/22 0.1hr 05f0d55 Pie chart ignore in progress sessions
+4/22 1hr   0746e44 Create e2e-test.yml
+4/23 2hr 7ee8c8a task mapping
+4/23 1hr 706600f personal calendar filtering
+4/23 1hr 8912219 hovercard and calendar color coding
+4/23 2hr ec12ea1 broken task card
+4/23 2hr 49cf5f8 personal task cards works? not?
+4/23 1hr 06f6506 link to project page in calendar
 4/23 98b411f 1hr Basic notifications
 4/23 26fef42 1hr Perform notifications at the right times
 4/23 e893a2d 0.5hr Notification settings
 4/23 46fa4f8 1hr Fix bugs
+4/23 52ad5282 8c3a660 0.5hr Fix MORE bugs
+2025-04-23 ed71e33 0.21hr Send html emails
+2025-04-23 25d966f 0.43hr Refactor, google login
+4/23 1hr   564f57e Fixing e2e tests and cicd pipeline
+4/23 1hr   3bd42bd More e2e tests
+4/23 0.1hr c4ba4da Correctly load due date time
+4/23 1.5hr 4ea854f More UI tweaks
+2025-04-24 0cd640a 0.69hr Google account registration
+2025-04-24 ececbc5 0.9hr Learn Google API
+2025-04-24 cb54613 0.74hr Limit date range
+2025-04-24 0def1ee 0.32hr load current date
+2025-04-24 c56ef39 0.17hr TODO: importing
+2025-04-24 c473920       Revert "load current date"
+2025-04-24 19d9a60 0.49hr Can edit, still need checks
+2025-04-25 649a354 0.64hr Filter, but wrongly
+2025-04-25 2af95ef 0.39hr Fix boundary case error
+2025-04-25 08418cc 0.13hr Fix initial tz view
+2025-04-24 e33e021 0.9hr Learn Google API
+2025-04-24 1e84c41 0.74hr Limit date range
+2025-04-24 959b84b 0.32hr load current date
+2025-04-24 4440cee 0.17hr TODO: importing
+2025-04-24 f71f386       Revert "load current date"
+2025-04-24 f957e34 0.49hr Can edit, still need checks
+2025-04-25 8182dc2 0.64hr Filter, but wrongly
+2025-04-25 b568bc3 0.39hr Fix boundary case error
+2025-04-25 4253bf6 0.26hr Try to detect cancelation
+2025-04-25 11e268b 0.11hr Figure out how to detect cancelation
+2025-04-25 04a0414 0.52hr toast cal import error
+2025-04-25 6c4c130 0.36hr Properly redirect on glogin
+2025-04-25 dd4d632 0.3hr Connect everything for gaccount registration
+2025-04-25 c7b61b0 0.35hr Save profile picture
+2025-04-25 56c2eb2 0.1hr Ignore free events
+2025-04-25 fdf1ed1 0.29hr Greet user on settings
+2025-04-25 b25240f 0.38hr Count visits
+4/25 0.1hr 8d24429 fix calendar link
 
 Week 9 (Summary) (Scrum Master: Henry Rovnyak)
 [Meetings]
