@@ -18,24 +18,6 @@ Automated Tests:
 4. npm run build  
 5. npm run test
 
-### User Story \#TEMPLATE
-
-As a user,
-
-Acceptance Criteria:
-
-1. ### Given that 
-
-#### Test Case
-
-#### Input
-
-#### Output
-
-#### Acceptance
-
-Pass.
-
 ### User Story \#1.4
 
 As a user, I want to be able to reset my password so that I can recover my account.
@@ -454,25 +436,3 @@ This test case tests all three acceptance criteria
 #### Acceptance
 
 Pass.
-
-**1 Version Control (1.0 point)**  
-(a) All team members are required to consistently use version control system.  
-**2 Weekly Reports (1.5 points)**  
-(a) Your current scrum master should submit weekly team reports to your project coordinator and  
-the head TA.  
-(b) Each individual should submit weekly individual reports to their project coordinator.  
-(c) Make sure to tag each task with your version control commit identifiers (e.g. git commit hash) as necessary.  
-(d) Both reports should be submitted via email by 11:58pm EVERY Sunday and no points will be given for late submissions.  
-**3 Implementation and Testing (9.0 points)**  
-(a) Your implementation and demo should be based on the Sprint Planning Document. Please implement the tasks that you have planned in the document.  
-(b) Each team member must present and explain the tasks they have worked on during the sprint.  
-(c) If you have any automated tests, then you should demonstrate them during the meeting.  
-(d) For any manual tests, you should submit a report of the test cases that were executed during the sprint. List a user story and its test cases. Each test case should include a short description, its input, observed output and should indicate if it was an acceptable output (yes or no).  
-(e) The manual testing report should be submitted anytime before the meeting.  
-**4 Overall Presentation (1.5 points)**  
-(a) Ensure to prepare your demo before the meeting and do a dry-run.  
-**Notes**  
-(a) Please arrange to meet with your assigned grader on the suggested meeting day (usually Friday) or one day before it.  
-(b) If you have some tasks based on machine learning or data mining algorithms, and cannot avoid certain error rates, it is understandable for your application not to always produce correct  
-results. No points will be deducted for the tasks which work reasonably well.
-
