@@ -1,12 +1,20 @@
 === Weekly Team Report (Team 5: Pleiades) ===
 
 Week 9 (Summary) (Scrum Master: Henry Rovnyak)
+4/20 1hr f934106 Notifications setting UI
+
 4/21 1hr           Figured out branch protection rules and required checks (No commit, github settings changes)
 4/21 9365ac6 1hr Implement infrastructure for notifications
 4/22 0.1hr fb10f01 Fix decoding sessions
 4/22 1.5hr 5f68922 Burndown chart task breakout
 4/22 0.1hr 05f0d55 Pie chart ignore in progress sessions
 4/22 1hr   0746e44 Create e2e-test.yml
+4/23 2hr 7ee8c8a task mapping
+4/23 1hr 706600f personal calendar filtering
+4/23 1hr 8912219 hovercard and calendar color coding
+4/23 2hr ec12ea1 broken task card
+4/23 2hr 49cf5f8 personal task cards works? not?
+4/23 1hr 06f6506 link to project page in calendar
 4/23 98b411f 1hr Basic notifications
 4/23 26fef42 1hr Perform notifications at the right times
 4/23 e893a2d 0.5hr Notification settings
